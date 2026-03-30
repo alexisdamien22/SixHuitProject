@@ -1,4 +1,7 @@
+import { createElement as el } from "../utils/DOMBuilder.js";
+
 export const AppViewNavigation = {
+  // --- 1. SLIDER DU FOOTER (Logique inchangée, 100% DOM native) ---
   updateSlider(index, animated = true) {
     const footer = document.querySelector(".main-footer");
     const icons = document.querySelectorAll(".icon-footer");
@@ -29,40 +32,108 @@ export const AppViewNavigation = {
     });
   },
 
+  // --- 2. MENU DU BAS (Refonte Sécurisée) ---
   createBottomMenu(view) {
     if (document.getElementById("bottom-menu-container")) return;
 
-    const menuHTML = `
-      <div id="bottom-menu-container" class="bottom-menu-container">
-        <div class="bottom-menu-overlay"></div>
-        <div class="bottom-menu-sheet">
-          <div class="bottom-menu-item" id="btn-compte"><span>Compte</span></div>
-          <div class="bottom-menu-item" id="btn-parametre-menu"><span>Paramètres</span></div>
-        </div>
-      </div>`;
+    const bottomMenu = el(
+      "div",
+      { id: "bottom-menu-container", className: "bottom-menu-container" },
+      // L'overlay sombre avec son événement de fermeture
+      el("div", {
+        className: "bottom-menu-overlay",
+        onClick: () => view.toggleBottomMenu(false),
+      }),
+      // La feuille de menu blanche
+      el(
+        "div",
+        { className: "bottom-menu-sheet" },
 
-    document.body.insertAdjacentHTML("beforeend", menuHTML);
+        // Bouton Compte
+        el(
+          "div",
+          {
+            className: "bottom-menu-item",
+            id: "btn-compte",
+            onClick: () => {
+              view.toggleBottomMenu(false, true);
+              view.syncFooter(3);
+              window.appController?.navigateToPage("profil");
+            },
+          },
+          el("span", {}, "Compte"),
+        ),
 
-    const container = document.getElementById("bottom-menu-container");
+        // Bouton Paramètres
+        el(
+          "div",
+          {
+            className: "bottom-menu-item",
+            id: "btn-parametre-menu",
+            onClick: () => {
+              view.toggleBottomMenu(false, true);
+              view.syncFooter(3);
+              window.appController?.navigateToPage("settings");
+            },
+          },
+          el("span", {}, "Paramètres"),
+        ),
+      ),
+    );
 
-    container
-      .querySelector(".bottom-menu-overlay")
-      .addEventListener("click", () => {
-        view.toggleBottomMenu(false);
-      });
+    // Insertion sécurisée
+    document.body.appendChild(bottomMenu);
+  },
 
-    container
-      .querySelector("#btn-parametre-menu")
-      .addEventListener("click", () => {
-        view.toggleBottomMenu(false, true);
-        view.syncFooter(3);
-        window.appController?.navigateToPage("settings");
-      });
+  // --- 3. MENU DU HAUT / SWAP ACCOUNT (Réintégré proprement) ---
+  createTopMenu(view, childAccounts = []) {
+    let menuContainer = document.getElementById("top-menu-container");
+    let sheet;
 
-    container.querySelector("#btn-compte").addEventListener("click", () => {
-      view.toggleBottomMenu(false, true);
-      view.syncFooter(3);
-      window.appController?.navigateToPage("profil");
+    // Squelette du menu
+    if (!menuContainer) {
+      menuContainer = el(
+        "div",
+        { id: "top-menu-container", className: "top-menu-container" },
+        el("div", {
+          className: "top-menu-overlay",
+          onClick: () => view.toggleTopMenu(false),
+        }),
+      );
+      sheet = el("div", { className: "top-menu-sheet" });
+      menuContainer.appendChild(sheet);
+
+      document.body.insertBefore(menuContainer, document.body.firstChild);
+    } else {
+      // Si le menu existe déjà, on le vide de manière sécurisée
+      sheet = menuContainer.querySelector(".top-menu-sheet");
+      sheet.textContent = "";
+    }
+
+    // Création dynamique et sécurisée des enfants
+    const items = childAccounts.map((account) => {
+      return el(
+        "div",
+        {
+          className: "swap-account-item",
+          dataset: { id: String(account.id) },
+          onClick: () => {
+            console.log("Swap sécurisé vers le compte enfant ID :", account.id);
+            view.toggleTopMenu(false);
+            // Logique future : window.appController.switchChild(account.id);
+          },
+        },
+        el(
+          "div",
+          { className: "swap-info" },
+          el("div", { className: "swap-avatar" }),
+          el("span", { className: "swap-pseudo" }, account.name), // 🔒 Sécurité absolue
+        ),
+        el("div", { className: "swap-icon-btn" }, "⇄"),
+      );
     });
+
+    // Insertion groupée
+    items.forEach((item) => sheet.appendChild(item));
   },
 };

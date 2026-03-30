@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 :root {
   color-scheme: dark;
   --color-bg-main: #20252b;
@@ -5,14 +6,27 @@
   --color-border-soft: rgba(0, 0, 0, 0.1);
   --color-bg-footer: #21262c;
   --color-border-light: #2a3139;
+=======
+/* Import de la base */
+@import url("./base/variables.css");
+@import url("./base/reset.css");
+@import url("./base/utilities.css");
+>>>>>>> Stashed changes
 
   --color-done: #58cc02;
   --color-todo: #fda20c;
   --color-nothing: #7e7d7d;
 
+<<<<<<< Updated upstream
   --color-done-shadow: #46a302;
   --color-todo-shadow: #ce830a;
   --color-nothing-shadow: #5d5d5d;
+=======
+/* Import des composants réutilisables */
+@import url("./components/buttons.css");
+@import url("./components/popups.css");
+@import url("./components/forms.css");
+>>>>>>> Stashed changes
 
   --color-halo-border: #3a424c;
   --color-halo-bg: rgba(255, 255, 255, 0);

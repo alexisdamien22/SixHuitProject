@@ -1,0 +1,36 @@
+/* Labels et Textes de questions */
+.form-label,
+.ca-question {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--color-text-main) !important;
+  display: block;
+}
+
+/* Champs de saisie standards */
+.form-input,
+.ca-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--ca-input-bg);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ca-input-text) !important;
+  outline: none;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+
+.form-input::placeholder,
+.ca-input::placeholder {
+  color: var(--ca-placeholder);
+}
+
+.form-input:focus,
+.ca-input:focus {
+  border-color: var(--ca-purple);
+}

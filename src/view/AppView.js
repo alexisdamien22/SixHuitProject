@@ -4,6 +4,8 @@ import { MusicPage } from "./pages/MusicPage.js";
 import { ProfilPage } from "./pages/ProfilPage.js";
 import { SettingsPage } from "./pages/SettingsPage.js";
 import { AppViewTheme } from "./AppViewTheme.js";
+import { HeaderView } from "./pages/HeaderView.js";
+import { FooterView } from "./pages/FooterView.js";
 import { AppViewNavigation } from "./AppViewNavigation.js";
 import { initAppEvents } from "./AppViewEvents.js";
 import { CreateAccountPage } from "./pages/CreateAccountPage.js";
@@ -14,6 +16,16 @@ import { setSecureHTML } from "../utils/SecurityHelpers.js";
 export class AppView {
   constructor() {
     this.app = document.getElementById("app");
+
+    // Injection 100% DOM et synchrone du Header et du Footer
+    const headerPlaceholder = document.getElementById("header-placeholder");
+    const footerPlaceholder = document.getElementById("footer-placeholder");
+
+    if (headerPlaceholder)
+      headerPlaceholder.replaceChildren(HeaderView.render());
+    if (footerPlaceholder)
+      footerPlaceholder.replaceChildren(FooterView.render());
+
     AppViewTheme.init();
     initAppEvents(this);
     this.setupFooterNavigation();
@@ -153,7 +165,7 @@ export class AppView {
     const header = document.querySelector("header, .main-header");
     if (header) header.style.display = "none";
 
-    setSecureHTML(this.app, CreateAccountPage.getHTML());
-    CreateAccountPage.afterRender();
+    const pageNode = CreateAccountPage.render();
+    this.app.replaceChildren(pageNode);
   }
 }

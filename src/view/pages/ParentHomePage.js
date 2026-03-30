@@ -1,20 +1,26 @@
-export const ParentHomePage = {
-  getHTML: (parentData) => {
-    return `
-      <div class="parent-screen" style="padding: 20px; text-align: center;">
-        <h1 style="margin-bottom: 20px;">Espace Parent</h1>
-       
-        
-        <button id="add-child-btn" class="ca-btn-next" style="margin-top: 40px; max-width: 300px;">
-          + Ajouter un profil enfant
-        </button>
-      </div>
-    `;
-  },
+import { createElement as el } from "../../utils/DOMBuilder.js";
 
-  afterRender: () => {
-    document.getElementById("add-child-btn")?.addEventListener("click", () => {
-      //TODO : Rediriger vers le formulaire d'ajout d'un enfant
-    });
+export const ParentHomePage = {
+  render(parentData) {
+    return el(
+      "div",
+      {
+        className: "parent-screen",
+        style: { padding: "20px", textAlign: "center" },
+      },
+      el("h1", { style: { marginBottom: "20px" } }, "Espace Parent"),
+      el(
+        "button",
+        {
+          id: "add-child-btn",
+          className: "ca-btn-next",
+          style: { marginTop: "40px", maxWidth: "300px" },
+          onClick: () => {
+            window.appController?.navigateToPage("createAccount");
+          },
+        },
+        "+ Ajouter un profil enfant",
+      ),
+    );
   },
 };

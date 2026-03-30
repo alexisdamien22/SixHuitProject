@@ -1,0 +1,62 @@
+/* Bouton Primaire (Utilisé pour Create Account, Login, Parent Home) */
+.btn-primary,
+.ca-btn-next {
+  width: 100%;
+  padding: 16px;
+  background: var(--ca-purple);
+  color: white;
+  border: none;
+  border-radius: var(--ca-radius-btn, 14px);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-primary:active,
+.ca-btn-next:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled,
+.ca-btn-next:disabled {
+  background: #dedede;
+  color: #aaaaaa;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Bouton 3D (Utilisé pour Lancer une leçon sur le Home) */
+.start-btn {
+  background-color: var(--color-todo);
+  color: white;
+  border: none;
+  padding: 8px 30px 8px 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--color-todo-shadow);
+  position: relative;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+
+.start-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--color-todo-shadow);
+}
+
+.start-btn.disabled {
+  background-color: var(--color-nothing);
+  box-shadow: 0 4px 0 var(--color-nothing-shadow);
+  cursor: not-allowed;
+  color: #e0e0e0;
+}

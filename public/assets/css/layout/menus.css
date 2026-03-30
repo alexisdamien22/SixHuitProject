@@ -1,0 +1,106 @@
+/* --- Base commune aux deux tiroirs (Top & Bottom) --- */
+.bottom-menu-container,
+.top-menu-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.bottom-menu-container {
+  justify-content: flex-end;
+}
+.top-menu-container {
+  justify-content: flex-start;
+}
+
+.bottom-menu-overlay,
+.top-menu-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.bottom-menu-sheet,
+.top-menu-sheet {
+  position: relative;
+  background-color: var(--color-bg-footer);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations et bordures spécifiques */
+.bottom-menu-sheet {
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  border-top: 1px solid var(--color-border-light);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.top-menu-sheet {
+  transform: translateY(-100%);
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  border-bottom: 1px solid var(--color-border-light);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding: 20px 20px 30px 20px;
+  gap: 15px;
+}
+
+/* Activation des menus */
+.bottom-menu-container.show,
+.top-menu-container.show {
+  pointer-events: auto;
+}
+
+.bottom-menu-container.show .bottom-menu-overlay,
+.top-menu-container.show .top-menu-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bottom-menu-container.show .bottom-menu-sheet,
+.top-menu-container.show .top-menu-sheet {
+  transform: translateY(0);
+}
+
+/* --- Design des boutons à l'intérieur --- */
+.bottom-menu-item,
+.swap-account-item {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg-main);
+  border: 2px solid var(--color-border-soft);
+  cursor: pointer;
+  transition:
+    transform 0.1s ease,
+    background-color 0.2s ease;
+}
+
+.bottom-menu-item {
+  padding: 15px 20px;
+  color: var(--color-text-main);
+  font-size: 18px;
+  font-weight: bold;
+  gap: 15px;
+}
+
+.swap-account-item {
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-radius: 30px;
+}
+
+.bottom-menu-item:active,
+.swap-account-item:active {
+  background-color: var(--color-border-soft);
+  transform: scale(0.98);
+}

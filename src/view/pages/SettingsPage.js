@@ -1,20 +1,36 @@
+import { createElement as el } from "../../utils/DOMBuilder.js";
+
 export const SettingsPage = {
-  getHTML: () => {
+  render() {
     const isLightMode = document.body.classList.contains("light-mode");
 
-    return `
-      <div style="padding-top: 12dvh; text-align: center; color: var(--color-text-main);">
-        <h1>Paramètres</h1>
-        <p>Gérez vos options ici.</p>
-        <div class="theme-switch-wrapper">
-          <span>Sombre</span>
-          <label class="theme-switch" for="theme-checkbox">
-            <input type="checkbox" id="theme-checkbox" ${isLightMode ? "checked" : ""}>
-            <div class="slider"></div>
-          </label>
-          <span>Clair</span>
-        </div>
-      </div>
-    `;
+    return el(
+      "div",
+      {
+        style: {
+          paddingTop: "12dvh",
+          textAlign: "center",
+          color: "var(--color-text-main)",
+        },
+      },
+      el("h1", {}, "Paramètres"),
+      el("p", {}, "Gérez vos options ici."),
+      el(
+        "div",
+        { className: "theme-switch-wrapper" },
+        el("span", {}, "Sombre"),
+        el(
+          "label",
+          { className: "theme-switch", htmlFor: "theme-checkbox" },
+          el("input", {
+            type: "checkbox",
+            id: "theme-checkbox",
+            checked: isLightMode,
+          }),
+          el("div", { className: "slider" }),
+        ),
+        el("span", {}, "Clair"),
+      ),
+    );
   },
 };

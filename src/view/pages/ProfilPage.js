@@ -1,11 +1,11 @@
+import { createElement as el } from "../../utils/DOMBuilder.js";
 import { AppFireChange } from "../AppFireChange.js";
-import { esc } from "../../utils/FormHelpers.js";
 
 export const ProfilPage = {
-  getHTML: (data) => {
-    const mascot = esc(data?.mascotte) || "👤";
-    const name = esc(data?.name) || "Profil";
-    const rawInstrument = esc(data?.instrument);
+  render(data) {
+    const mascot = data?.mascotte || "👤";
+    const name = data?.name || "Profil";
+    const rawInstrument = data?.instrument || "";
     const instrument = rawInstrument
       ? rawInstrument.charAt(0).toUpperCase() + rawInstrument.slice(1)
       : "-";
@@ -15,31 +15,62 @@ export const ProfilPage = {
       10,
     );
 
-    return `
-      <div class="profile-page">
-        <div class="profil-img" style="display: flex; align-items: center; justify-content: center; font-size: 4rem;">
-          ${mascot}
-        </div>
-        <p class="profil-name">${name}</p>
-        
-        <div class="stats-row">
-          <div class="card">
-            <h3>Série actuelle</h3>
-            <div class="strik" style="margin-top: 10px; justify-content: center;">
-              <img class="strik-icon" src="${AppFireChange.FireTextur(currentStreak)}" alt="flame">
-              <span class="strik-text">${currentStreak}</span>
-            </div>
-          </div>
-          <div class="card">
-            <h3>Instrument</h3>
-            <p style="font-size: 1.2rem; margin-top: 10px;">${instrument}</p>
-          </div>
-        </div>
+    return el(
+      "div",
+      { className: "profile-page" },
+      el(
+        "div",
+        {
+          className: "profil-img",
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "4rem",
+          },
+        },
+        mascot,
+      ),
+      el("p", { className: "profil-name" }, name),
 
-        <div class="history-section">
-          <h3>Historique des séances</h3>
-        </div>
-      </div>
-    `;
+      el(
+        "div",
+        { className: "stats-row" },
+        el(
+          "div",
+          { className: "card" },
+          el("h3", {}, "Série actuelle"),
+          el(
+            "div",
+            {
+              className: "strik",
+              style: { marginTop: "10px", justifyContent: "center" },
+            },
+            el("img", {
+              className: "strik-icon",
+              src: AppFireChange.FireTextur(currentStreak),
+              alt: "flame",
+            }),
+            el("span", { className: "strik-text" }, String(currentStreak)),
+          ),
+        ),
+        el(
+          "div",
+          { className: "card" },
+          el("h3", {}, "Instrument"),
+          el(
+            "p",
+            { style: { fontSize: "1.2rem", marginTop: "10px" } },
+            instrument,
+          ),
+        ),
+      ),
+
+      el(
+        "div",
+        { className: "history-section" },
+        el("h3", {}, "Historique des séances"),
+      ),
+    );
   },
 };

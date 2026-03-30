@@ -1,0 +1,92 @@
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 10dvh;
+  padding: 20px 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  margin-bottom: 10dvh;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.profil-img-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+.strik-centered {
+  margin-top: 10px;
+  justify-content: center;
+}
+.instrument-text {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+.profil-img {
+  width: 120px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid var(--color-border-soft);
+}
+
+.profil-name {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.stats-row {
+  display: flex;
+  gap: 10vw;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--color-bg-popup);
+  width: 40vw;
+  max-width: 200px;
+  aspect-ratio: 4/3;
+  border-radius: 20px;
+  border: 2px solid var(--color-border-soft);
+}
+
+.card h3 {
+  color: var(--color-text-popup-title);
+  margin: 10px 0 5px 0;
+  font-size: 16px;
+}
+
+.card p {
+  color: var(--color-text-popup-desc);
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+
+.history-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--color-bg-popup);
+  width: 90vw;
+  height: auto;
+  border-radius: 10px;
+  border: 2px solid var(--color-border-soft);
+  padding-bottom: 20px;
+}
+
+.history-section h3 {
+  color: var(--color-text-popup-title);
+  margin: 15px 0;
+  font-size: 16px;
+}
