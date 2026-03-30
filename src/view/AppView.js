@@ -91,7 +91,10 @@ export class AppView {
     if (header) header.style.display = "";
 
     this.updateHeaderStreak();
-    setSecureHTML(this.app, HomePage.getHTML(data));
+
+    const homeNode = HomePage.render(data);
+    this.app.replaceChildren(homeNode);
+
     HomePage.afterRender();
   }
 

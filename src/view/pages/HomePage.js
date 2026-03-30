@@ -1,79 +1,87 @@
+import { createElement as el } from "../../utils/DOMBuilder.js";
+
 export const HomePage = {
-  getHTML: function (childData) {
+  render(childData) {
     if (!childData || !childData.sessions) {
-      return `<div class="home-screen"></div>`;
+      return el("div", { className: "home-screen" });
     }
 
     const pattern = [0, 45, 25, -25, -45];
 
-    const pathHTML = childData.sessions
-      .map((session, i) => {
-        const offset = pattern[i % pattern.length];
-        const isToday = session.isToday;
+    const pathSteps = childData.sessions.map((session, i) => {
+      const offset = pattern[i % pattern.length];
+      const isToday = session.isToday;
+      const isDone = session.status === "done";
 
-        let popupContent = "";
-        let extraElements = "";
-        let lockedClass = "";
+      const lockedClass = !isToday && !isDone ? "is-locked" : "";
 
-        if (isToday) {
-          extraElements = `
-          <div class="today-halo"></div>
-          <img src="/assets/img/mascottes/camelion.png" class="mascotte-path" alt="Mascotte">
-        `;
-          popupContent = `
-          <h3>Leçon ${i + 1}</h3>
-          <p>Prêt pour un défi ?</p>
-          <button class="start-btn">COMMENCER</button>
-        `;
-        } else if (session.status === "done") {
-          popupContent = `
-          <h3>Leçon ${i + 1}</h3>
-          <p>Bravo ! Tu as validé cette séance.</p>
-        `;
-        } else {
-          lockedClass = "is-locked";
-          popupContent = `
-          <h3>Leçon ${i + 1}</h3>
-          <p>Patience... cette leçon n'est pas encore disponible.</p>
-          <button class="start-btn disabled" disabled>
-            <span class="icon-lock">🔒</span> BLOQUÉ
-          </button>
-        `;
-        }
+      const popup = this.buildPopup(session, i + 1, isToday, isDone);
 
-        return `
-        <div class="path-step ${session.status} ${lockedClass}" style="transform: translateX(${offset}px); z-index: 1;">
-          <div class="path-button-container">
-            ${extraElements}
-            <div class="path-dot-shadow"></div> 
-            <div class="path-dot"></div>
-            <div class="duo-popup">
-              <div class="popup-arrow"></div>
-              ${popupContent}
-            </div>    
-          </div>
-          <span class="path-label">${session.day}</span>
-        </div>
-      `;
-      })
-      .join("");
+      return el(
+        "div",
+        {
+          className: `path-step ${session.status} ${lockedClass}`,
+          style: { transform: `translateX(${offset}px)`, zIndex: "1" },
+        },
+        el(
+          "div",
+          { className: "path-button-container" },
+          isToday ? el("div", { className: "today-halo" }) : null,
+          isToday
+            ? el("img", {
+                className: "mascotte-path",
+                src: "/assets/img/mascottes/camelion.png",
+                alt: "Mascotte",
+              })
+            : null,
+          el("div", { className: "path-dot-shadow" }),
+          el("div", { className: "path-dot" }),
+          popup,
+        ),
+        el("span", { className: "path-label" }, session.day),
+      );
+    });
 
-    return `
-      <div class="home-screen">
-        <div class="path-container">
-          ${pathHTML}
-        </div>
-      </div>
-    `;
+    return el(
+      "div",
+      { className: "home-screen" },
+      el("div", { className: "path-container" }, pathSteps),
+    );
+  },
+  buildPopup(session, lessonNumber, isToday, isDone) {
+    let content = [];
+    content.push(el("h3", {}, `Leçon ${lessonNumber}`));
+
+    if (isToday) {
+      content.push(el("p", {}, "Prêt pour un défi ?"));
+      content.push(el("button", { className: "start-btn" }, "COMMENCER"));
+    } else if (isDone) {
+      content.push(el("p", {}, "Bravo ! Tu as validé cette séance."));
+    } else {
+      content.push(
+        el("p", {}, "Patience... cette leçon n'est pas encore disponible."),
+      );
+      content.push(
+        el(
+          "button",
+          { className: "start-btn disabled", disabled: true },
+          "🔒 BLOQUÉ",
+        ),
+      );
+    }
+
+    return el(
+      "div",
+      { className: "duo-popup" },
+      el("div", { className: "popup-arrow" }),
+      content,
+    );
   },
 
-  afterRender: function () {
+  afterRender() {
     const currentElement = document.querySelector(".mascotte-path");
     if (currentElement) {
-      currentElement.scrollIntoView({
-        behavior: "auto",
-        block: "center",
-      });
+      currentElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   },
 };
