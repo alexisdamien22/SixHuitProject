@@ -1,0 +1,185 @@
+.path-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  margin-top: 10dvh;
+  padding: 60px 0 35dvh 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  margin-bottom: 10dvh;
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+
+.path-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.path-button-container {
+  position: relative;
+  width: 70px;
+  height: 60px;
+  user-select: none;
+  touch-action: none;
+}
+
+.path-dot,
+.path-dot-shadow {
+  width: 70px;
+  height: 60px;
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+}
+
+.path-dot-shadow::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background-color: inherit;
+  z-index: -1;
+  transition:
+    height 0.1s,
+    top 0.1s;
+}
+
+.path-button-container:active .path-dot-shadow::before,
+.path-button-container.pressed .path-dot-shadow::before {
+  height: 2px;
+  top: 28px;
+}
+
+.path-dot-shadow {
+  top: 10px;
+  z-index: 1;
+}
+
+.path-dot {
+  top: 0;
+  z-index: 2;
+  border: 1px solid var(--color-border-soft);
+  cursor: pointer;
+  transition: transform 0.05s;
+}
+
+.done .path-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../../img/other/light.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.done .path-dot {
+  background-color: var(--color-done);
+}
+.done .path-dot-shadow {
+  background-color: var(--color-done-shadow);
+}
+
+.todo .path-dot {
+  background-color: var(--color-todo);
+}
+.todo .path-dot-shadow {
+  background-color: var(--color-todo-shadow);
+}
+
+.nothing .path-dot {
+  background-color: var(--color-nothing);
+}
+.nothing .path-dot-shadow {
+  background-color: var(--color-nothing-shadow);
+}
+
+.today-halo {
+  position: absolute;
+  width: 90px;
+  height: 80px;
+  background-color: var(--color-halo-bg);
+  border-radius: 50%;
+  border: 6px solid var(--color-halo-border);
+  top: calc(50% + 10px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+  animation: gravity-bounce 1.9s infinite;
+}
+
+@keyframes gravity-bounce {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
+  }
+  45% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.85;
+    animation-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.path-button-container:active .path-dot,
+.path-button-container.pressed .path-dot,
+.path-dot:active {
+  transform: translateY(8px);
+}
+
+.path-button-container:active .mascotte-path,
+.path-button-container.pressed .mascotte-path {
+  transform: translateX(-50%) translateY(8px);
+}
+
+.mascotte-path {
+  position: absolute;
+  width: 80px;
+  height: auto;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+  transition: transform 0.1s;
+}
+
+.path-label {
+  margin-top: 20px;
+  font-weight: bold;
+  color: var(--color-text-main);
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.path-button-container:has(.duo-popup:hover) .path-dot,
+.path-button-container:has(.duo-popup:active) .path-dot {
+  transform: none;
+}
+.path-button-container:has(.duo-popup:hover) .mascotte-path,
+.path-button-container:has(.duo-popup:active) .mascotte-path {
+  transform: translateX(-50%);
+}
+.path-button-container:has(.duo-popup:hover) .path-dot-shadow::before,
+.path-button-container:has(.duo-popup:active) .path-dot-shadow::before {
+  height: 10px;
+  top: 20px;
+}
