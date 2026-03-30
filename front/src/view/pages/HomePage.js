@@ -1,44 +1,68 @@
 export class HomePage {
-    constructor(controller) {
-        this.controller = controller;
+    constructor(app) {
+        this.app = app;
     }
 
-    render(childData) {
-        if (!childData || !childData.sessions) {
-            return `<div class="home-screen"></div>`;
+    render() {
+        const childData = this.app.model.getChildData();
+
+        const root = document.createElement("div");
+        root.classList.add("home-screen");
+
+        if (!childData || !childData.weeklyPlan) {
+            return root;
         }
 
-        return `
-      <div class="home-screen">
-        <div class="path-container">
-          ${childData.sessions.map((s, i) => this.renderStep(s, i)).join("")}
-        </div>
-      </div>
-    `;
+        const pathContainer = document.createElement("div");
+        pathContainer.classList.add("path-container");
+
+        childData.weeklyPlan.forEach((session, index) => {
+            const step = this.renderStep(session, index);
+            pathContainer.appendChild(step);
+        });
+
+        root.appendChild(pathContainer);
+
+        setTimeout(() => this.mount(), 0);
+
+        return root;
     }
 
     renderStep(session, index) {
+        const step = document.createElement("div");
+        step.classList.add("path-step", session.status);
+        if (session.isLocked) step.classList.add("is-locked");
+
         const offset = this.getOffset(index);
+        step.style.transform = `translateX(${offset}px)`;
+        step.style.zIndex = "1";
+
+        const container = document.createElement("div");
+        container.classList.add("path-button-container");
+
         const extra = this.renderExtra(session);
+        if (extra) container.appendChild(extra);
+
+        const shadow = document.createElement("div");
+        shadow.classList.add("path-dot-shadow");
+
+        const dot = document.createElement("div");
+        dot.classList.add("path-dot");
+
         const popup = this.renderPopup(session, index);
 
-        return `
-      <div class="path-step ${session.status} ${session.isLocked ? "is-locked" : ""}"
-           style="transform: translateX(${offset}px); z-index: 1;">
-           
-        <div class="path-button-container">
-          ${extra}
-          <div class="path-dot-shadow"></div>
-          <div class="path-dot"></div>
-          <div class="duo-popup">
-            <div class="popup-arrow"></div>
-            ${popup}
-          </div>
-        </div>
+        container.appendChild(shadow);
+        container.appendChild(dot);
+        container.appendChild(popup);
 
-        <span class="path-label">${session.day}</span>
-      </div>
-    `;
+        const label = document.createElement("span");
+        label.classList.add("path-label");
+        label.textContent = session.day;
+
+        step.appendChild(container);
+        step.appendChild(label);
+
+        return step;
     }
 
     getOffset(index) {
@@ -47,39 +71,68 @@ export class HomePage {
     }
 
     renderExtra(session) {
-        if (!session.isToday) return "";
+        if (!session.isToday) return null;
 
-        return `
-      <div class="today-halo"></div>
-      <img src="/assets/img/mascottes/camelion.png"
-           class="mascotte-path"
-           alt="Mascotte">
-    `;
+        const wrapper = document.createElement("div");
+
+        const halo = document.createElement("div");
+        halo.classList.add("today-halo");
+
+        const mascotte = document.createElement("img");
+        mascotte.src = "/assets/img/mascottes/camelion.png";
+        mascotte.classList.add("mascotte-path");
+        mascotte.alt = "Mascotte";
+
+        wrapper.appendChild(halo);
+        wrapper.appendChild(mascotte);
+
+        return wrapper;
     }
 
     renderPopup(session, index) {
+        const popup = document.createElement("div");
+        popup.classList.add("duo-popup");
+
+        const arrow = document.createElement("div");
+        arrow.classList.add("popup-arrow");
+
+        popup.appendChild(arrow);
+
+        const title = document.createElement("h3");
+        title.textContent = `Leçon ${index + 1}`;
+
+        const desc = document.createElement("p");
+
+        popup.appendChild(title);
+        popup.appendChild(desc);
+
         if (session.isToday) {
-            return `
-        <h3>Leçon ${index + 1}</h3>
-        <p>Prêt pour un défi ?</p>
-        <button class="start-btn" data-session="${index}">COMMENCER</button>
-      `;
+            desc.textContent = "Prêt pour un défi ?";
+
+            const btn = document.createElement("button");
+            btn.classList.add("start-btn");
+            btn.dataset.session = index;
+            btn.textContent = "COMMENCER";
+
+            popup.appendChild(btn);
+            return popup;
         }
 
         if (session.status === "done") {
-            return `
-        <h3>Leçon ${index + 1}</h3>
-        <p>Bravo ! Tu as validé cette séance.</p>
-      `;
+            desc.textContent = "Bravo ! Tu as validé cette séance.";
+            return popup;
         }
 
-        return `
-      <h3>Leçon ${index + 1}</h3>
-      <p>Patience... cette leçon n'est pas encore disponible.</p>
-      <button class="start-btn disabled" disabled>
-        <span class="icon-lock">🔒</span> BLOQUÉ
-      </button>
-    `;
+        desc.textContent = "Patience... cette leçon n'est pas encore disponible.";
+
+        const btn = document.createElement("button");
+        btn.classList.add("start-btn", "disabled");
+        btn.disabled = true;
+        btn.innerHTML = `<span class="icon-lock">🔒</span> BLOQUÉ`;
+
+        popup.appendChild(btn);
+
+        return popup;
     }
 
     mount() {
@@ -91,12 +144,16 @@ export class HomePage {
             });
         }
 
-        // Gestion du bouton "COMMENCER"
         document.querySelectorAll(".start-btn:not(.disabled)").forEach(btn => {
             btn.addEventListener("click", () => {
                 const sessionIndex = btn.dataset.session;
-                this.controller.startSession(sessionIndex);
+                this.app.child.updateSession("Lundi", "done");
+                this.app.navigation.goTo("music");
             });
         });
+    }
+
+    update(childData) {
+        // Si tu veux mettre à jour dynamiquement la page
     }
 }
