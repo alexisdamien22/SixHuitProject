@@ -1,4 +1,4 @@
-import db from "../db/connection.js";
+import { db } from "../db/connection.js";
 
 export class BaseModel {
     static query(sql, params = []) {
