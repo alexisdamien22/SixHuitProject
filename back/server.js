@@ -1,38 +1,27 @@
 import "dotenv/config";
 import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
+import cors from "cors";
 
 import authRoutes from "./src/routes/authRoutes.js";
 import childRoutes from "./src/routes/childRoutes.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
+// Middlewares
+app.use(cors());
 app.use(express.json());
 
+// Routes API
 app.use("/api/auth", authRoutes);
 app.use("/api/child", childRoutes);
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use("/src", express.static(path.join(__dirname, "src")));
-
-app.get("/manifest.json", (req, res) => {
-  res.sendFile(path.join(__dirname, "manifest.json"));
+// Catch-all pour les routes inconnues
+app.use((req, res) => {
+  res.status(404).json({ error: "Route non trouvée" });
 });
 
-app.get("/sw.js", (req, res) => {
-  res.setHeader("Content-Type", "application/javascript");
-  res.sendFile(path.join(__dirname, "sw.js"));
-});
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
+// Lancement du serveur
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur actif sur le port ${PORT}`);
+  console.log(`🚀 API active sur le port ${PORT}`);
 });
