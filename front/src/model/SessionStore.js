@@ -1,0 +1,49 @@
+export class SessionStore {
+    constructor() {
+        this.data = {
+            token: null,
+            adultId: null,
+            childId: null,
+        };
+    }
+
+    load() {
+        const raw = localStorage.getItem("sixhuit-session");
+        if (!raw) return;
+
+        try {
+            this.data = JSON.parse(raw);
+            console.log("Session chargée :", this.data);
+        } catch (err) {
+            console.error("Erreur de parsing session :", err);
+        }
+    }
+
+    saveSession({ token, adultId, childId }) {
+        this.data = { token, adultId, childId };
+        localStorage.setItem("sixhuit-session", JSON.stringify(this.data));
+        console.log("Session sauvegardée :", this.data);
+    }
+
+    clear() {
+        this.data = { token: null, adultId: null, childId: null };
+        localStorage.removeItem("sixhuit-session");
+        console.log("Session effacée");
+    }
+
+    isLoggedIn() {
+        return !!this.data.token;
+    }
+
+    getToken() {
+        return this.data.token;
+    }
+
+    getAdultId() {
+        return this.data.adultId;
+    }
+
+    getChildId() {
+        return this.data.childId;
+    }
+}
