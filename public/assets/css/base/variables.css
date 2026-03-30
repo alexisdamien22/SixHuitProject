@@ -1,0 +1,51 @@
+:root {
+  color-scheme: dark;
+  --color-bg-main: #20252b;
+  --color-text-main: #ffffff;
+  --color-border-soft: rgba(0, 0, 0, 0.1);
+  --color-bg-footer: #21262c;
+  --color-border-light: #2a3139;
+
+  --color-done: #58cc02;
+  --color-todo: #fda20c;
+  --color-nothing: #7e7d7d;
+
+  --color-done-shadow: #46a302;
+  --color-todo-shadow: #ce830a;
+  --color-nothing-shadow: #5d5d5d;
+
+  --color-halo-border: #3a424c;
+  --color-halo-bg: rgba(255, 255, 255, 0);
+
+  --color-button: #747474;
+  --color-staff-line: rgba(255, 255, 255, 0.3);
+
+  --color-bg-popup: #2a3139;
+  --color-text-popup-title: #ffffff;
+  --color-text-popup-desc: #b4b4b4;
+
+  /* Constantes Create Account */
+  --ca-purple: #7b2fbe;
+  --ca-purple-hover: #6a1fa8;
+  --ca-input-bg: #2a3139;
+  --ca-input-text: #ffffff;
+  --ca-placeholder: #aaaaaa;
+  --ca-text-sub: #999999;
+  --ca-text-main: #1a1a1a;
+  --ca-radius-btn: 14px;
+}
+
+body.light-mode {
+  color-scheme: light;
+  --color-bg-main: #f0f4f8;
+  --color-text-main: #20252b;
+  --color-bg-footer: #ffffff;
+  --color-border-light: #cacccf;
+  --color-halo-border: #d0d7de;
+  --color-staff-line: rgba(0, 0, 0, 0.15);
+  --color-bg-popup: #ffffff;
+  --color-text-popup-title: #3c3c3c;
+  --color-text-popup-desc: #777777;
+  --ca-input-bg: #e1e8ed;
+  --ca-input-text: #20252b;
+}

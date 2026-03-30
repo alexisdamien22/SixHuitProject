@@ -1,0 +1,101 @@
+.main-header {
+  display: flex;
+  width: 100vw;
+  height: 10dvh;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1001;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--color-bg-footer);
+  border-bottom: 2px solid var(--color-border-light);
+}
+
+.profile-icon {
+  height: 70%;
+  aspect-ratio: 1;
+  background-color: #58cc02;
+  background-image: url("../../img/mascottes/camelion.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+}
+
+.strik {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.strik-icon {
+  width: 30px;
+  height: 30px;
+  transform: translateY(-4px);
+}
+
+.strik-text {
+  color: var(--color-text-main);
+  font-size: 14px;
+}
+
+.swipe {
+  height: 70%;
+  aspect-ratio: 1;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swipe::before {
+  content: "";
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  -webkit-mask-image: url("../../img/icons/swip.png");
+  mask-image: url("../../img/icons/swip.png");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background-color: var(--color-button);
+}
+
+.parametre {
+  height: 90%;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 1s ease;
+  cursor: pointer;
+}
+
+.parametre::before {
+  content: "";
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  -webkit-mask-image: url("../../img/icons/parametre.png");
+  mask-image: url("../../img/icons/parametre.png");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background-color: var(--color-button);
+  transition: transform 0.2s ease;
+}
+
+.parametre:hover::before {
+  transform: rotate(10deg);
+}
