@@ -46,7 +46,12 @@ export class AuthController {
         password: state.loginData.password,
       });
 
-      if (result.error) throw new Error(result.error);
+      if (!result || result.error || !result.token) {
+        throw new Error(
+          result?.error ||
+            "Erreur de communication avec le serveur (Base de données injoignable).",
+        );
+      }
 
       this.app.model.session.saveSession({
         token: result.token,
@@ -77,7 +82,13 @@ export class AuthController {
         password: state.registerData.password,
       });
 
-      if (result.error) throw new Error(result.error);
+      // On sécurise également l'inscription
+      if (!result || result.error || (!result.token && !result.adultId)) {
+        throw new Error(
+          result?.error ||
+            "Erreur lors de la création (Base de données injoignable).",
+        );
+      }
 
       this.app.model.session.saveSession({
         token: result.token,
