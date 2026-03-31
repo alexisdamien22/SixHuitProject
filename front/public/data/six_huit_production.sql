@@ -138,7 +138,6 @@ CREATE TABLE `weekly_plan` (
   `child_id` int NOT NULL,
   `day_of_week` enum('monday','tuesday','wednesday','thursday','friday','saturday','sunday') NOT NULL,
   `practice` tinyint(1) DEFAULT '0',
-  `color` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `child_id` (`child_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
