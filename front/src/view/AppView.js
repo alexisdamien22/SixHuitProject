@@ -2,12 +2,19 @@ import { Header } from "./components/Header.js";
 import { Footer } from "./components/Footer.js";
 
 import { HomePage } from "./pages/HomePage.js";
-import { CreateAccountPage } from "./pages/CreateAccountPage.js";
 import { ProfilPage } from "./pages/ProfilPage.js";
 import { SettingsPage } from "./pages/SettingsPage.js";
 import { MusicPage } from "./pages/MusicPage.js";
 import { PodiumPage } from "./pages/PodiumPage.js";
 import { ParentHomePage } from "./pages/ParentHomePage.js";
+
+// --- LES 3 NOUVELLES PAGES ---
+import { LoginPage } from "./pages/LoginPage.js";
+import { RegisterParentPage } from "./pages/RegisterParentPage.js";
+import { RegisterChildPage } from "./pages/RegisterChildPage.js";
+
+// --- AJUSTÉ SELON TA CAPTURE D'ÉCRAN ---
+import { AccountSwitcher } from "./pages/AccountSwitcher.js";
 
 import { AppViewTheme } from "./AppViewTheme.js";
 import { AppViewNavigation } from "./AppViewNavigation.js";
@@ -15,51 +22,51 @@ import { initAppEvents } from "./AppViewEvents.js";
 
 export class AppView {
   constructor() {
-    // Les conteneurs principaux de ton index.html
     this.appRoot = document.getElementById("app");
     this.headerRoot = document.getElementById("header-placeholder");
     this.footerRoot = document.getElementById("footer-placeholder");
-
     this.currentPage = null;
   }
 
   init(app) {
     this.app = app;
-
-    // Instanciation des composants fixes
     this.header = new Header(app);
     this.footer = new Footer(app);
 
-    // Injection 100% DOM sécurisée
     this.headerRoot.replaceChildren(this.header.render());
     this.footerRoot.replaceChildren(this.footer.render());
 
-    // Initialisation du thème (clair/sombre) et des événements globaux
     AppViewTheme.init();
     initAppEvents(this);
-
-    // Initialise l'animation du slider du footer
     requestAnimationFrame(() => this.syncFooter(0));
   }
 
-  // --- ROUTEUR PRINCIPAL ---
   renderPage(name, params = {}) {
-    // 1. Vider la zone de contenu proprement
     this.appRoot.replaceChildren();
 
-    // 2. Affichage conditionnel (On cache la navigation sur l'onboarding et l'espace parent)
-    const hideNav = name === "create-account" || name === "parent-home";
+    // On masque la navigation pour l'onboarding ET l'espace parent
+    const hideNav = [
+      "login",
+      "registerParent",
+      "registerChild",
+      "parent-home",
+    ].includes(name);
     this.headerRoot.style.display = hideNav ? "none" : "";
     this.footerRoot.style.display = hideNav ? "none" : "";
 
-    // 3. Instanciation de la page demandée
     let page;
     switch (name) {
       case "home":
         page = new HomePage(this.app);
         break;
-      case "create-account":
-        page = new CreateAccountPage(this.app);
+      case "login":
+        page = new LoginPage(this.app);
+        break;
+      case "registerParent":
+        page = new RegisterParentPage(this.app);
+        break;
+      case "registerChild":
+        page = new RegisterChildPage(this.app);
         break;
       case "profil":
         page = new ProfilPage(this.app);
@@ -81,22 +88,16 @@ export class AppView {
     }
 
     this.currentPage = page;
-
-    // 4. Injection sécurisée du DOM généré par le composant
     this.appRoot.appendChild(page.render());
   }
 
-  // --- MISE À JOUR DES DONNÉES ---
   updateChildData(data) {
     this.header.update(data);
-
-    // Si la page actuellement affichée a une méthode update(), on l'appelle
     if (this.currentPage && typeof this.currentPage.update === "function") {
       this.currentPage.update(data);
     }
   }
 
-  // --- GESTION DES MENUS & NAVIGATION ---
   syncFooter(index) {
     const icons = document.querySelectorAll(".icon-footer");
     icons.forEach((i) => i.classList.remove("active"));
@@ -115,7 +116,6 @@ export class AppView {
       force !== undefined ? force : !container.classList.contains("show");
     container.classList.toggle("show", show);
 
-    // Si on ferme le menu sans aller vers les paramètres ou le profil, on remet le curseur au bon endroit
     if (!show && !skipReset) {
       const hash = window.location.hash.substring(1) || "home";
       const pages = ["home", "podium", "music", "menu"];
@@ -131,13 +131,32 @@ export class AppView {
     AppViewNavigation.createTopMenu(this, accounts);
     const container = document.getElementById("top-menu-container");
     if (!container) return;
-
     const show =
       force !== undefined ? force : !container.classList.contains("show");
     container.classList.toggle("show", show);
   }
 
-  // --- FALLBACK ---
+  toggleAccountSwitcher(show) {
+    let switcher = document.getElementById("account-switcher-container");
+    if (!switcher && show) {
+      const children = this.app.model?.getChildren
+        ? this.app.model.getChildren()
+        : [];
+      AccountSwitcher.create(this, children);
+      switcher = document.getElementById("account-switcher-container");
+    }
+
+    if (switcher) {
+      if (show) {
+        switcher.classList.add("show");
+        document.body.style.overflow = "hidden";
+      } else {
+        switcher.classList.remove("show");
+        document.body.style.overflow = "";
+      }
+    }
+  }
+
   createErrorPage(name) {
     return {
       render() {
