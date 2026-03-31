@@ -59,7 +59,6 @@ export class AuthController {
       });
 
       this.app.model.setLoading(false);
-      // On redirige vers l'espace parent (ou home) une fois connecté
       this.app.navigation.goTo("home");
     } catch (err) {
       this.app.model.setLoading(false);
