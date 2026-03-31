@@ -156,7 +156,25 @@ export class AppView {
       }
     }
   }
+  toggleAccountSwitcher(show) {
+    let switcher = document.getElementById("account-switcher-container");
 
+    if (!switcher && show) {
+      const children = this.model?.getChildren ? this.model.getChildren() : [];
+      AccountSwitcher.create(this, children);
+      switcher = document.getElementById("account-switcher-container");
+    }
+
+    if (switcher) {
+      if (show) {
+        switcher.classList.add("show");
+        document.body.style.overflow = "hidden";
+      } else {
+        switcher.classList.remove("show");
+        document.body.style.overflow = "";
+      }
+    }
+  }
   createErrorPage(name) {
     return {
       render() {

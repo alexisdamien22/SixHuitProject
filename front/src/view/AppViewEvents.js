@@ -9,6 +9,18 @@ export function initAppEvents(view) {
   // 2. Délégation Globale des Clics
   document.addEventListener("click", (e) => {
     // --- Menus Glissants ---
+    const headerProfile = e.target.closest(".profile-icon");
+    if (headerProfile) {
+      view.toggleAccountSwitcher(true);
+      return;
+    }
+
+    const switcher = document.getElementById("account-switcher-container");
+    if (switcher?.classList.contains("show")) {
+      if (!e.target.closest(".account-switcher-sheet") && !headerProfile) {
+        view.toggleAccountSwitcher(false);
+      }
+    }
     const bottomMenu = document.getElementById("bottom-menu-container");
     if (bottomMenu?.classList.contains("show")) {
       const clickedIcon = e.target.closest(".icon-footer");
