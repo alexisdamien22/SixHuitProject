@@ -1,40 +1,52 @@
+import { el } from "../../utils/DOMBuilder.js";
+
 export class ProfilPage {
-    constructor(app) {
-        this.app = app;
-    }
+  constructor(app) {
+    this.app = app;
+  }
 
-    render() {
-        const root = document.createElement("div");
-        root.classList.add("page", "profile-page");
+  render() {
+    const child = this.app.model.getChildData() || {};
+    const mascot = child.mascotte || "👤";
+    const name = child.name || "Profil";
+    const rawInstrument = child.instrument || "";
+    const instrument = rawInstrument
+      ? rawInstrument.charAt(0).toUpperCase() + rawInstrument.slice(1)
+      : "-";
+    const streak = child.streak || 0;
 
-        const title = document.createElement("h2");
-        title.textContent = "Profil";
+    return el(
+      "div",
+      { className: "page profile-page" },
+      el("div", { className: "profil-img profil-img-container" }, mascot),
+      el("p", { className: "profil-name" }, name),
 
-        const child = this.app.model.getChildData();
+      el(
+        "div",
+        { className: "stats-row" },
+        el(
+          "div",
+          { className: "card" },
+          el("h3", {}, "Série actuelle"),
+          el(
+            "div",
+            { className: "strik strik-centered" },
+            el("span", { className: "strik-text" }, `🔥 ${streak}`),
+          ),
+        ),
+        el(
+          "div",
+          { className: "card" },
+          el("h3", {}, "Instrument"),
+          el("p", { className: "instrument-text" }, instrument),
+        ),
+      ),
 
-        const info = document.createElement("div");
-        info.classList.add("profile-info");
-
-        const name = document.createElement("p");
-        name.textContent = `Nom : ${child.name}`;
-
-        const instrument = document.createElement("p");
-        instrument.textContent = `Instrument : ${child.instrument}`;
-
-        const streak = document.createElement("p");
-        streak.textContent = `Streak : ${child.streak}`;
-
-        info.appendChild(name);
-        info.appendChild(instrument);
-        info.appendChild(streak);
-
-        root.appendChild(title);
-        root.appendChild(info);
-
-        return root;
-    }
-
-    update(data) {
-        // Si tu veux mettre à jour dynamiquement
-    }
+      el(
+        "div",
+        { className: "history-section" },
+        el("h3", {}, "Historique des séances"),
+      ),
+    );
+  }
 }

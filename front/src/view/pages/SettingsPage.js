@@ -1,26 +1,43 @@
+import { el } from "../../utils/DOMBuilder.js";
+
 export class SettingsPage {
-    constructor(app) {
-        this.app = app;
-    }
+  constructor(app) {
+    this.app = app;
+  }
 
-    render() {
-        const root = document.createElement("div");
-        root.classList.add("page", "settings-page");
+  render() {
+    const isLightMode = document.body.classList.contains("light-mode");
 
-        const title = document.createElement("h2");
-        title.textContent = "Paramètres";
-
-        const logoutBtn = document.createElement("button");
-        logoutBtn.textContent = "Se déconnecter";
-        logoutBtn.classList.add("start-btn");
-
-        logoutBtn.onclick = () => {
-            this.app.auth.logout();
-        };
-
-        root.appendChild(title);
-        root.appendChild(logoutBtn);
-
-        return root;
-    }
+    return el(
+      "div",
+      { className: "page page-centered" },
+      el("h2", {}, "Paramètres"),
+      el("p", {}, "Gérez vos options ici."),
+      el(
+        "div",
+        { className: "theme-switch-wrapper" },
+        el("span", {}, "Sombre"),
+        el(
+          "label",
+          { className: "theme-switch", htmlFor: "theme-checkbox" },
+          el("input", {
+            type: "checkbox",
+            id: "theme-checkbox",
+            checked: isLightMode,
+          }),
+          el("div", { className: "slider" }),
+        ),
+        el("span", {}, "Clair"),
+      ),
+      el(
+        "button",
+        {
+          className: "btn-primary mt-40",
+          style: { maxWidth: "250px" },
+          onClick: () => this.app.auth.logout(),
+        },
+        "Se déconnecter",
+      ),
+    );
+  }
 }

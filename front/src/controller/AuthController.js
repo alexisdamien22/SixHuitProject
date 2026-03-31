@@ -1,75 +1,117 @@
 import { ApiClient } from "../model/ApiClient.js";
 
 export class AuthController {
-    constructor(app) {
-        this.app = app;
-    }
+  constructor(app) {
+    this.app = app;
+  }
 
-    async register(data) {
-        try {
-            console.log("Register →", data);
+  // --- ACTIONS DÉCLENCHÉES PAR LA VUE ---
 
-            const result = await ApiClient.post(`/auth/register`, data);
+  handleInput(mode, field, value) {
+    this.app.model.updateAuthData(mode, field, value);
+    this.triggerRender();
+  }
 
-            console.log("Register result :", result);
+  handleSwitchMode() {
+    this.app.model.toggleLoginMode();
+    this.triggerRender();
+  }
 
-            this.app.model.session.saveSession({
-                token: result.token,
-                adultId: result.adultId,
-                childId: result.childId,
-            });
+  handleInstrumentSelect(instrumentId) {
+    this.app.model.updateAuthData("register", "instrument", instrumentId);
+    this.triggerRender();
+  }
 
-            await this.app.child.loadChildData();
+  handleMascotSelect(mascot) {
+    this.app.model.updateAuthData("register", "mascotte", mascot);
+    this.triggerRender();
+  }
 
-            this.app.navigation.goTo("home");
+  handleDayToggle(day) {
+    this.app.model.toggleRegisterDay(day);
+    this.triggerRender();
+  }
 
-        } catch (err) {
-            console.error("Erreur register :", err);
-            throw err;
+  async handleMainAction() {
+    const state = this.app.model.getAuthState();
+    if (state.isLoading) return;
+
+    // Étape finale ou Mode Connexion : On envoie à l'API
+    if (state.isLoginMode || state.step === 7) {
+      this.app.model.setLoading(true);
+      this.triggerRender();
+
+      try {
+        if (state.isLoginMode) {
+          await this.login(state.loginData.email, state.loginData.password);
+        } else {
+          // Formatage strict pour l'API
+          const payload = {
+            username: state.registerData.email,
+            password: state.registerData.password,
+            teacher: false,
+            child: {
+              name: state.registerData.name,
+              age: parseInt(state.registerData.age) || null,
+              instrument: state.registerData.instrument,
+              duree: parseInt(state.registerData.duree) || null,
+              ecole: state.registerData.ecole,
+              mascotte: state.registerData.mascotte,
+              jours: state.registerData.jours,
+            },
+          };
+          await this.register(payload);
         }
+      } catch (err) {
+        this.app.model.setLoading(false);
+        alert(err.message || "Erreur d'authentification.");
+        this.triggerRender();
+      }
+    } else {
+      // Étape intermédiaire : On passe à l'étape suivante
+      this.app.model.setAuthStep(state.step + 1);
+      this.triggerRender();
     }
+  }
 
-    async login(username, password) {
-        try {
-            console.log("Login →", username);
+  // --- APPELS RÉSEAU ---
 
-            const result = await ApiClient.post(`/auth/login`, {
-                username,
-                password,
-            });
+  async register(payload) {
+    const result = await ApiClient.post(`/auth/register`, payload);
+    if (result.error) throw new Error(result.error);
 
-            console.log("Login result :", result);
+    this.app.model.session.saveSession({
+      token: result.token,
+      adultId: result.adultId,
+      childId: result.childId,
+    });
 
-            this.app.model.session.saveSession({
-                token: result.token,
-                adultId: result.adultId,
-            });
+    this.app.model.setAuthStep(8); // Écran de succès
+    this.app.model.setLoading(false);
+    this.triggerRender();
+  }
 
-            await this.loadChildAfterLogin();
+  async login(username, password) {
+    const result = await ApiClient.post(`/auth/login`, { username, password });
+    if (result.error) throw new Error(result.error);
 
-            this.app.navigation.goTo("home");
+    this.app.model.session.saveSession({
+      token: result.token,
+      adultId: result.adultId,
+    });
 
-        } catch (err) {
-            console.error("Erreur login :", err);
-            throw err;
-        }
-    }
+    this.app.model.setLoading(false);
+    await this.app.child.loadChildData(); // Charge les enfants liés
+    this.app.navigation.goTo("home");
+  }
 
-    async loadChildAfterLogin() {
-        try {
-            const adultId = this.app.model.session.getAdultId();
+  logout() {
+    this.app.model.session.clear();
+    this.app.navigation.goTo("create-account");
+  }
 
-            if (!adultId) return;
-
-            console.warn("⚠️ loadChildAfterLogin : il manque une route backend pour récupérer les enfants d'un adulte.");
-
-        } catch (err) {
-            console.error("Erreur loadChildAfterLogin :", err);
-        }
-    }
-
-    logout() {
-        this.app.model.session.clear();
-        this.app.navigation.goTo("create-account");
-    }
+  // Rafraîchit la vue courante (Architecture Réactive)
+  triggerRender() {
+    this.app.navigation.goTo("create-account");
+  }
 }

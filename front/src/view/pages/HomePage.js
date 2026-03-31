@@ -1,159 +1,120 @@
+import { el } from "../../utils/DOMBuilder.js";
+
 export class HomePage {
-    constructor(app) {
-        this.app = app;
+  constructor(app) {
+    this.app = app;
+  }
+
+  render() {
+    const childData = this.app.model.getChildData();
+
+    if (!childData || !childData.weeklyPlan) {
+      return el("div", { className: "home-screen" });
     }
 
-    render() {
-        const childData = this.app.model.getChildData();
+    const pathSteps = childData.weeklyPlan.map((session, index) =>
+      this.renderStep(session, index),
+    );
 
-        const root = document.createElement("div");
-        root.classList.add("home-screen");
+    const root = el(
+      "div",
+      { className: "home-screen" },
+      el("div", { className: "path-container" }, pathSteps),
+    );
 
-        if (!childData || !childData.weeklyPlan) {
-            return root;
-        }
+    // Déclencher le scroll une fois inséré dans le DOM
+    setTimeout(() => this.mount(), 0);
+    return root;
+  }
 
-        const pathContainer = document.createElement("div");
-        pathContainer.classList.add("path-container");
+  renderStep(session, index) {
+    const pattern = [0, 45, 25, -25, -45];
+    const offset = pattern[index % pattern.length];
 
-        childData.weeklyPlan.forEach((session, index) => {
-            const step = this.renderStep(session, index);
-            pathContainer.appendChild(step);
-        });
+    const lockedClass = session.isLocked ? "is-locked" : "";
 
-        root.appendChild(pathContainer);
+    // Le style en ligne ici est justifié car c'est une position géométrique dynamique
+    return el(
+      "div",
+      {
+        className: `path-step ${session.status} ${lockedClass}`,
+        style: { transform: `translateX(${offset}px)`, zIndex: "1" },
+      },
+      el(
+        "div",
+        { className: "path-button-container" },
+        this.renderExtra(session),
+        el("div", { className: "path-dot-shadow" }),
+        el("div", { className: "path-dot" }),
+        this.renderPopup(session, index),
+      ),
+      el("span", { className: "path-label" }, session.day),
+    );
+  }
 
-        setTimeout(() => this.mount(), 0);
+  renderExtra(session) {
+    if (!session.isToday) return null;
+    return [
+      el("div", { className: "today-halo" }),
+      el("img", {
+        src: "/assets/img/mascottes/camelion.png",
+        className: "mascotte-path",
+        alt: "Mascotte",
+      }),
+    ];
+  }
 
-        return root;
+  renderPopup(session, index) {
+    let content = [];
+    content.push(el("h3", {}, `Leçon ${index + 1}`));
+
+    if (session.isToday) {
+      content.push(el("p", {}, "Prêt pour un défi ?"));
+      content.push(
+        el(
+          "button",
+          {
+            className: "start-btn",
+            dataset: { session: index },
+            onClick: () => {
+              this.app.child.updateSession("Lundi", "done");
+              this.app.navigation.goTo("music");
+            },
+          },
+          "COMMENCER",
+        ),
+      );
+    } else if (session.status === "done") {
+      content.push(el("p", {}, "Bravo ! Tu as validé cette séance."));
+    } else {
+      content.push(
+        el("p", {}, "Patience... cette leçon n'est pas encore disponible."),
+      );
+      content.push(
+        el(
+          "button",
+          { className: "start-btn disabled", disabled: true },
+          "🔒 BLOQUÉ",
+        ),
+      );
     }
 
-    renderStep(session, index) {
-        const step = document.createElement("div");
-        step.classList.add("path-step", session.status);
-        if (session.isLocked) step.classList.add("is-locked");
+    return el(
+      "div",
+      { className: "duo-popup" },
+      el("div", { className: "popup-arrow" }),
+      content,
+    );
+  }
 
-        const offset = this.getOffset(index);
-        step.style.transform = `translateX(${offset}px)`;
-        step.style.zIndex = "1";
-
-        const container = document.createElement("div");
-        container.classList.add("path-button-container");
-
-        const extra = this.renderExtra(session);
-        if (extra) container.appendChild(extra);
-
-        const shadow = document.createElement("div");
-        shadow.classList.add("path-dot-shadow");
-
-        const dot = document.createElement("div");
-        dot.classList.add("path-dot");
-
-        const popup = this.renderPopup(session, index);
-
-        container.appendChild(shadow);
-        container.appendChild(dot);
-        container.appendChild(popup);
-
-        const label = document.createElement("span");
-        label.classList.add("path-label");
-        label.textContent = session.day;
-
-        step.appendChild(container);
-        step.appendChild(label);
-
-        return step;
+  mount() {
+    const mascot = document.querySelector(".mascotte-path");
+    if (mascot) {
+      mascot.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+  }
 
-    getOffset(index) {
-        const pattern = [0, 45, 25, -25, -45];
-        return pattern[index % pattern.length];
-    }
-
-    renderExtra(session) {
-        if (!session.isToday) return null;
-
-        const wrapper = document.createElement("div");
-
-        const halo = document.createElement("div");
-        halo.classList.add("today-halo");
-
-        const mascotte = document.createElement("img");
-        mascotte.src = "/assets/img/mascottes/camelion.png";
-        mascotte.classList.add("mascotte-path");
-        mascotte.alt = "Mascotte";
-
-        wrapper.appendChild(halo);
-        wrapper.appendChild(mascotte);
-
-        return wrapper;
-    }
-
-    renderPopup(session, index) {
-        const popup = document.createElement("div");
-        popup.classList.add("duo-popup");
-
-        const arrow = document.createElement("div");
-        arrow.classList.add("popup-arrow");
-
-        popup.appendChild(arrow);
-
-        const title = document.createElement("h3");
-        title.textContent = `Leçon ${index + 1}`;
-
-        const desc = document.createElement("p");
-
-        popup.appendChild(title);
-        popup.appendChild(desc);
-
-        if (session.isToday) {
-            desc.textContent = "Prêt pour un défi ?";
-
-            const btn = document.createElement("button");
-            btn.classList.add("start-btn");
-            btn.dataset.session = index;
-            btn.textContent = "COMMENCER";
-
-            popup.appendChild(btn);
-            return popup;
-        }
-
-        if (session.status === "done") {
-            desc.textContent = "Bravo ! Tu as validé cette séance.";
-            return popup;
-        }
-
-        desc.textContent = "Patience... cette leçon n'est pas encore disponible.";
-
-        const btn = document.createElement("button");
-        btn.classList.add("start-btn", "disabled");
-        btn.disabled = true;
-        btn.innerHTML = `<span class="icon-lock">🔒</span> BLOQUÉ`;
-
-        popup.appendChild(btn);
-
-        return popup;
-    }
-
-    mount() {
-        const mascot = document.querySelector(".mascotte-path");
-        if (mascot) {
-            mascot.scrollIntoView({
-                behavior: "auto",
-                block: "center",
-            });
-        }
-
-        document.querySelectorAll(".start-btn:not(.disabled)").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const sessionIndex = btn.dataset.session;
-                this.app.child.updateSession("Lundi", "done");
-                this.app.navigation.goTo("music");
-            });
-        });
-    }
-
-    update(childData) {
-        // Si tu veux mettre à jour dynamiquement la page
-    }
+  update(childData) {
+    // Sera géré par le contrôleur qui rappellera render()
+  }
 }
