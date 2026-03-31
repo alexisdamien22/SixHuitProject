@@ -1,120 +1,151 @@
 import { el } from "../../utils/DOMBuilder.js";
 
 export class HomePage {
-  constructor(app) {
-    this.app = app;
-  }
+    constructor(app) {
+        this.app = app;
 
-  render() {
-    const childData = this.app.model.getChildData();
-
-    if (!childData || !childData.weeklyPlan) {
-      return el("div", { className: "home-screen" });
+        // État interne
+        this.stepsContainer = null;
+        this.popup = null;
+        this.popupTitle = null;
+        this.popupDesc = null;
+        this.startBtn = null;
+        this.hasHighlighted = false;
     }
 
-    const pathSteps = childData.weeklyPlan.map((session, index) =>
-      this.renderStep(session, index),
-    );
+    // -----------------------------
+    // 1. Mapping BDD → Front
+    // -----------------------------
+    formatWeeklyPlan(rawPlan) {
+        const DAY_MAP = {
+            monday: "Lundi",
+            tuesday: "Mardi",
+            wednesday: "Mercredi",
+            thursday: "Jeudi",
+            friday: "Vendredi"
+        };
 
-    const root = el(
-      "div",
-      { className: "home-screen" },
-      el("div", { className: "path-container" }, pathSteps),
-    );
+        const STATUS_MAP = {
+            1: "done",
+            0: "todo"
+        };
 
-    // Déclencher le scroll une fois inséré dans le DOM
-    setTimeout(() => this.mount(), 0);
-    return root;
-  }
+        // Plan complet par défaut
+        const fullPlan = {
+            Lundi: "nothing",
+            Mardi: "nothing",
+            Mercredi: "nothing",
+            Jeudi: "nothing",
+            Vendredi: "nothing"
+        };
 
-  renderStep(session, index) {
-    const pattern = [0, 45, 25, -25, -45];
-    const offset = pattern[index % pattern.length];
+        // Remplissage avec les données SQL
+        rawPlan.forEach(entry => {
+            const day = DAY_MAP[entry.day_of_week];
+            const status = STATUS_MAP[entry.practice];
+            fullPlan[day] = status;
+        });
 
-    const lockedClass = session.isLocked ? "is-locked" : "";
-
-    // Le style en ligne ici est justifié car c'est une position géométrique dynamique
-    return el(
-      "div",
-      {
-        className: `path-step ${session.status} ${lockedClass}`,
-        style: { transform: `translateX(${offset}px)`, zIndex: "1" },
-      },
-      el(
-        "div",
-        { className: "path-button-container" },
-        this.renderExtra(session),
-        el("div", { className: "path-dot-shadow" }),
-        el("div", { className: "path-dot" }),
-        this.renderPopup(session, index),
-      ),
-      el("span", { className: "path-label" }, session.day),
-    );
-  }
-
-  renderExtra(session) {
-    if (!session.isToday) return null;
-    return [
-      el("div", { className: "today-halo" }),
-      el("img", {
-        src: "/assets/img/mascottes/camelion.png",
-        className: "mascotte-path",
-        alt: "Mascotte",
-      }),
-    ];
-  }
-
-  renderPopup(session, index) {
-    let content = [];
-    content.push(el("h3", {}, `Leçon ${index + 1}`));
-
-    if (session.isToday) {
-      content.push(el("p", {}, "Prêt pour un défi ?"));
-      content.push(
-        el(
-          "button",
-          {
-            className: "start-btn",
-            dataset: { session: index },
-            onClick: () => {
-              this.app.child.updateSession("Lundi", "done");
-              this.app.navigation.goTo("music");
-            },
-          },
-          "COMMENCER",
-        ),
-      );
-    } else if (session.status === "done") {
-      content.push(el("p", {}, "Bravo ! Tu as validé cette séance."));
-    } else {
-      content.push(
-        el("p", {}, "Patience... cette leçon n'est pas encore disponible."),
-      );
-      content.push(
-        el(
-          "button",
-          { className: "start-btn disabled", disabled: true },
-          "🔒 BLOQUÉ",
-        ),
-      );
+        return fullPlan;
     }
 
-    return el(
-      "div",
-      { className: "duo-popup" },
-      el("div", { className: "popup-arrow" }),
-      content,
-    );
-  }
+    // -----------------------------
+    // 2. Popup
+    // -----------------------------
+    showPopup(day) {
+        this.popupTitle.textContent = day;
+        this.popupDesc.textContent = "Prêt pour un défi ?";
+        this.popup.classList.add("show");
 
-  mount() {
-    const mascot = document.querySelector(".mascotte-path");
-    if (mascot) {
-      mascot.scrollIntoView({ behavior: "smooth", block: "center" });
+        this.startBtn.onclick = async () => {
+            await this.app.child.updateSession({
+                practice_day: day,
+                practice: 1,
+                session_date: new Date().toISOString().slice(0, 10)
+            });
+
+            this.popup.classList.remove("show");
+            this.app.navigation.goTo("music");
+        };
     }
-  }
 
-  update(childData) {
-    // Sera géré par le contrôleur qui rappellera render()
-  }
+    // -----------------------------
+    // 3. Rendu principal
+    // -----------------------------
+    async render() {
+        const childData = await this.app.child.getChildData();
+        const weeklyPlan = this.formatWeeklyPlan(childData.weeklyPlan);
+
+        this.hasHighlighted = false;
+
+        return el(
+            "div",
+            { className: "home-page" },
+
+            // -----------------------------
+            // Steps container
+            // -----------------------------
+            (this.stepsContainer = el(
+                "div",
+                { className: "steps-container" },
+
+                Object.entries(weeklyPlan).map(([day, status]) => {
+                    const step = el(
+                        "div",
+                        {
+                            className: `step ${status}`,
+                            dataset: { day }
+                        },
+                        el("span", { className: "step-label" }, day)
+                    );
+
+                    // Mascotte + halo sur le premier "todo"
+                    if (status === "todo" && !this.hasHighlighted) {
+                        this.hasHighlighted = true;
+
+                        step.appendChild(
+                            el("div", { className: "halo" })
+                        );
+
+                        step.appendChild(
+                            el("img", {
+                                className: "mascotte",
+                                src: "/assets/img/mascottes/camelion.png"
+                            })
+                        );
+
+                        step.addEventListener("click", () => this.showPopup(day));
+                    }
+
+                    return step;
+                })
+            )),
+
+            // -----------------------------
+            // Popup
+            // -----------------------------
+            (this.popup = el(
+                "div",
+                { className: "duo-popup" },
+
+                el("div", { className: "popup-arrow" }),
+
+                (this.popupTitle = el("h3", {}, "")),
+                (this.popupDesc = el("p", {}, "")),
+
+                (this.startBtn = el(
+                    "button",
+                    { className: "start-btn" },
+                    "COMMENCER"
+                ))
+            ))
+        );
+    }
+
+    // -----------------------------
+    // 4. Hook d’affichage
+    // -----------------------------
+    onShow() {
+        if (this.popup) this.popup.classList.remove("show");
+    }
 }

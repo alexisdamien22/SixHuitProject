@@ -19,12 +19,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `adultaccount` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(255) DEFAULT NULL,
   `teacher` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -138,7 +138,6 @@ CREATE TABLE `weekly_plan` (
   `child_id` int NOT NULL,
   `day_of_week` enum('monday','tuesday','wednesday','thursday','friday','saturday','sunday') NOT NULL,
   `practice` tinyint(1) DEFAULT '0',
-  `color` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `child_id` (`child_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

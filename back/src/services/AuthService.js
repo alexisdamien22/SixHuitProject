@@ -7,8 +7,8 @@ import { WeeklyPlanModel } from "../models/WeeklyPlanModel.js";
 import { StreakModel } from "../models/StreakModel.js";
 
 export class AuthService {
-    static async register(data) {
-        const { username, password, teacher, child } = data;
+    static async registerAdult(data) {
+        const { username, password, teacher } = data;
 
         const existing = await AdultAccountModel.findByUsername(username);
         if (existing.length > 0) {
@@ -27,13 +27,34 @@ export class AuthService {
 
         const adultId = adult.insertId;
 
-        const childResult = await ChildAccountModel.create({
+        const token = jwt.sign(
+            { id: adultId },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        return {
+            message: "Compte adulte créé avec succès",
+            token,
             adultId,
-            ...child,
+        };
+    }
+
+
+    static async registerChild(adultId, data) {
+        const child = await ChildAccountModel.create({
+            adultId,
+            name: data.name,
+            age: data.age,
+            instrument: data.instrument,
+            duree: data.duree,
+            ecole: data.ecole,
+            mascotte: data.mascotte
         });
 
-        const childId = childResult.insertId;
+        const childId = child.insertId;
 
+        // Initialisation du weekly plan
         await WeeklyPlanModel.setDay(childId, "Lundi", "todo");
         await WeeklyPlanModel.setDay(childId, "Mardi", "todo");
         await WeeklyPlanModel.setDay(childId, "Mercredi", "todo");
@@ -42,22 +63,15 @@ export class AuthService {
 
         await StreakModel.updateStreak(childId, 0);
 
-        const token = jwt.sign(
-            { id: adultId },
-            process.env.JWT_SECRET,
-            { expiresIn: "7d" }
-        );
-
         return {
-            message: "Compte créé avec succès",
-            token,
-            adultId,
+            message: "Enfant créé avec succès",
             childId,
         };
     }
 
-    static async login({ username, password }) {
-        const user = await AdultAccountModel.findByUsername(username);
+
+    static async login({ email, password }) {
+        const user = await AdultAccountModel.findByEmail(email);
 
         if (user.length === 0) {
             const err = new Error("Utilisateur introuvable.");
