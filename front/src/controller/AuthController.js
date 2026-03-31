@@ -5,8 +5,7 @@ export class AuthController {
     this.app = app;
   }
 
-  // --- ACTIONS DÉCLENCHÉES PAR LA VUE ---
-
+  // --- GESTION DE L'INTERFACE (ONBOARDING) ---
   handleInput(mode, field, value) {
     this.app.model.updateAuthData(mode, field, value);
     this.triggerRender();
@@ -36,7 +35,6 @@ export class AuthController {
     const state = this.app.model.getAuthState();
     if (state.isLoading) return;
 
-    // Étape finale ou Mode Connexion : On envoie à l'API
     if (state.isLoginMode || state.step === 7) {
       this.app.model.setLoading(true);
       this.triggerRender();
@@ -68,14 +66,12 @@ export class AuthController {
         this.triggerRender();
       }
     } else {
-      // Étape intermédiaire : On passe à l'étape suivante
       this.app.model.setAuthStep(state.step + 1);
       this.triggerRender();
     }
   }
 
   // --- APPELS RÉSEAU ---
-
   async register(payload) {
     const result = await ApiClient.post(`/auth/register`, payload);
     if (result.error) throw new Error(result.error);
@@ -86,7 +82,7 @@ export class AuthController {
       childId: result.childId,
     });
 
-    this.app.model.setAuthStep(8); // Écran de succès
+    this.app.model.setAuthStep(8);
     this.app.model.setLoading(false);
     this.triggerRender();
   }
@@ -101,7 +97,7 @@ export class AuthController {
     });
 
     this.app.model.setLoading(false);
-    await this.app.child.loadChildData(); // Charge les enfants liés
+    await this.app.child.loadChildData();
     this.app.navigation.goTo("home");
   }
 
@@ -110,7 +106,6 @@ export class AuthController {
     this.app.navigation.goTo("create-account");
   }
 
-  // Rafraîchit la vue courante (Architecture Réactive)
   triggerRender() {
     this.app.navigation.goTo("create-account");
   }

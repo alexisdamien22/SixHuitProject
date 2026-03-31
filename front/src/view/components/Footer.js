@@ -1,31 +1,38 @@
+import { el } from "../../utils/DOMBuilder.js";
+
 export class Footer {
-    constructor(app) {
-        this.app = app;
-    }
+  constructor(app) {
+    this.app = app;
+  }
 
-    render() {
-        const footer = document.createElement("footer");
-        footer.classList.add("main-footer");
-
-        const homeBtn = document.createElement("img");
-        homeBtn.src = "/assets/img/icons/home.png";
-        homeBtn.classList.add("icon-footer");
-        homeBtn.onclick = () => this.app.navigation.goTo("home");
-
-        const musicBtn = document.createElement("img");
-        musicBtn.src = "/assets/img/icons/music.png";
-        musicBtn.classList.add("icon-footer");
-        musicBtn.onclick = () => this.app.navigation.goTo("music");
-
-        const podiumBtn = document.createElement("img");
-        podiumBtn.src = "/assets/img/icons/podium.png";
-        podiumBtn.classList.add("icon-footer");
-        podiumBtn.onclick = () => this.app.navigation.goTo("podium");
-
-        footer.appendChild(homeBtn);
-        footer.appendChild(musicBtn);
-        footer.appendChild(podiumBtn);
-
-        return footer;
-    }
+  render() {
+    return el(
+      "footer",
+      { className: "main-footer" },
+      el("img", {
+        src: "/assets/img/icons/home.png",
+        className: "footer-home icon-footer active",
+        dataset: { page: "home" },
+        alt: "Accueil",
+      }),
+      el("img", {
+        src: "/assets/img/icons/podium.png",
+        className: "footer-podium icon-footer",
+        dataset: { page: "podium" },
+        alt: "Classement",
+      }),
+      el("img", {
+        src: "/assets/img/icons/music.png",
+        className: "footer-music icon-footer",
+        dataset: { page: "music" },
+        alt: "Musique",
+      }),
+      el("img", {
+        src: "/assets/img/icons/menu.png",
+        className: "footer-menu icon-footer",
+        dataset: { page: "menu" },
+        alt: "Menu",
+      }),
+    );
+  }
 }

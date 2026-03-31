@@ -1,37 +1,27 @@
+import { el } from "../../utils/DOMBuilder.js";
+
 export class Header {
-    constructor(app) {
-        this.app = app;
-    }
+  constructor(app) {
+    this.app = app;
+  }
 
-    render() {
-        const header = document.createElement("header");
-        header.classList.add("main-header");
-
-        const title = document.createElement("h1");
-        title.textContent = "Six-Huit";
-
-        const childInfo = document.createElement("div");
-        childInfo.id = "child-info";
-
-        header.appendChild(title);
-        header.appendChild(childInfo);
-
-        return header;
-    }
-
-    update(data) {
-        const el = document.getElementById("child-info");
-        if (!el) return;
-
-        el.replaceChildren();
-
-        const name = document.createElement("strong");
-        name.textContent = data.name;
-
-        const streak = document.createElement("span");
-        streak.textContent = `🔥 ${data.streak}`;
-
-        el.appendChild(name);
-        el.appendChild(streak);
-    }
+  render() {
+    return el(
+      "header",
+      { className: "main-header" },
+      el("div", { className: "profile-icon" }),
+      el(
+        "div",
+        { className: "strik" },
+        el("img", {
+          className: "strik-icon",
+          src: "/assets/img/icons/strik/flame_1.png",
+          alt: "Série de jours",
+        }),
+        el("p", { className: "strik-text" }, "0"),
+      ),
+      el("div", { className: "swipe" }),
+      el("div", { className: "parametre", dataset: { rotation: "0" } }),
+    );
+  }
 }
