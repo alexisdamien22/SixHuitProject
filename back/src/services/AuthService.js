@@ -8,9 +8,9 @@ import { StreakModel } from "../models/StreakModel.js";
 
 export class AuthService {
     static async register(data) {
-        const { username, password, teacher, child } = data;
+        const { email, password, teacher, child } = data;
 
-        const existing = await AdultAccountModel.findByUsername(username);
+        const existing = await AdultAccountModel.findByEmail(email);
         if (existing.length > 0) {
             const err = new Error("Cet utilisateur existe déjà.");
             err.status = 409;
@@ -20,7 +20,7 @@ export class AuthService {
         const hashed = await bcrypt.hash(password, 10);
 
         const adult = await AdultAccountModel.create({
-            username,
+            email,
             password: hashed,
             teacher: teacher ? 1 : 0,
         });
@@ -56,8 +56,8 @@ export class AuthService {
         };
     }
 
-    static async login({ username, password }) {
-        const user = await AdultAccountModel.findByUsername(username);
+    static async login({ email, password }) {
+        const user = await AdultAccountModel.findByEmail(email);
 
         if (user.length === 0) {
             const err = new Error("Utilisateur introuvable.");
