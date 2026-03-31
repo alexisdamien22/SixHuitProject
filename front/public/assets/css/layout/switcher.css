@@ -1,0 +1,72 @@
+.account-switcher-container {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.account-switcher-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.account-switcher-sheet {
+  position: relative;
+  background-color: var(--color-bg-footer);
+  width: 100%;
+  padding: 20px;
+  transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  pointer-events: auto;
+  border-bottom: 2px solid var(--ca-purple);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.account-switcher-container.show {
+  pointer-events: auto;
+}
+.account-switcher-container.show .account-switcher-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+.account-switcher-container.show .account-switcher-sheet {
+  transform: translateY(0);
+}
+
+.switcher-list {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.switcher-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: var(--ca-input-bg);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.switcher-avatar {
+  font-size: 24px;
+}
+.switcher-name {
+  font-weight: bold;
+  color: var(--color-text-main);
+}
+.switcher-divider {
+  height: 1px;
+  background: var(--color-border-light);
+  margin: 10px 0;
+}

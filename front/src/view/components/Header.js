@@ -9,7 +9,7 @@ export class Header {
     return el(
       "header",
       { className: "main-header" },
-      el("div", { className: "profile-icon" }),
+      el("div", { className: "profile-icon header-profile-btn" }),
       el(
         "div",
         { className: "strik" },
@@ -20,7 +20,6 @@ export class Header {
         }),
         el("p", { className: "strik-text" }, "0"),
       ),
-      el("div", { className: "swipe" }),
       el("div", { className: "parametre", dataset: { rotation: "0" } }),
     );
   }
