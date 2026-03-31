@@ -3,7 +3,7 @@ import { BaseModel } from "./BaseModel.js";
 export class WeeklyPlanModel extends BaseModel {
     static getPlan(childId) {
         return this.query(
-            "SELECT day_of_week, practice, color FROM weekly_plan WHERE child_id = ?",
+            "SELECT day_of_week, practice FROM weekly_plan WHERE child_id = ?",
             [childId]
         );
     }
