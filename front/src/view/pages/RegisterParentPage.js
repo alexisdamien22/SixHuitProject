@@ -44,7 +44,7 @@ export class RegisterParentPage {
               placeholder: "Ton email",
               value: state.registerData.email,
               onInput: (e) =>
-                controller.handleInput("register", "email", e.target.value),
+                controller.handleInput("register-parent", "email", e.target.value),
             }),
             el("input", {
               className: "ca-input reg-input",
@@ -52,7 +52,7 @@ export class RegisterParentPage {
               placeholder: "Mot de passe (8+ car.)",
               value: state.registerData.password,
               onInput: (e) =>
-                controller.handleInput("register", "password", e.target.value),
+                controller.handleInput("register-parent", "password", e.target.value),
             }),
             el("input", {
               className: "ca-input reg-input",
@@ -60,11 +60,7 @@ export class RegisterParentPage {
               placeholder: "Confirmer le mot de passe",
               value: state.registerData.confirmPassword || "",
               onInput: (e) =>
-                controller.handleInput(
-                  "register",
-                  "confirmPassword",
-                  e.target.value,
-                ),
+                controller.handleInput("register-parent", "confirmPassword", e.target.value),
             }),
           ),
         ),

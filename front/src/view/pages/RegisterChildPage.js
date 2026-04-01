@@ -88,7 +88,7 @@ export class RegisterChildPage {
           el(
             "div",
             { className: "ca-success-mascot" },
-            state.childRegisterData.mascotte || "🎵",
+            state.childRegisterData.mascot || "🎵",
           ),
           el(
             "h2",

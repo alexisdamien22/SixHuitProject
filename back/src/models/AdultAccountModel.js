@@ -10,7 +10,7 @@ export class AdultAccountModel extends BaseModel {
 
     static create({ email, password, teacher }) {
         return this.query(
-            "INSERT INTO adultaccount (email, password, teacher) VALUES (?, ?, ?)",
+            "INSERT INTO adultaccount (email, password_hash, teacher) VALUES (?, ?, ?)",
             [email, password, teacher]
         );
     }

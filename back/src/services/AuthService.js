@@ -21,7 +21,7 @@ export class AuthService {
 
         const adult = await AdultAccountModel.create({
             email,
-            password_hash: hashed,
+            password: hashed,
             teacher: teacher ? 1 : 0,
         });
 
