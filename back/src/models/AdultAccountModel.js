@@ -4,6 +4,9 @@ export class AdultAccountModel extends BaseModel {
   static findByEmail(email) {
     return this.query("SELECT * FROM adultaccount WHERE email = ?", [email]);
   }
+  static findByEmail(email) {
+    return this.query("SELECT * FROM adultaccount WHERE email = ?", [email]);
+  }
 
   static create({ email, password, teacher }) {
     return this.query(
@@ -12,6 +15,12 @@ export class AdultAccountModel extends BaseModel {
     );
   }
 
+  static findById(id) {
+    return this.query(
+      "SELECT id, email, teacher, created_at FROM adultaccount WHERE id = ?",
+      [id],
+    );
+  }
   static findById(id) {
     return this.query(
       "SELECT id, email, teacher, created_at FROM adultaccount WHERE id = ?",
