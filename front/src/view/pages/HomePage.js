@@ -17,11 +17,6 @@ export class HomePage {
       sunday: "Dimanche",
     };
 
-    const statusMap = {
-      1: "done",
-      0: "todo",
-    };
-
     const fullPlan = {
       Lundi: "nothing",
       Mardi: "nothing",
@@ -37,7 +32,13 @@ export class HomePage {
     rawPlan.forEach((entry) => {
       const day = dayMap[entry.day_of_week];
       if (day) {
-        fullPlan[day] = statusMap[entry.practice];
+        if (entry.status === 1) {
+          fullPlan[day] = "done";
+        } else if (entry.practice === 1) {
+          fullPlan[day] = "todo";
+        } else {
+          fullPlan[day] = "nothing";
+        }
       }
     });
 

@@ -63,13 +63,25 @@ export function initAppEvents(view) {
   });
 
   view.appRoot.addEventListener("click", (e) => {
-    // Gère la fermeture de la popup de la page d'accueil en cliquant à l'extérieur
-    const popup = document.querySelector(".duo-popup.show");
-    if (popup) {
-      const clickedOnOpener = e.target.closest(".path-button-container");
+    const pathDot = e.target.closest(".path-dot");
+
+    if (pathDot) {
+      const step = pathDot.closest(".path-step");
+      const popup = step.querySelector(".duo-popup");
+
+      document.querySelectorAll(".duo-popup.show").forEach((p) => {
+        if (p !== popup) p.classList.remove("show");
+      });
+
+      if (popup) popup.classList.toggle("show");
+      return;
+    }
+
+    const activePopup = document.querySelector(".duo-popup.show");
+    if (activePopup) {
       const clickedOnPopup = e.target.closest(".duo-popup");
-      if (!clickedOnOpener && !clickedOnPopup) {
-        popup.classList.remove("show");
+      if (!clickedOnPopup) {
+        activePopup.classList.remove("show");
       }
     }
   });

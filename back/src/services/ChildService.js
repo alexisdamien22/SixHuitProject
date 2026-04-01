@@ -22,6 +22,24 @@ export class ChildService {
 
   static async updateSession(childId, data) {
     await SessionsModel.addSession(childId, data);
-    return { message: "Session enregistrée" };
+
+    if (data.practice_day) {
+      const mapDays = {
+        Lundi: "monday",
+        Mardi: "tuesday",
+        Mercredi: "wednesday",
+        Jeudi: "thursday",
+        Vendredi: "friday",
+        Samedi: "saturday",
+        Dimanche: "sunday",
+      };
+
+      const englishDay = mapDays[data.practice_day];
+      if (englishDay) {
+        await WeeklyPlanModel.setDayStatus(childId, englishDay, 1);
+      }
+    }
+
+    return { message: "Session recorded" };
   }
 }

@@ -11,6 +11,7 @@
   margin-bottom: 10dvh;
   max-height: 90dvh;
   overflow-y: auto;
+  z-index: 1;
 }
 
 .path-step {
@@ -169,17 +170,33 @@
   text-transform: uppercase;
   font-size: 14px;
 }
+.path-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.path-step:has(.duo-popup.show) {
+  z-index: 9999;
+}
 
 .path-button-container:has(.duo-popup:hover) .path-dot,
-.path-button-container:has(.duo-popup:active) .path-dot {
+.path-button-container:has(.duo-popup:active) .path-dot,
+.path-button-container:has(.duo-popup.show) .path-dot {
   transform: none;
 }
+
 .path-button-container:has(.duo-popup:hover) .mascot-path,
-.path-button-container:has(.duo-popup:active) .mascot-path {
+.path-button-container:has(.duo-popup:active) .mascot-path,
+.path-button-container:has(.duo-popup.show) .mascot-path {
   transform: translateX(-50%);
 }
+
 .path-button-container:has(.duo-popup:hover) .path-dot-shadow::before,
-.path-button-container:has(.duo-popup:active) .path-dot-shadow::before {
+.path-button-container:has(.duo-popup:active) .path-dot-shadow::before,
+.path-button-container:has(.duo-popup.show) .path-dot-shadow::before {
   height: 10px;
   top: 20px;
 }
