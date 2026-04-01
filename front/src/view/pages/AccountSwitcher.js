@@ -3,7 +3,7 @@ import { el } from "../../utils/DOMBuilder.js";
 export const AccountSwitcher = {
   create(view, accounts = []) {
     let container = document.getElementById("account-switcher-container");
-    if (container) container.remove(); // On recrée proprement à chaque fois
+    if (container) container.remove();
 
     const items = accounts.map((acc) =>
       el(
@@ -17,7 +17,7 @@ export const AccountSwitcher = {
             window.appController?.navigation.goTo("home");
           },
         },
-        el("div", { className: "switcher-avatar" }, acc.mascotte || "🎵"),
+        el("div", { className: "switcher-avatar" }, acc.mascot || "🎵"),
         el(
           "div",
           { className: "switcher-info" },
@@ -79,7 +79,7 @@ export const AccountSwitcher = {
             onClick: () => {
               localStorage.removeItem("activeChildId");
               view.toggleAccountSwitcher(false);
-              window.appController?.navigation.goTo("home"); // Redirige vers ParentHomePage
+              window.appController?.navigation.goTo("home");
             },
           },
           el(

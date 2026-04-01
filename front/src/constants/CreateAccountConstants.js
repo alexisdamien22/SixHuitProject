@@ -1,5 +1,3 @@
-// --- front/src/constants/CreateAccountConstants.js ---
-
 export const ICONS = {
   basson: "/assets/img/icons/basson.png",
   guitare: "/assets/img/icons/guitar.png",
@@ -30,9 +28,9 @@ export const STEP_ILLUS = {
   7: { png: ICONS.flute, lbl: "Flûte traversière" },
 };
 
-export const MASCOTTES = ["🦊", "🐱", "🐸", "🐶", "🦋", "🐺", "🦄", "🐼", "🐰"];
+export const MASCOTS = ["🦊", "🐱", "🐸", "🐶", "🦋", "🐺", "🦄", "🐼", "🐰"];
 
-export const JOURS = [
+export const DAYS = [
   "Lundi",
   "Mardi",
   "Mercredi",

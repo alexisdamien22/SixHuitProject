@@ -46,4 +46,12 @@ export class SessionStore {
     getChildId() {
         return this.data.childId;
     }
+
+    isParent() {
+        return !!this.data.adultId;
+    }
+
+    isChild() {
+        return !!this.data.childId;
+    }
 }

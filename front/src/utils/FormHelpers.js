@@ -1,5 +1,3 @@
-// --- front/src/utils/FormHelpers.js ---
-
 export const FormHelpers = {
   isLoginValid(data) {
     return data.email?.includes("@") && data.password?.length >= 4;
@@ -23,14 +21,14 @@ export const FormHelpers = {
       case 3:
         return !!data.instrument;
       case 4:
-        const duree = parseInt(data.duree, 10);
-        return !isNaN(duree) && duree >= 0;
+        const time_amount = parseInt(data.time_amount, 10);
+        return !isNaN(time_amount) && time_amount >= 0;
       case 5:
-        return data.ecole?.trim().length > 0;
+        return data.school?.trim().length > 0;
       case 6:
-        return !!data.mascotte;
+        return !!data.mascot;
       case 7:
-        return Array.isArray(data.jours) && data.jours.length > 0;
+        return Array.isArray(data.days) && data.days.length > 0;
       default:
         return true;
     }

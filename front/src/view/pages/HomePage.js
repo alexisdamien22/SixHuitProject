@@ -4,7 +4,6 @@ export class HomePage {
     constructor(app) {
         this.app = app;
 
-        // État interne
         this.stepsContainer = null;
         this.popup = null;
         this.popupTitle = null;
@@ -13,9 +12,6 @@ export class HomePage {
         this.hasHighlighted = false;
     }
 
-    // -----------------------------
-    // 1. Mapping BDD → Front
-    // -----------------------------
     formatWeeklyPlan(rawPlan) {
         const DAY_MAP = {
             monday: "Lundi",
@@ -30,7 +26,6 @@ export class HomePage {
             0: "todo"
         };
 
-        // Plan complet par défaut
         const fullPlan = {
             Lundi: "nothing",
             Mardi: "nothing",
@@ -39,7 +34,6 @@ export class HomePage {
             Vendredi: "nothing"
         };
 
-        // Remplissage avec les données SQL
         rawPlan.forEach(entry => {
             const day = DAY_MAP[entry.day_of_week];
             const status = STATUS_MAP[entry.practice];
@@ -49,9 +43,6 @@ export class HomePage {
         return fullPlan;
     }
 
-    // -----------------------------
-    // 2. Popup
-    // -----------------------------
     showPopup(day) {
         this.popupTitle.textContent = day;
         this.popupDesc.textContent = "Prêt pour un défi ?";
@@ -69,9 +60,6 @@ export class HomePage {
         };
     }
 
-    // -----------------------------
-    // 3. Rendu principal
-    // -----------------------------
     async render() {
         const childData = await this.app.child.getChildData();
         const weeklyPlan = this.formatWeeklyPlan(childData.weeklyPlan);
@@ -82,9 +70,6 @@ export class HomePage {
             "div",
             { className: "home-page" },
 
-            // -----------------------------
-            // Steps container
-            // -----------------------------
             (this.stepsContainer = el(
                 "div",
                 { className: "steps-container" },
@@ -99,7 +84,6 @@ export class HomePage {
                         el("span", { className: "step-label" }, day)
                     );
 
-                    // Mascotte + halo sur le premier "todo"
                     if (status === "todo" && !this.hasHighlighted) {
                         this.hasHighlighted = true;
 
@@ -109,8 +93,8 @@ export class HomePage {
 
                         step.appendChild(
                             el("img", {
-                                className: "mascotte",
-                                src: "/assets/img/mascottes/camelion.png"
+                                className: "mascot",
+                                src: "/assets/img/mascots/camelion.png"
                             })
                         );
 
@@ -121,9 +105,6 @@ export class HomePage {
                 })
             )),
 
-            // -----------------------------
-            // Popup
-            // -----------------------------
             (this.popup = el(
                 "div",
                 { className: "duo-popup" },
@@ -142,9 +123,6 @@ export class HomePage {
         );
     }
 
-    // -----------------------------
-    // 4. Hook d’affichage
-    // -----------------------------
     onShow() {
         if (this.popup) this.popup.classList.remove("show");
     }

@@ -62,7 +62,6 @@ export class LoginPage {
           ),
         ),
 
-        // AJOUT DE L'ID 'ca-main-btn' ICI
         el(
           "button",
           {
@@ -97,7 +96,6 @@ export class LoginPage {
     );
   }
 
-  // LA NOUVELLE FONCTION QUI MET A JOUR UNIQUEMENT LE BOUTON
   refreshBtn() {
     const btn = document.getElementById("ca-main-btn");
     if (btn) {

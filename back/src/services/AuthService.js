@@ -8,9 +8,9 @@ import { StreakModel } from "../models/StreakModel.js";
 
 export class AuthService {
     static async registerAdult(data) {
-        const { username, password, teacher } = data;
+        const { email, password, teacher } = data;
 
-        const existing = await AdultAccountModel.findByUsername(username);
+        const existing = await AdultAccountModel.findByEmail(email);
         if (existing.length > 0) {
             const err = new Error("Cet utilisateur existe déjà.");
             err.status = 409;
@@ -20,8 +20,8 @@ export class AuthService {
         const hashed = await bcrypt.hash(password, 10);
 
         const adult = await AdultAccountModel.create({
-            username,
-            password: hashed,
+            email,
+            password_hash: hashed,
             teacher: teacher ? 1 : 0,
         });
 
@@ -47,24 +47,36 @@ export class AuthService {
             name: data.name,
             age: data.age,
             instrument: data.instrument,
-            duree: data.duree,
-            ecole: data.ecole,
-            mascotte: data.mascotte
+            time_amount: data.time_amount,
+            school: data.school,
+            mascot: data.mascot
         });
 
         const childId = child.insertId;
 
-        // Initialisation du weekly plan
-        await WeeklyPlanModel.setDay(childId, "Lundi", "todo");
-        await WeeklyPlanModel.setDay(childId, "Mardi", "todo");
-        await WeeklyPlanModel.setDay(childId, "Mercredi", "todo");
-        await WeeklyPlanModel.setDay(childId, "Jeudi", "todo");
-        await WeeklyPlanModel.setDay(childId, "Vendredi", "todo");
+        const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+        const mapDays = {
+            "Lundi": "monday",
+            "Mardi": "tuesday",
+            "Mercredi": "wednesday",
+            "Jeudi": "thursday",
+            "Vendredi": "friday",
+            "Samedi": "saturday",
+            "Dimanche": "sunday"
+        };
+
+        for (const day of days) {
+            const english = mapDays[day];
+            const status = data.days.includes(day) ? 1 : 0;
+            await WeeklyPlanModel.setDay(childId, english, status);
+        }
 
         await StreakModel.updateStreak(childId, 0);
 
         return {
             message: "Enfant créé avec succès",
+            success: true,
             childId,
         };
     }
@@ -81,7 +93,7 @@ export class AuthService {
 
         const account = user[0];
 
-        const valid = await bcrypt.compare(password, account.password);
+        const valid = await bcrypt.compare(password, account.password_hash);
         if (!valid) {
             const err = new Error("Mot de passe incorrect.");
             err.status = 401;

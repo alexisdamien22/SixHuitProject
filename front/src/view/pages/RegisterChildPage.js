@@ -1,8 +1,8 @@
 import { el } from "../../utils/DOMBuilder.js";
 import {
   INSTRUMENTS,
-  MASCOTTES,
-  JOURS,
+  MASCOTS,
+  DAYS,
   STEP_ILLUS,
   TOTAL_STEPS,
 } from "../../constants/CreateAccountConstants.js";
@@ -13,11 +13,71 @@ export class RegisterChildPage {
     this.app = app;
   }
 
+  refreshBtn() {
+    const state = this.app.model.getAuthState();
+    const isValid = FormHelpers.isChildStepValid(
+      state.step,
+      state.childRegisterData
+    );
+
+    const btn = document.getElementById("ca-main-btn");
+    if (btn) {
+      btn.disabled = !isValid || state.isLoading;
+    }
+  }
+
+  refreshInstrumentSelection() {
+    const state = this.app.model.getAuthState();
+    const cards = document.querySelectorAll(".ca-instr-card");
+
+    cards.forEach(card => {
+      const id = card.getAttribute("data-id");
+      if (id === state.childRegisterData.instrument) {
+        card.classList.add("sel");
+      } else {
+        card.classList.remove("sel");
+      }
+    });
+
+    this.refreshBtn();
+  }
+
+  refreshMascotSelection() {
+    const state = this.app.model.getAuthState();
+    const cells = document.querySelectorAll(".ca-mascot-cell");
+
+    cells.forEach(cell => {
+      const value = cell.getAttribute("data-value");
+      if (value === state.childRegisterData.mascot) {
+        cell.classList.add("sel");
+      } else {
+        cell.classList.remove("sel");
+      }
+    });
+
+    this.refreshBtn();
+  }
+
+  refreshDaysSelection() {
+    const state = this.app.model.getAuthState();
+    const pills = document.querySelectorAll(".ca-day-pill");
+
+    pills.forEach(pill => {
+      const value = pill.getAttribute("data-value");
+      if (state.childRegisterData.days.includes(value)) {
+        pill.classList.add("sel");
+      } else {
+        pill.classList.remove("sel");
+      }
+    });
+
+    this.refreshBtn();
+  }
+
   render() {
     const state = this.app.model.getAuthState();
     const controller = this.app.auth;
 
-    // --- Écran de succès final ---
     if (state.step === 8) {
       return el(
         "div",
@@ -28,12 +88,12 @@ export class RegisterChildPage {
           el(
             "div",
             { className: "ca-success-mascot" },
-            state.registerData.mascotte || "🎵",
+            state.childRegisterData.mascotte || "🎵",
           ),
           el(
             "h2",
             { className: "ca-success-title" },
-            `Bienvenue, ${state.registerData.name} !`,
+            `Bienvenue, ${state.childRegisterData.name} !`,
           ),
         ),
         el(
@@ -51,11 +111,20 @@ export class RegisterChildPage {
       );
     }
 
-    // --- Écran principal du tunnel ---
     const illus = STEP_ILLUS[state.step] || { png: "", lbl: "" };
+    console.log("STEP =", state.step);
+    console.log("CHILD DATA =", state.childRegisterData || state.registerData);
+    console.log(
+      "IS VALID ?",
+      FormHelpers.isChildStepValid(
+        state.step,
+        state.childRegisterData || state.registerData
+      )
+    );
+
     const isValid = FormHelpers.isChildStepValid(
       state.step,
-      state.registerData,
+      state.childRegisterData,
     );
 
     let btnLabel = state.step === TOTAL_STEPS ? "Terminer" : "Suivant";
@@ -110,9 +179,9 @@ export class RegisterChildPage {
             className: "form-input",
             type: "text",
             placeholder: "Ton prénom",
-            value: state.registerData.name,
+            value: state.childRegisterData.name,
             onInput: (e) =>
-              controller.handleInput("register", "name", e.target.value),
+              controller.handleInput("register-child", "name", e.target.value),
           }),
         ];
       case 2:
@@ -122,9 +191,9 @@ export class RegisterChildPage {
             className: "form-input",
             type: "number",
             placeholder: "Âge",
-            value: state.registerData.age,
+            value: state.childRegisterData.age,
             onInput: (e) =>
-              controller.handleInput("register", "age", e.target.value),
+              controller.handleInput("register-child", "age", e.target.value),
           }),
         ];
       case 3:
@@ -137,7 +206,8 @@ export class RegisterChildPage {
               el(
                 "div",
                 {
-                  className: `ca-instr-card ${state.registerData.instrument === ins.id ? "sel" : ""}`,
+                  className: `ca-instr-card ${state.childRegisterData.instrument === ins.id ? "sel" : ""}`,
+                  "data-id": ins.id,
                   onClick: () => controller.handleInstrumentSelect(ins.id),
                 },
                 el(
@@ -160,9 +230,9 @@ export class RegisterChildPage {
           el("input", {
             className: "form-input",
             type: "number",
-            value: state.registerData.duree,
+            value: state.childRegisterData.time_amount,
             onInput: (e) =>
-              controller.handleInput("register", "duree", e.target.value),
+              controller.handleInput("register-child", "time_amount", e.target.value),
           }),
         ];
       case 5:
@@ -171,22 +241,23 @@ export class RegisterChildPage {
           el("input", {
             className: "form-input",
             type: "text",
-            value: state.registerData.ecole,
+            value: state.childRegisterData.school,
             onInput: (e) =>
-              controller.handleInput("register", "ecole", e.target.value),
+              controller.handleInput("register-child", "school", e.target.value),
           }),
         ];
       case 6:
         return [
-          el("p", { className: "form-label" }, "Choisis une mascotte !"),
+          el("p", { className: "form-label" }, "Choisis une mascot !"),
           el(
             "div",
             { className: "ca-mascot-grid" },
-            MASCOTTES.map((m) =>
+            MASCOTS.map((m) =>
               el(
                 "div",
                 {
-                  className: `ca-mascot-cell ${state.registerData.mascotte === m ? "sel" : ""}`,
+                  className: `ca-mascot-cell ${state.childRegisterData.mascot === m ? "sel" : ""}`,
+                  "data-value": m,
                   onClick: () => controller.handleMascotSelect(m),
                 },
                 m,
@@ -204,11 +275,12 @@ export class RegisterChildPage {
           el(
             "div",
             { className: "ca-days-row" },
-            JOURS.map((j) =>
+            DAYS.map((j) =>
               el(
                 "button",
                 {
-                  className: `ca-day-pill ${state.registerData.jours.includes(j) ? "sel" : ""}`,
+                  className: `ca-day-pill ${state.childRegisterData.days.includes(j) ? "sel" : ""}`,
+                  "data-value": j,
                   onClick: () => controller.handleDayToggle(j),
                 },
                 j,

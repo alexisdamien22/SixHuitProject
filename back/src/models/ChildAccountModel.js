@@ -4,16 +4,16 @@ export class ChildAccountModel extends BaseModel {
     static create(data) {
         return this.query(
             `INSERT INTO childaccount 
-       (adultId, name, age, instrument, duree, ecole, mascotte)
+       (adultId, name, age, instrument, time_amount, school, mascot)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [
                 data.adultId,
                 data.name,
                 data.age,
                 data.instrument,
-                data.duree,
-                data.ecole,
-                data.mascotte
+                data.time_amount,
+                data.school,
+                data.mascot
             ]
         );
     }

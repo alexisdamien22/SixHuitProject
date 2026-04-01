@@ -10,7 +10,7 @@ const ASSETS_TO_CACHE = [
   "/assets/img/icons/music.png",
   "/assets/img/icons/menu.png",
   "/assets/img/icons/app-icon-86.png",
-  "/assets/img/mascottes/camelion.png",
+  "/assets/img/mascots/camelion.png",
 ];
 
 self.addEventListener("install", (event) => {

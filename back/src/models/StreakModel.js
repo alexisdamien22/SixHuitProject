@@ -15,7 +15,7 @@ export class StreakModel extends BaseModel {
              ON DUPLICATE KEY UPDATE 
                 current_streak = VALUES(current_streak),
                 last_practice_date = VALUES(last_practice_date)`,
-            [childId, current_streak, last_practice_date]
+            [childId, current_streak, last_practice_date ?? null]
         );
     }
 }

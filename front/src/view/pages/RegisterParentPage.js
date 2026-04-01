@@ -69,7 +69,6 @@ export class RegisterParentPage {
           ),
         ),
 
-        // AJOUT DE L'ID 'ca-main-btn' ICI
         el(
           "button",
           {
