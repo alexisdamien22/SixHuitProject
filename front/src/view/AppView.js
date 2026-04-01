@@ -95,7 +95,9 @@ export class AppView {
   }
 
   updateChildData(data) {
-    this.header.update(data);
+    if (this.header && typeof this.header.update === "function") {
+      this.header.update(data);
+    }
     if (this.currentPage && typeof this.currentPage.update === "function") {
       this.currentPage.update(data);
     }

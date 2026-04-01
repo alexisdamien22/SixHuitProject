@@ -63,9 +63,6 @@ export function initAppEvents(view) {
   });
 
   view.appRoot.addEventListener("click", (e) => {
-    if (e.target.closest(".duo-popup")) {
-      e.stopImmediatePropagation();
-      return;
     // Gère la fermeture de la popup de la page d'accueil en cliquant à l'extérieur
     const popup = document.querySelector(".duo-popup.show");
     if (popup) {
@@ -74,29 +71,6 @@ export function initAppEvents(view) {
       if (!clickedOnOpener && !clickedOnPopup) {
         popup.classList.remove("show");
       }
-    }
-
-    const clickedElement = document.elementFromPoint(e.clientX, e.clientY);
-    const pathDot = clickedElement?.closest(".path-dot");
-
-    if (pathDot) {
-      const step = pathDot.closest(".path-step");
-      const popup = step.querySelector(".duo-popup");
-
-      document
-        .querySelectorAll(".path-step")
-        .forEach((s) => (s.style.zIndex = "1"));
-      document.querySelectorAll(".duo-popup").forEach((p) => {
-        if (p !== popup) p.classList.remove("show");
-      });
-
-      popup.classList.toggle("show");
-      step.style.zIndex = popup.classList.contains("show") ? "999" : "1";
-    } else {
-      document.querySelectorAll(".duo-popup.show").forEach((p) => {
-        p.classList.remove("show");
-        p.closest(".path-step").style.zIndex = "1";
-      });
     }
   });
 
