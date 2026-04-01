@@ -66,6 +66,14 @@ export function initAppEvents(view) {
     if (e.target.closest(".duo-popup")) {
       e.stopImmediatePropagation();
       return;
+    // Gère la fermeture de la popup de la page d'accueil en cliquant à l'extérieur
+    const popup = document.querySelector(".duo-popup.show");
+    if (popup) {
+      const clickedOnOpener = e.target.closest(".path-button-container");
+      const clickedOnPopup = e.target.closest(".duo-popup");
+      if (!clickedOnOpener && !clickedOnPopup) {
+        popup.classList.remove("show");
+      }
     }
 
     const clickedElement = document.elementFromPoint(e.clientX, e.clientY);

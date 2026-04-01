@@ -34,6 +34,8 @@ export class HomePage {
       Vendredi: "nothing",
     };
 
+    if (!rawPlan || !Array.isArray(rawPlan)) return fullPlan;
+
     rawPlan.forEach((entry) => {
       const day = DAY_MAP[entry.day_of_week];
       const status = STATUS_MAP[entry.practice];
@@ -61,8 +63,10 @@ export class HomePage {
   }
 
   async render() {
-    const childData = await this.app.model.getChildData();
-    const weeklyPlan = this.formatWeeklyPlan(childData.weeklyPlan);
+    const childData = (await this.app.model.getChildData()) || {};
+    console.log("[HomePage] childData reçu du modèle :", childData);
+
+    const weeklyPlan = this.formatWeeklyPlan(childData.weeklyPlan || []);
 
     this.hasHighlighted = false;
 
