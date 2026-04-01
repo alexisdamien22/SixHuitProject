@@ -46,15 +46,18 @@ export class AppView {
       name,
     );
 
-    const hideFooter = [
-      "login",
-      "registerParent",
-      "registerChild",
-      "parent-home",
-    ].includes(name);
+    const hideFooter = ["login", "registerParent", "registerChild"].includes(
+      name,
+    );
 
     this.headerRoot.style.display = hideHeader ? "none" : "";
     this.footerRoot.style.display = hideFooter ? "none" : "";
+
+    // Active une classe CSS spéciale si on est sur l'espace parent
+    const isParentMode =
+      this.app.model.session.isParent() &&
+      !localStorage.getItem("activeChildId");
+    document.body.classList.toggle("parent-mode", isParentMode);
 
     let page;
     switch (name) {

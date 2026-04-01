@@ -48,7 +48,13 @@ export function initAppEvents(view) {
 
     const footerIcon = e.target.closest(".icon-footer");
     if (footerIcon) {
-      const page = footerIcon.dataset.page;
+      let page = footerIcon.dataset.page;
+
+      // Redirige vers le tableau de bord parent si on clique sur la maison en mode Adulte
+      if (document.body.classList.contains("parent-mode") && page === "home") {
+        page = "parent-home";
+      }
+
       const icons = Array.from(document.querySelectorAll(".icon-footer"));
       const index = icons.indexOf(footerIcon);
 
