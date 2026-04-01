@@ -101,7 +101,7 @@ export class AuthController {
             });
 
             this.app.model.setLoading(false);
-            this.app.navigation.goTo("home-adult");
+            this.app.navigation.goTo("parent-home");
         } catch (err) {
             this.app.model.setLoading(false);
             alert(err.message || "Erreur lors de la création du compte.");
