@@ -1,0 +1,98 @@
+.parent-screen {
+  padding: 20px;
+  margin-top: 10dvh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.parent-screen h1 {
+  margin-bottom: 10px;
+}
+
+.parent-welcome-text {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.parent-info-block {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 15px;
+  background: var(--color-bg-popup, #f9f9f9);
+}
+
+.parent-info-desc {
+  font-size: 0.9em;
+  color: #888;
+}
+
+.parent-children-list {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+}
+
+.parent-child-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-bg-button-popup, #ffffff);
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.parent-child-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.parent-child-avatar {
+  font-size: 1.5em;
+}
+
+.parent-child-name {
+  font-weight: bold;
+  color: var(--color-text-button-popup, #333);
+}
+
+.parent-child-edit-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: #f0f0f0;
+  border: none;
+  cursor: pointer;
+}
+
+.parent-child-edit-btn:hover {
+  background: #e0e0e0;
+}
+
+.parent-no-child {
+  color: #888;
+  font-style: italic;
+}
+
+.parent-add-btn {
+  margin-top: 40px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.parent-logout-btn {
+  margin-top: 20px;
+  color: #ff4757;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.parent-logout-btn:hover {
+  text-decoration: underline;
+}

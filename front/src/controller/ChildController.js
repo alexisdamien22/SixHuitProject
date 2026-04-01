@@ -7,7 +7,6 @@ export class ChildController {
 
   async loadChildData() {
     try {
-      // Récupère l'ID via la session ou via le localStorage (utilisé par le Switcher)
       const childId =
         this.app.model.session.getChildId() ||
         localStorage.getItem("activeChildId");

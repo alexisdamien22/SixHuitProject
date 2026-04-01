@@ -69,20 +69,30 @@ export function initAppEvents(view) {
       const step = pathDot.closest(".path-step");
       const popup = step.querySelector(".duo-popup");
 
-      document.querySelectorAll(".duo-popup.show").forEach((p) => {
-        if (p !== popup) p.classList.remove("show");
+      document.querySelectorAll(".path-step").forEach((s) => {
+        if (s !== step) {
+          s.classList.remove("active-step");
+          const otherPopup = s.querySelector(".duo-popup");
+          if (otherPopup) otherPopup.classList.remove("show");
+        }
       });
 
-      if (popup) popup.classList.toggle("show");
+      const isOpening = !popup.classList.contains("show");
+      if (isOpening) {
+        popup.classList.add("show");
+        step.classList.add("active-step");
+      } else {
+        popup.classList.remove("show");
+        step.classList.remove("active-step");
+      }
       return;
     }
 
     const activePopup = document.querySelector(".duo-popup.show");
-    if (activePopup) {
-      const clickedOnPopup = e.target.closest(".duo-popup");
-      if (!clickedOnPopup) {
-        activePopup.classList.remove("show");
-      }
+    if (activePopup && !e.target.closest(".duo-popup")) {
+      activePopup.classList.remove("show");
+      const activeStep = activePopup.closest(".path-step");
+      if (activeStep) activeStep.classList.remove("active-step");
     }
   });
 

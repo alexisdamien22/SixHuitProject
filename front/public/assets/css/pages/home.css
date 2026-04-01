@@ -170,18 +170,25 @@
   text-transform: uppercase;
   font-size: 14px;
 }
+
 .path-step {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  /* On s'assure qu'il n'y a pas de z-index fixe ici qui bloquerait le JS */
   z-index: 1;
 }
 
-.path-step:has(.duo-popup.show) {
-  z-index: 9999;
+/* Cette classe forcée par le JS garantit que l'élément est au-dessus de TOUT */
+.path-step.active-step {
+  z-index: 9999 !important;
 }
 
+/* On s'assure que la popup a aussi son propre z-index interne */
+.duo-popup {
+  z-index: 10000;
+}
 .path-button-container:has(.duo-popup:hover) .path-dot,
 .path-button-container:has(.duo-popup:active) .path-dot,
 .path-button-container:has(.duo-popup.show) .path-dot {
