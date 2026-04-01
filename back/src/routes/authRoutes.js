@@ -10,4 +10,6 @@ router.post("/login", AuthController.login);
 
 router.get("/me", AuthController.getProfile);
 
+router.get("/children", authMiddleware, AuthController.getChildren);
+
 export default router;

@@ -4,6 +4,7 @@ export class AppModel {
   constructor() {
     this.session = new SessionStore();
     this.childData = null;
+    this.childrenAccounts = [];
 
     this.authState = {
       step: 1,
@@ -81,9 +82,9 @@ export class AppModel {
       const token = this.session.getToken();
       if (!token) return;
 
-      const apiUrl =
-        import.meta.env.VITE_API_URL || "http://localhost:3001/api";
-      const response = await fetch(`${apiUrl}/parent/children`, {
+      const apiUrl = "http://localhost:3001/api";
+
+      const response = await fetch(`${apiUrl}/auth/children`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -95,15 +96,12 @@ export class AppModel {
 
       if (response.ok && result.success) {
         this.childrenAccounts = result.children;
+        console.log("[AppModel] Enfants chargés :", this.childrenAccounts);
       } else {
         this.childrenAccounts = [];
-        console.error("[AppModel] Erreur renvoyée par l'API :", result.error);
       }
     } catch (error) {
-      console.error(
-        "[AppModel] Erreur de communication avec le serveur :",
-        error,
-      );
+      console.error("[AppModel] Erreur fetch :", error);
       this.childrenAccounts = [];
     }
   }

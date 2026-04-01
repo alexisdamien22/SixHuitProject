@@ -20,20 +20,8 @@ export class AdultAccountModel extends BaseModel {
   }
 
   static getChildrenByAdultId(adultId) {
-    console.log(
-      "[Backend - DB] getChildrenByAdultId appelé avec adultId :",
+    return this.query("SELECT * FROM childaccount WHERE adultId = ?", [
       adultId,
-    );
-    return this.query("SELECT * FROM childaccount WHERE adult_id = ?", [
-      adultId,
-    ])
-      .then((result) => {
-        console.log("[Backend - DB] Résultats trouvés :", result);
-        return result;
-      })
-      .catch((err) => {
-        console.error("[Backend - DB] Erreur SQL :", err);
-        throw err;
-      });
+    ]);
   }
 }
