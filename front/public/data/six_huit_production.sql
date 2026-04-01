@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `adultaccount` (
   `id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) DEFAULT NULL,
+  `password_hash` varchar(255) DEFAULT NULL,
   `teacher` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -39,9 +39,9 @@ CREATE TABLE `childaccount` (
   `name` varchar(255) NOT NULL,
   `age` int DEFAULT NULL,
   `instrument` varchar(100) DEFAULT NULL,
-  `duree` int DEFAULT NULL,
-  `ecole` varchar(255) DEFAULT NULL,
-  `mascotte` varchar(50) DEFAULT NULL,
+  `time_amount` int DEFAULT NULL,
+  `school` varchar(255) DEFAULT NULL,
+  `mascot` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `adultId` (`adultId`)
