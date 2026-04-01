@@ -1,20 +1,22 @@
 import { BaseModel } from "./BaseModel.js";
 
 export class AdultAccountModel extends BaseModel {
-  static findByEmail(email) {
-    return this.query("SELECT * FROM adultaccount WHERE email = ?", [email]);
+  static findByUsername(username) {
+    return this.query("SELECT * FROM adultaccount WHERE username = ?", [
+      username,
+    ]);
   }
 
-  static create({ email, password, teacher }) {
+  static create({ username, password, teacher }) {
     return this.query(
-      "INSERT INTO adultaccount (email, password, teacher) VALUES (?, ?, ?)",
-      [email, password, teacher],
+      "INSERT INTO adultaccount (username, password, teacher) VALUES (?, ?, ?)",
+      [username, password, teacher],
     );
   }
 
   static findById(id) {
     return this.query(
-      "SELECT id, email, teacher, created_at FROM adultaccount WHERE id = ?",
+      "SELECT id, username, teacher, created_at FROM adultaccount WHERE id = ?",
       [id],
     );
   }
