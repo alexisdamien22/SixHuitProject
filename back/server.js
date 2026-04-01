@@ -18,6 +18,11 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route non trouvée" });
 });
 
+app.use((err, req, res, next) => {
+  console.error("[Serveur] Erreur fatale :", err);
+  res.status(500).json({ error: "Serveur ou base de données injoignable." });
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 API active sur le port ${PORT}`);
 });

@@ -195,9 +195,10 @@ export class AuthController {
     this.app.navigation.goTo("login");
   }
 
-  triggerRender() {
+  async triggerRender() {
     if (this.app.view.currentPage) {
-      this.app.view.appRoot.replaceChildren(this.app.view.currentPage.render());
+      const content = await this.app.view.currentPage.render();
+      this.app.view.appRoot.replaceChildren(content);
     }
   }
 }
