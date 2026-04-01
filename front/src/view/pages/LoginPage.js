@@ -37,7 +37,10 @@ export class LoginPage {
           el("p", { className: "ca-question" }, "Content de te revoir !"),
           el(
             "form",
-            { onSubmit: (e) => e.preventDefault() },
+            {
+              onSubmit: (e) => e.preventDefault(),
+              onsubmit: (e) => e.preventDefault(),
+            },
             el("input", {
               className: "ca-input login-input",
               type: "email",
