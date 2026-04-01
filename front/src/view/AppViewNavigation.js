@@ -1,4 +1,5 @@
 import { el } from "../utils/DOMBuilder.js";
+import { playSound } from "../utils/audio.js";
 
 export const AppViewNavigation = {
   // --- SLIDER DU FOOTER ---
@@ -63,6 +64,7 @@ export const AppViewNavigation = {
           {
             className: "bottom-menu-item",
             onClick: () => {
+              playSound('assets/audio/settings.mp3'); // Dernier ajout
               view.toggleBottomMenu(false, true);
               view.syncFooter(3);
               view.app.navigation.goTo("settings");
