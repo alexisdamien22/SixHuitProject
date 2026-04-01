@@ -5,9 +5,26 @@ export class ParentHomePage {
     this.app = app;
   }
 
-  render() {
+  async render() {
+    console.log("[ParentHomePage] Début du render()...");
+    if (
+      this.app.model &&
+      typeof this.app.model.fetchChildrenAccounts === "function"
+    ) {
+      console.log("[ParentHomePage] Appel de fetchChildrenAccounts()...");
+      await this.app.model.fetchChildrenAccounts();
+      console.log("[ParentHomePage] fetchChildrenAccounts() terminé.");
+    } else {
+      console.warn(
+        "[ParentHomePage] ATTENTION: fetchChildrenAccounts n'existe pas dans le modèle !",
+      );
+    }
+
     const parentData = this.app.model.getParentData() || {};
     const welcomeName = parentData.name ? `, ${parentData.name}` : "";
+
+    const children = this.app.model?.childrenAccounts || [];
+    console.log("[ParentHomePage] Liste des enfants récupérée :", children);
 
     return el(
       "div",
@@ -48,6 +65,67 @@ export class ParentHomePage {
           { style: { fontSize: "0.9em", color: "#888" } },
           "Crée un profil pour que ton enfant puisse commencer ses sessions de musique.",
         ),
+      ),
+
+      el(
+        "div",
+        { style: { width: "100%", maxWidth: "400px", marginTop: "20px" } },
+        children.length > 0
+          ? children.map((child) =>
+              el(
+                "div",
+                {
+                  style: {
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    background: "#fff",
+                    padding: "10px 15px",
+                    borderRadius: "10px",
+                    marginBottom: "10px",
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  },
+                },
+                el(
+                  "div",
+                  {
+                    style: {
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    },
+                  },
+                  el(
+                    "span",
+                    { style: { fontSize: "1.5em" } },
+                    child.mascot || "🎵",
+                  ),
+                  el(
+                    "span",
+                    { style: { fontWeight: "bold", color: "#333" } },
+                    child.name,
+                  ),
+                ),
+                el(
+                  "button",
+                  {
+                    style: {
+                      padding: "5px 10px",
+                      borderRadius: "5px",
+                      background: "#f0f0f0",
+                      border: "none",
+                      cursor: "pointer",
+                    },
+                  },
+                  "Modifier",
+                ),
+              ),
+            )
+          : el(
+              "p",
+              { style: { color: "#888", fontStyle: "italic" } },
+              "Aucun enfant associé pour le moment.",
+            ),
       ),
 
       el(
