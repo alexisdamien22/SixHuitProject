@@ -44,11 +44,13 @@ export class ParentHomePage {
           className: "ca-form-block parent-info-block",
         },
         el("p", { className: "ca-question" }, "Gère les profils enfants ici."),
-        el(
-          "p",
-          { className: "parent-info-desc" },
-          "Crée un profil pour que ton enfant puisse commencer ses sessions de musique.",
-        ),
+        children.length === 0
+          ? el(
+              "p",
+              { className: "parent-info-desc" },
+              "Crée un profil pour que ton enfant puisse commencer ses sessions de musique.",
+            )
+          : "",
 
         el(
           "div",
