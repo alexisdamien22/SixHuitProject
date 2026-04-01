@@ -11,10 +11,16 @@ export const AccountSwitcher = {
         {
           className: "switcher-item",
           dataset: { id: String(acc.id) },
-          onClick: () => {
+          onClick: async () => {
             localStorage.setItem("activeChildId", acc.id);
             view.toggleAccountSwitcher(false);
-            window.appController?.navigation.goTo("home");
+            if (
+              view.app.child &&
+              typeof view.app.child.loadChildData === "function"
+            ) {
+              await view.app.child.loadChildData();
+            }
+            view.app.navigation.goTo("home");
           },
         },
         el("div", { className: "switcher-avatar" }, acc.mascot || "🎵"),
@@ -59,7 +65,7 @@ export const AccountSwitcher = {
               id: "btn-switch-add",
               onClick: () => {
                 view.toggleAccountSwitcher(false);
-                window.appController?.navigation.goTo("registerChild");
+                view.app.navigation.goTo("registerChild");
               },
             },
             el("div", { className: "switcher-avatar" }, "+"),
@@ -79,7 +85,7 @@ export const AccountSwitcher = {
             onClick: () => {
               localStorage.removeItem("activeChildId");
               view.toggleAccountSwitcher(false);
-              window.appController?.navigation.goTo("home");
+              view.app.navigation.goTo("parent-home");
             },
           },
           el(

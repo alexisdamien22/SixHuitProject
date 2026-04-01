@@ -6,6 +6,7 @@
 @import url("./layout/header.css");
 @import url("./layout/footer.css");
 @import url("./layout/menus.css");
+@import url("./layout/switcher.css");
 
 /* Import des composants réutilisables */
 @import url("./components/buttons.css");

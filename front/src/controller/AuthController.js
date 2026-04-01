@@ -69,13 +69,25 @@ export class AuthController {
         );
       }
 
+      console.log("[AuthController] Résultat de connexion API :", result);
+
       this.app.model.session.saveSession({
         token: result.token,
         adultId: result.adultId,
+        childId: result.childId,
       });
 
       this.app.model.setLoading(false);
-      this.app.navigation.goTo("home");
+      console.log(
+        "[AuthController] Redirection. est-il Parent ?",
+        this.app.model.session.isParent(),
+      );
+      if (this.app.model.session.isParent()) {
+        this.app.navigation.goTo("parent-home");
+      } else {
+        await this.app.child.loadChildData();
+        this.app.navigation.goTo("home");
+      }
     } catch (err) {
       this.app.model.setLoading(false);
       alert(err.message || "Identifiants incorrects.");
@@ -96,7 +108,6 @@ export class AuthController {
         password: state.registerData.password,
       });
 
-      // On sécurise également l'inscription
       if (!result || result.error || (!result.token && !result.adultId)) {
         throw new Error(
           result?.error ||
@@ -110,7 +121,7 @@ export class AuthController {
       });
 
       this.app.model.setLoading(false);
-      this.app.navigation.goTo("home-adult");
+      this.app.navigation.goTo("parent-home");
     } catch (err) {
       this.app.model.setLoading(false);
       alert(err.message || "Erreur lors de la création du compte.");

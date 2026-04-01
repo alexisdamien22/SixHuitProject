@@ -1,7 +1,8 @@
 .account-switcher-container {
   position: fixed;
   inset: 0;
-  z-index: 2000;
+  top: 10dvh;
+  z-index: 1000;
   pointer-events: none;
   display: flex;
   flex-direction: column;

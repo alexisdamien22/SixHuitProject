@@ -5,12 +5,12 @@ export function initAppEvents(view) {
     if (e.target.id === "theme-checkbox") AppViewTheme.toggle(e.target.checked);
   });
 
-  // 2. Délégation Globale des Clics
   document.addEventListener("click", (e) => {
-    // --- Menus Glissants ---
-    const headerProfile = e.target.closest(".profile-icon");
+    const headerProfile = e.target.closest(
+      ".profile-icon, .header-profile-btn",
+    );
     if (headerProfile) {
-      view.toggleAccountSwitcher(true);
+      view.toggleAccountSwitcher();
       return;
     }
 
@@ -35,14 +35,6 @@ export function initAppEvents(view) {
         !e.target.closest(".profile-icon")
       )
         view.toggleTopMenu(false);
-    }
-
-    if (e.target.closest(".profile-icon")) {
-      const accounts = view.app.model?.childrenAccounts || [
-        { id: 1, name: "Compte 1" },
-        { id: 2, name: "Compte 2" },
-      ];
-      view.toggleTopMenu(undefined, accounts);
     }
 
     const paramBtn = e.target.closest(".parametre");

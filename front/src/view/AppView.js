@@ -39,17 +39,22 @@ export class AppView {
     requestAnimationFrame(() => this.syncFooter(0));
   }
 
-  renderPage(name, params = {}) {
+  async renderPage(name, params = {}) {
     this.appRoot.replaceChildren();
 
-    const hideNav = [
+    const hideHeader = ["login", "registerParent", "registerChild"].includes(
+      name,
+    );
+
+    const hideFooter = [
       "login",
       "registerParent",
       "registerChild",
       "parent-home",
     ].includes(name);
-    this.headerRoot.style.display = hideNav ? "none" : "";
-    this.footerRoot.style.display = hideNav ? "none" : "";
+
+    this.headerRoot.style.display = hideHeader ? "none" : "";
+    this.footerRoot.style.display = hideFooter ? "none" : "";
 
     let page;
     switch (name) {
@@ -85,7 +90,8 @@ export class AppView {
     }
 
     this.currentPage = page;
-    this.appRoot.appendChild(page.render());
+    const content = await page.render();
+    this.appRoot.appendChild(content);
   }
 
   updateChildData(data) {
@@ -133,43 +139,42 @@ export class AppView {
     container.classList.toggle("show", show);
   }
 
-  toggleAccountSwitcher(show) {
+  async toggleAccountSwitcher(show) {
     let switcher = document.getElementById("account-switcher-container");
-    if (!switcher && show) {
-      const children = this.app.model?.getChildren
-        ? this.app.model.getChildren()
-        : [];
+    const isShowing = switcher?.classList.contains("show");
+    const targetShow = show !== undefined ? show : !isShowing;
+
+    if (targetShow) {
+      console.log(
+        "[AppView] Ouverture du switcher. Récupération des enfants...",
+      );
+      if (
+        this.app.model &&
+        typeof this.app.model.fetchChildrenAccounts === "function"
+      ) {
+        console.log("[AppView] Appel de fetchChildrenAccounts()...");
+        await this.app.model.fetchChildrenAccounts();
+      } else {
+        console.warn(
+          "[AppView] ATTENTION: fetchChildrenAccounts n'existe pas dans le modèle !",
+        );
+      }
+
+      const children =
+        this.app.model?.childrenAccounts ||
+        (this.app.model?.getChildren ? this.app.model.getChildren() : []);
+      console.log("[AppView] Enfants injectés dans le switcher :", children);
+
       AccountSwitcher.create(this, children);
       switcher = document.getElementById("account-switcher-container");
-    }
 
-    if (switcher) {
-      if (show) {
-        switcher.classList.add("show");
-        document.body.style.overflow = "hidden";
-      } else {
-        switcher.classList.remove("show");
-        document.body.style.overflow = "";
-      }
-    }
-  }
-  toggleAccountSwitcher(show) {
-    let switcher = document.getElementById("account-switcher-container");
+      void switcher.offsetWidth;
 
-    if (!switcher && show) {
-      const children = this.model?.getChildren ? this.model.getChildren() : [];
-      AccountSwitcher.create(this, children);
-      switcher = document.getElementById("account-switcher-container");
-    }
-
-    if (switcher) {
-      if (show) {
-        switcher.classList.add("show");
-        document.body.style.overflow = "hidden";
-      } else {
-        switcher.classList.remove("show");
-        document.body.style.overflow = "";
-      }
+      switcher.classList.add("show");
+      document.body.style.overflow = "hidden";
+    } else if (switcher) {
+      switcher.classList.remove("show");
+      document.body.style.overflow = "";
     }
   }
   createErrorPage(name) {
