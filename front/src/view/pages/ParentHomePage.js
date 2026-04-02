@@ -13,20 +13,21 @@ export class ParentHomePage {
       await this.app.model.fetchChildrenAccounts();
     } else {
       console.warn(
-        "[ParentHomePage] ATTENTION: fetchChildrenAccounts n'existe pas !",
+        "[ParentHomePage] ATTENTION: fetchChildrenAccounts n'existe pas dans le modèle !",
       );
     }
 
     const parentData = this.app.model.getParentData() || {};
     const welcomeName = parentData.name ? `, ${parentData.name}` : "";
+
     const children = this.app.model?.childrenAccounts || [];
 
     return el(
       "div",
-      { className: "parent-screen page" },
-
+      {
+        className: "parent-screen page",
+      },
       el("h1", {}, "Espace Parent"),
-
       el(
         "p",
         { className: "parent-welcome-text" },
@@ -35,7 +36,9 @@ export class ParentHomePage {
 
       el(
         "div",
-        { className: "ca-form-block parent-info-block" },
+        {
+          className: "ca-form-block parent-info-block",
+        },
         el("p", { className: "ca-question" }, "Gère les profils enfants ici."),
         children.length === 0
           ? el(
@@ -44,47 +47,47 @@ export class ParentHomePage {
               "Crée un profil pour que ton enfant puisse commencer ses sessions de musique.",
             )
           : "",
-      ),
 
-      el(
-        "div",
-        { className: "parent-children-list" },
-        children.length > 0
-          ? children.map((child) =>
-              el(
-                "div",
-                { className: "parent-child-card" },
+        el(
+          "div",
+          { className: "parent-children-list" },
+          children.length > 0
+            ? children.map((child) =>
                 el(
                   "div",
-                  { className: "parent-child-info" },
+                  { className: "parent-child-card" },
                   el(
-                    "span",
-                    { className: "parent-child-avatar" },
-                    child.mascot || "🎵",
+                    "div",
+                    { className: "parent-child-info" },
+                    el(
+                      "span",
+                      { className: "parent-child-avatar" },
+                      child.mascot || "🎵",
+                    ),
+                    el("span", { className: "parent-child-name" }, child.name),
                   ),
-                  el("span", { className: "parent-child-name" }, child.name),
+                  el(
+                    "button",
+                    { className: "parent-child-edit-btn" },
+                    "Modifier",
+                  ),
                 ),
-                el(
-                  "button",
-                  { className: "parent-child-edit-btn" },
-                  "Modifier",
-                ),
+              )
+            : el(
+                "p",
+                { className: "parent-no-child" },
+                "Aucun enfant associé pour le moment.",
               ),
-            )
-          : el(
-              "p",
-              { className: "parent-no-child" },
-              "Aucun enfant associé pour le moment.",
-            ),
-      ),
+        ),
 
-      el(
-        "button",
-        {
-          className: "ca-btn-next parent-add-btn",
-          onClick: () => this.app.navigation.goTo("registerChild"),
-        },
-        "+ Ajouter un profil enfant",
+        el(
+          "button",
+          {
+            className: "ca-btn-next parent-add-btn",
+            onClick: () => this.app.navigation.goTo("registerChild"),
+          },
+          "+ Ajouter un profil enfant",
+        ),
       ),
 
       el(
