@@ -50,13 +50,21 @@ export class HomePage {
     const weeklyPlan = this.formatWeeklyPlan(childData.weeklyPlan || []);
 
     const pattern = [0, 45, 25, -25, -45];
-    this.hasHighlighted = false;
+
+    const frenchDays = [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+    ];
+    const currentDayName = frenchDays[new Date().getDay()];
 
     const steps = Object.entries(weeklyPlan).map(([day, status], i) => {
       const offset = pattern[i % pattern.length];
-      const isToday = status === "todo" && !this.hasHighlighted;
-
-      if (isToday) this.hasHighlighted = true;
+      const isToday = day === currentDayName;
 
       const extraElements = isToday
         ? [
@@ -108,7 +116,9 @@ export class HomePage {
     let desc = "";
     let button = null;
 
-    if (isToday) {
+    if (status === "done") {
+      desc = "Bravo ! Tu as validé cette séance.";
+    } else if (isToday && status === "todo") {
       desc = "Prêt pour un défi ?";
       button = el(
         "button",
@@ -121,8 +131,8 @@ export class HomePage {
         },
         "COMMENCER",
       );
-    } else if (status === "done") {
-      desc = "Bravo ! Tu as validé cette séance.";
+    } else if (status === "nothing") {
+      desc = "C'est un jour de repos !";
     } else {
       desc = "Patience... cette leçon n'est pas encore disponible.";
       button = el(

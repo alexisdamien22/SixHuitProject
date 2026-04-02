@@ -3,7 +3,6 @@ import { ChildService } from "../services/ChildService.js";
 export class ChildController {
   static async getChildData(req, res) {
     try {
-      console.log("Récupération des données de l'enfant…");
       const childId = req.params.childId;
       const result = await ChildService.getChildData(childId);
       res.status(200).json(result);

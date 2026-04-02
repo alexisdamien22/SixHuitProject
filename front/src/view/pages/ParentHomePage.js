@@ -6,14 +6,11 @@ export class ParentHomePage {
   }
 
   async render() {
-    console.log("[ParentHomePage] Début du render()...");
     if (
       this.app.model &&
       typeof this.app.model.fetchChildrenAccounts === "function"
     ) {
-      console.log("[ParentHomePage] Appel de fetchChildrenAccounts()...");
       await this.app.model.fetchChildrenAccounts();
-      console.log("[ParentHomePage] fetchChildrenAccounts() terminé.");
     } else {
       console.warn(
         "[ParentHomePage] ATTENTION: fetchChildrenAccounts n'existe pas dans le modèle !",
@@ -24,7 +21,7 @@ export class ParentHomePage {
     const welcomeName = parentData.name ? `, ${parentData.name}` : "";
 
     const children = this.app.model?.childrenAccounts || [];
-    console.log("[ParentHomePage] Liste des enfants récupérée :", children);
+    
 
     return el(
       "div",

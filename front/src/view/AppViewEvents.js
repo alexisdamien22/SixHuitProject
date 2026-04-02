@@ -1,6 +1,14 @@
 import { AppViewTheme } from "./AppViewTheme.js";
 
 export function initAppEvents(view) {
+  window.addEventListener("resize", () => {
+    const icons = Array.from(document.querySelectorAll(".icon-footer"));
+    const activeIndex = icons.findIndex((i) => i.classList.contains("active"));
+    if (activeIndex !== -1) {
+      view.syncFooter(activeIndex);
+    }
+  });
+
   document.addEventListener("change", (e) => {
     if (e.target.id === "theme-checkbox") AppViewTheme.toggle(e.target.checked);
   });
@@ -50,7 +58,6 @@ export function initAppEvents(view) {
     if (footerIcon) {
       let page = footerIcon.dataset.page;
 
-      // Redirige vers le tableau de bord parent si on clique sur la maison en mode Adulte
       if (document.body.classList.contains("parent-mode") && page === "home") {
         page = "parent-home";
       }

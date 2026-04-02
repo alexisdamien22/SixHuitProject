@@ -53,7 +53,6 @@ export class AppView {
     this.headerRoot.style.display = hideHeader ? "none" : "";
     this.footerRoot.style.display = hideFooter ? "none" : "";
 
-    // Active une classe CSS spéciale si on est sur l'espace parent
     const isParentMode =
       this.app.model.session.isParent() &&
       !localStorage.getItem("activeChildId");
@@ -95,6 +94,19 @@ export class AppView {
     this.currentPage = page;
     const content = await page.render();
     this.appRoot.appendChild(content);
+
+    const pageToIconMap = {
+      home: 0,
+      "parent-home": 0,
+      podium: 1,
+      music: 2,
+      profil: 3,
+      settings: 3,
+    };
+    const activeFooterIndex = pageToIconMap[name];
+    if (activeFooterIndex !== undefined) {
+      this.syncFooter(activeFooterIndex);
+    }
   }
 
   updateChildData(data) {
@@ -150,14 +162,10 @@ export class AppView {
     const targetShow = show !== undefined ? show : !isShowing;
 
     if (targetShow) {
-      console.log(
-        "[AppView] Ouverture du switcher. Récupération des enfants...",
-      );
       if (
         this.app.model &&
         typeof this.app.model.fetchChildrenAccounts === "function"
       ) {
-        console.log("[AppView] Appel de fetchChildrenAccounts()...");
         await this.app.model.fetchChildrenAccounts();
       } else {
         console.warn(
@@ -168,7 +176,6 @@ export class AppView {
       const children =
         this.app.model?.childrenAccounts ||
         (this.app.model?.getChildren ? this.app.model.getChildren() : []);
-      console.log("[AppView] Enfants injectés dans le switcher :", children);
 
       AccountSwitcher.create(this, children);
       switcher = document.getElementById("account-switcher-container");

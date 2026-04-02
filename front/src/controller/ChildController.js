@@ -16,15 +16,11 @@ export class ChildController {
         return;
       }
 
-      console.log("Chargement des données enfant…", childId);
-
       const data = await ApiClient.get(`/child/${childId}`);
 
       if (data && data.error) {
         throw new Error(data.error);
       }
-
-      console.log("Données enfant reçues :", data);
 
       this.app.model.setChildData(data);
 

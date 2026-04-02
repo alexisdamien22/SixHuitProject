@@ -69,8 +69,6 @@ export class AuthController {
         );
       }
 
-      console.log("[AuthController] Résultat de connexion API :", result);
-
       this.app.model.session.saveSession({
         token: result.token,
         adultId: result.adultId,
@@ -78,10 +76,7 @@ export class AuthController {
       });
 
       this.app.model.setLoading(false);
-      console.log(
-        "[AuthController] Redirection. est-il Parent ?",
-        this.app.model.session.isParent(),
-      );
+
       if (this.app.model.session.isParent()) {
         this.app.navigation.goTo("parent-home");
       } else {

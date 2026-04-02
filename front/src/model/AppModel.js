@@ -28,7 +28,6 @@ export class AppModel {
   }
 
   async loadSession() {
-    console.log("Chargement de la session…");
     this.session.load();
   }
 
@@ -96,7 +95,6 @@ export class AppModel {
 
       if (response.ok && result.success) {
         this.childrenAccounts = result.children;
-        console.log("[AppModel] Enfants chargés :", this.childrenAccounts);
       } else {
         this.childrenAccounts = [];
       }
