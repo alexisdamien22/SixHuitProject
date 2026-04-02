@@ -1,5 +1,5 @@
 import { AuthService } from "../services/AuthService.js";
-import { ChildAccountModel } from "../models/AdultAccountModel.js";
+import { ChildAccountModel } from "../models/ChildAccountModel.js";
 export class AuthController {
   static async registerAdult(req, res) {
     try {
