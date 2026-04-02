@@ -56,3 +56,11 @@ input:checked + .slider:before {
   background-color: #ffffff00;
   border-radius: 50px;
 }
+
+.page-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10dvh;
+  padding: 20px;
+}
