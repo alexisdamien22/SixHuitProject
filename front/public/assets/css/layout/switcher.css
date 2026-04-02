@@ -12,7 +12,7 @@
 .account-switcher-overlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: var(--color-overlay);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -33,12 +33,20 @@
 .account-switcher-container.show {
   pointer-events: auto;
 }
+
 .account-switcher-container.show .account-switcher-overlay {
   opacity: 1;
   pointer-events: auto;
 }
+
 .account-switcher-container.show .account-switcher-sheet {
   transform: translateY(0);
+}
+
+.switcher-header {
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: var(--color-text-main);
 }
 
 .switcher-list {
@@ -58,14 +66,19 @@
   background: var(--ca-input-bg);
   border-radius: 12px;
   cursor: pointer;
+  border: 1px solid var(--color-border-soft);
 }
-.switcher-avatar {
-  font-size: 24px;
-}
+
 .switcher-name {
   font-weight: bold;
   color: var(--color-text-main);
 }
+
+.switcher-status {
+  color: var(--color-text-sub);
+  font-size: 0.85em;
+}
+
 .switcher-divider {
   height: 1px;
   background: var(--color-border-light);
@@ -75,33 +88,27 @@
 .ca-pin-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: var(--color-overlay);
   backdrop-filter: blur(5px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  color: #fff;
-}
-
-.verify-pin-container {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
+  color: var(--color-text-main);
 }
 
 .verify-pin-dot {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 2px solid #fff;
-  transition: all 0.2s;
+  border: 2px solid var(--color-pin-dot-border);
   background-color: transparent;
+  transition: all 0.2s;
 }
 
 .verify-pin-dot.filled {
-  background-color: #fff;
+  background-color: var(--color-pin-dot-filled);
 }
 
 .verify-pin-keypad {
@@ -113,33 +120,30 @@
 }
 
 .pin-key {
-  background-color: rgba(255, 255, 255, 0.1);
-  border: none;
+  background-color: var(--color-keypad-bg);
+  border: 1px solid var(--color-border-light);
   border-radius: 50%;
   width: 65px;
   height: 65px;
-  color: #fff;
+  color: var(--color-keypad-text);
   font-size: 1.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
 }
 
 .pin-key:active {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--ca-purple);
+  color: #ffffff;
 }
 
 .pin-key-cancel {
   background-color: transparent !important;
+  border: none !important;
   font-size: 16px;
-  box-shadow: none;
-  border-radius: 12px;
-}
-
-.error-shake {
-  animation: shake 0.4s;
+  color: var(--color-text-main);
+  width: auto;
 }
 
 @keyframes shake {
@@ -154,4 +158,8 @@
   50% {
     transform: translateX(10px);
   }
+}
+
+.error-shake {
+  animation: shake 0.4s;
 }
