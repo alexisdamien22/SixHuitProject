@@ -1,22 +1,24 @@
-export class SessionsModel extends BaseModel {
-    static addSession(childId, data) {
-        return this.query(
-            `INSERT INTO sessions (child_id, session_date, hapiness, quality, practice_day)
-             VALUES (?, ?, ?, ?, ?)`,
-            [
-                childId,
-                data.session_date,
-                data.hapiness,
-                data.quality,
-                data.practice_day
-            ]
-        );
-    }
+import { BaseModel } from "./BaseModel.js";
 
-    static getSessions(childId) {
-        return this.query(
-            "SELECT * FROM sessions WHERE child_id = ? ORDER BY session_date DESC",
-            [childId]
-        );
-    }
+export class SessionsModel extends BaseModel {
+  static addSession(childId, data) {
+    return this.query(
+      `INSERT INTO sessions (child_id, session_date, hapiness, quality, practice_day)
+             VALUES (?, ?, ?, ?, ?)`,
+      [
+        childId,
+        data.session_date,
+        data.hapiness,
+        data.quality,
+        data.practice_day,
+      ],
+    );
+  }
+
+  static getSessions(childId) {
+    return this.query(
+      "SELECT * FROM sessions WHERE child_id = ? ORDER BY session_date DESC",
+      [childId],
+    );
+  }
 }

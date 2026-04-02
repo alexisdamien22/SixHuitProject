@@ -3,27 +3,18 @@ import { el } from "../../utils/DOMBuilder.js";
 export class HomePage {
   constructor(app) {
     this.app = app;
-
-    this.stepsContainer = null;
-    this.popup = null;
-    this.popupTitle = null;
-    this.popupDesc = null;
-    this.startBtn = null;
     this.hasHighlighted = false;
   }
 
   formatWeeklyPlan(rawPlan) {
-    const DAY_MAP = {
+    const dayMap = {
       monday: "Lundi",
       tuesday: "Mardi",
       wednesday: "Mercredi",
       thursday: "Jeudi",
       friday: "Vendredi",
-    };
-
-    const STATUS_MAP = {
-      1: "done",
-      0: "todo",
+      saturday: "Samedi",
+      sunday: "Dimanche",
     };
 
     const fullPlan = {
@@ -32,90 +23,151 @@ export class HomePage {
       Mercredi: "nothing",
       Jeudi: "nothing",
       Vendredi: "nothing",
+      Samedi: "nothing",
+      Dimanche: "nothing",
     };
 
+    if (!rawPlan || !Array.isArray(rawPlan)) return fullPlan;
+
     rawPlan.forEach((entry) => {
-      const day = DAY_MAP[entry.day_of_week];
-      const status = STATUS_MAP[entry.practice];
-      fullPlan[day] = status;
+      const day = dayMap[entry.day_of_week];
+      if (day) {
+        if (entry.status === 1) {
+          fullPlan[day] = "done";
+        } else if (entry.practice === 1) {
+          fullPlan[day] = "todo";
+        } else {
+          fullPlan[day] = "nothing";
+        }
+      }
     });
 
     return fullPlan;
   }
 
-  showPopup(day) {
-    this.popupTitle.textContent = day;
-    this.popupDesc.textContent = "Prêt pour un défi ?";
-    this.popup.classList.add("show");
+  async render() {
+    const childData = (await this.app.model.getChildData()) || {};
+    const weeklyPlan = this.formatWeeklyPlan(childData.weeklyPlan || []);
 
-    this.startBtn.onclick = async () => {
-      await this.app.child.updateSession({
-        practice_day: day,
-        practice: 1,
-        session_date: new Date().toISOString().slice(0, 10),
-      });
+    const pattern = [0, 45, 25, -25, -45];
 
-      this.popup.classList.remove("show");
-      this.app.navigation.goTo("music");
-    };
+    const frenchDays = [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+    ];
+    const currentDayName = frenchDays[new Date().getDay()];
+
+    const steps = Object.entries(weeklyPlan).map(([day, status], i) => {
+      const offset = pattern[i % pattern.length];
+      const isToday = day === currentDayName;
+
+      const extraElements = isToday
+        ? [
+            el("div", { className: "today-halo" }),
+            el("img", {
+              className: "mascot-path",
+              src: "/assets/img/mascots/camelion.png",
+              alt: "Mascotte",
+            }),
+          ]
+        : [];
+
+      const popup = this.createPopup(day, status, i, isToday);
+
+      const pathButtonContainer = el(
+        "div",
+        { className: "path-button-container" },
+        ...extraElements,
+        el("div", { className: "path-dot-shadow" }),
+        el("div", { className: "path-dot" }),
+        popup,
+      );
+
+      return el(
+        "div",
+        {
+          className: `path-step ${status} ${!isToday && status === "todo" ? "is-locked" : ""}`,
+          style: { transform: `translateX(${offset}px)`, zIndex: "1" },
+          dataset: { day: day },
+        },
+        pathButtonContainer,
+        el("span", { className: "path-label" }, day),
+      );
+    });
+
+    const container = el(
+      "div",
+      { className: "home-page" },
+      el("div", { className: "path-container" }, steps),
+    );
+
+    requestAnimationFrame(() => this.scrollToMascot());
+
+    return container;
   }
 
-  async render() {
-    const childData = await this.app.model.getChildData();
-    const weeklyPlan = this.formatWeeklyPlan(childData.weeklyPlan);
+  createPopup(day, status, index, isToday) {
+    const title = `Leçon ${index + 1}`;
+    let desc = "";
+    let button = null;
 
-    this.hasHighlighted = false;
+    if (status === "done") {
+      desc = "Bravo ! Tu as validé cette séance.";
+    } else if (isToday && status === "todo") {
+      desc = "Prêt pour un défi ?";
+      button = el(
+        "button",
+        {
+          className: "start-btn",
+          onClick: (e) => {
+            e.stopPropagation();
+            this.handleStart(day);
+          },
+        },
+        "COMMENCER",
+      );
+    } else if (status === "nothing") {
+      desc = "C'est un jour de repos !";
+    } else {
+      desc = "Patience... cette leçon n'est pas encore disponible.";
+      button = el(
+        "button",
+        { className: "start-btn disabled", disabled: true },
+        "🔒 BLOQUÉ",
+      );
+    }
 
     return el(
       "div",
-      { className: "home-page" },
-
-      (this.stepsContainer = el(
-        "div",
-        { className: "steps-container" },
-
-        Object.entries(weeklyPlan).map(([day, status]) => {
-          const step = el(
-            "div",
-            {
-              className: `step ${status}`,
-              dataset: { day },
-            },
-            el("span", { className: "step-label" }, day),
-          );
-
-          if (status === "todo" && !this.hasHighlighted) {
-            this.hasHighlighted = true;
-
-            step.appendChild(el("div", { className: "halo" }));
-
-            step.appendChild(
-              el("img", {
-                className: "mascot",
-                src: "/assets/img/mascots/camelion.png",
-              }),
-            );
-
-            step.addEventListener("click", () => this.showPopup(day));
-          }
-
-          return step;
-        }),
-      )),
-      (this.popup = el(
-        "div",
-        { className: "duo-popup" },
-
-        el("div", { className: "popup-arrow" }),
-
-        (this.popupTitle = el("h3", {}, "")),
-        (this.popupDesc = el("p", {}, "")),
-        (this.startBtn = el("button", { className: "start-btn" }, "COMMENCER")),
-      )),
+      { className: "duo-popup" },
+      el("div", { className: "popup-arrow" }),
+      el("h3", {}, title),
+      el("p", {}, desc),
+      button,
     );
   }
 
-  onShow() {
-    if (this.popup) this.popup.classList.remove("show");
+  async handleStart(day) {
+    await this.app.child.updateSession({
+      practice_day: day,
+      practice: 1,
+      session_date: new Date().toISOString().slice(0, 10),
+    });
+    this.app.navigation.goTo("music");
+  }
+
+  scrollToMascot() {
+    const mascot = document.querySelector(".mascot-path");
+    if (mascot) {
+      mascot.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
   }
 }

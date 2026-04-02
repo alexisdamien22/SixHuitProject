@@ -10,18 +10,19 @@
   border-radius: 15px;
   padding: 15px;
   text-align: center;
-  z-index: 999;
+  z-index: 1000; /* Augmenté légèrement */
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-  pointer-events: auto;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Ombre plus forte pour détacher du fond */
+  pointer-events: none; /* Empêche de bloquer le clic quand invisible */
 }
 
 .duo-popup.show {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) scale(1);
+  pointer-events: auto; /* Réactive le clic sur le bouton COMMENCER */
 }
 
 .popup-arrow {

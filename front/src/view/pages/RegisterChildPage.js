@@ -17,7 +17,7 @@ export class RegisterChildPage {
     const state = this.app.model.getAuthState();
     const isValid = FormHelpers.isChildStepValid(
       state.step,
-      state.childRegisterData
+      state.childRegisterData,
     );
 
     const btn = document.getElementById("ca-main-btn");
@@ -30,7 +30,7 @@ export class RegisterChildPage {
     const state = this.app.model.getAuthState();
     const cards = document.querySelectorAll(".ca-instr-card");
 
-    cards.forEach(card => {
+    cards.forEach((card) => {
       const id = card.getAttribute("data-id");
       if (id === state.childRegisterData.instrument) {
         card.classList.add("sel");
@@ -46,7 +46,7 @@ export class RegisterChildPage {
     const state = this.app.model.getAuthState();
     const cells = document.querySelectorAll(".ca-mascot-cell");
 
-    cells.forEach(cell => {
+    cells.forEach((cell) => {
       const value = cell.getAttribute("data-value");
       if (value === state.childRegisterData.mascot) {
         cell.classList.add("sel");
@@ -62,7 +62,7 @@ export class RegisterChildPage {
     const state = this.app.model.getAuthState();
     const pills = document.querySelectorAll(".ca-day-pill");
 
-    pills.forEach(pill => {
+    pills.forEach((pill) => {
       const value = pill.getAttribute("data-value");
       if (state.childRegisterData.days.includes(value)) {
         pill.classList.add("sel");
@@ -102,7 +102,7 @@ export class RegisterChildPage {
           el(
             "button",
             {
-              className: "btn-primary",
+              className: "ca-btn-next",
               onClick: () => this.app.navigation.goTo("home"),
             },
             "C'est parti ! 🚀",
@@ -118,8 +118,8 @@ export class RegisterChildPage {
       "IS VALID ?",
       FormHelpers.isChildStepValid(
         state.step,
-        state.childRegisterData || state.registerData
-      )
+        state.childRegisterData || state.registerData,
+      ),
     );
 
     const isValid = FormHelpers.isChildStepValid(
@@ -152,7 +152,7 @@ export class RegisterChildPage {
 
         el(
           "div",
-          { className: "ca-form-block mt-24" },
+          { className: "ca-form-block" },
           this.buildStepContent(state, controller),
         ),
 
@@ -160,7 +160,7 @@ export class RegisterChildPage {
           "button",
           {
             id: "ca-main-btn",
-            className: "btn-primary mt-40",
+            className: "ca-btn-next",
             disabled: !isValid || state.isLoading,
             onClick: () => controller.handleNextChildStep(),
           },
@@ -174,9 +174,9 @@ export class RegisterChildPage {
     switch (state.step) {
       case 1:
         return [
-          el("p", { className: "form-label" }, "Quel est ton prénom ?"),
+          el("p", { className: "ca-question" }, "Quel est ton prénom ?"),
           el("input", {
-            className: "form-input",
+            className: "ca-input",
             type: "text",
             placeholder: "Ton prénom",
             value: state.childRegisterData.name,
@@ -186,9 +186,9 @@ export class RegisterChildPage {
         ];
       case 2:
         return [
-          el("p", { className: "form-label" }, "Quel est ton âge ?"),
+          el("p", { className: "ca-question" }, "Quel est ton âge ?"),
           el("input", {
-            className: "form-input",
+            className: "ca-input",
             type: "number",
             placeholder: "Âge",
             value: state.childRegisterData.age,
@@ -198,7 +198,7 @@ export class RegisterChildPage {
         ];
       case 3:
         return [
-          el("p", { className: "form-label" }, "Quel instrument ?"),
+          el("p", { className: "ca-question" }, "Quel instrument ?"),
           el(
             "div",
             { className: "ca-instr-grid" },
@@ -224,31 +224,39 @@ export class RegisterChildPage {
         return [
           el(
             "p",
-            { className: "form-label" },
+            { className: "ca-question" },
             "Depuis combien d'années pratiques-tu ?",
           ),
           el("input", {
-            className: "form-input",
+            className: "ca-input",
             type: "number",
             value: state.childRegisterData.time_amount,
             onInput: (e) =>
-              controller.handleInput("register-child", "time_amount", e.target.value),
+              controller.handleInput(
+                "register-child",
+                "time_amount",
+                e.target.value,
+              ),
           }),
         ];
       case 5:
         return [
-          el("p", { className: "form-label" }, "Ton école ou conservatoire ?"),
+          el("p", { className: "ca-question" }, "Ton école ou conservatoire ?"),
           el("input", {
-            className: "form-input",
+            className: "ca-input",
             type: "text",
             value: state.childRegisterData.school,
             onInput: (e) =>
-              controller.handleInput("register-child", "school", e.target.value),
+              controller.handleInput(
+                "register-child",
+                "school",
+                e.target.value,
+              ),
           }),
         ];
       case 6:
         return [
-          el("p", { className: "form-label" }, "Choisis une mascot !"),
+          el("p", { className: "ca-question" }, "Choisis une mascotte !"),
           el(
             "div",
             { className: "ca-mascot-grid" },
@@ -269,7 +277,7 @@ export class RegisterChildPage {
         return [
           el(
             "p",
-            { className: "form-label" },
+            { className: "ca-question" },
             "Quels jours vas-tu travailler ?",
           ),
           el(

@@ -59,15 +59,17 @@ export class AppView {
       name,
     );
 
-    const hideFooter = [
-      "login",
-      "registerParent",
-      "registerChild",
-      "parent-home",
-    ].includes(name);
+    const hideFooter = ["login", "registerParent", "registerChild"].includes(
+      name,
+    );
 
     this.headerRoot.style.display = hideHeader ? "none" : "";
     this.footerRoot.style.display = hideFooter ? "none" : "";
+
+    const isParentMode =
+      this.app.model.session.isParent() &&
+      !localStorage.getItem("activeChildId");
+    document.body.classList.toggle("parent-mode", isParentMode);
 
     let page;
     switch (name) {
@@ -105,10 +107,25 @@ export class AppView {
     this.currentPage = page;
     const content = await page.render();
     this.appRoot.appendChild(content);
+
+    const pageToIconMap = {
+      home: 0,
+      "parent-home": 0,
+      podium: 1,
+      music: 2,
+      profil: 3,
+      settings: 3,
+    };
+    const activeFooterIndex = pageToIconMap[name];
+    if (activeFooterIndex !== undefined) {
+      this.syncFooter(activeFooterIndex);
+    }
   }
 
   updateChildData(data) {
-    this.header.update(data);
+    if (this.header && typeof this.header.update === "function") {
+      this.header.update(data);
+    }
     if (this.currentPage && typeof this.currentPage.update === "function") {
       this.currentPage.update(data);
     }
@@ -130,6 +147,11 @@ export class AppView {
 
     const show =
       force !== undefined ? force : !container.classList.contains("show");
+
+    if (show) {
+      void container.offsetWidth;
+    }
+
     container.classList.toggle("show", show);
 
     if (!show && !skipReset) {
@@ -158,14 +180,10 @@ export class AppView {
     const targetShow = show !== undefined ? show : !isShowing;
 
     if (targetShow) {
-      console.log(
-        "[AppView] Ouverture du switcher. Récupération des enfants...",
-      );
       if (
         this.app.model &&
         typeof this.app.model.fetchChildrenAccounts === "function"
       ) {
-        console.log("[AppView] Appel de fetchChildrenAccounts()...");
         await this.app.model.fetchChildrenAccounts();
       } else {
         console.warn(
@@ -176,7 +194,6 @@ export class AppView {
       const children =
         this.app.model?.childrenAccounts ||
         (this.app.model?.getChildren ? this.app.model.getChildren() : []);
-      console.log("[AppView] Enfants injectés dans le switcher :", children);
 
       AccountSwitcher.create(this, children);
       switcher = document.getElementById("account-switcher-container");
