@@ -1,6 +1,14 @@
 import { AppViewTheme } from "./AppViewTheme.js";
 
 export function initAppEvents(view) {
+  window.addEventListener("resize", () => {
+    const icons = Array.from(document.querySelectorAll(".icon-footer"));
+    const activeIndex = icons.findIndex((i) => i.classList.contains("active"));
+    if (activeIndex !== -1) {
+      view.syncFooter(activeIndex);
+    }
+  });
+
   document.addEventListener("change", (e) => {
     if (e.target.id === "theme-checkbox") AppViewTheme.toggle(e.target.checked);
   });
@@ -48,7 +56,12 @@ export function initAppEvents(view) {
 
     const footerIcon = e.target.closest(".icon-footer");
     if (footerIcon) {
-      const page = footerIcon.dataset.page;
+      let page = footerIcon.dataset.page;
+
+      if (document.body.classList.contains("parent-mode") && page === "home") {
+        page = "parent-home";
+      }
+
       const icons = Array.from(document.querySelectorAll(".icon-footer"));
       const index = icons.indexOf(footerIcon);
 
@@ -63,32 +76,36 @@ export function initAppEvents(view) {
   });
 
   view.appRoot.addEventListener("click", (e) => {
-    if (e.target.closest(".duo-popup")) {
-      e.stopImmediatePropagation();
-      return;
-    }
-
-    const clickedElement = document.elementFromPoint(e.clientX, e.clientY);
-    const pathDot = clickedElement?.closest(".path-dot");
+    const pathDot = e.target.closest(".path-dot");
 
     if (pathDot) {
       const step = pathDot.closest(".path-step");
       const popup = step.querySelector(".duo-popup");
 
-      document
-        .querySelectorAll(".path-step")
-        .forEach((s) => (s.style.zIndex = "1"));
-      document.querySelectorAll(".duo-popup").forEach((p) => {
-        if (p !== popup) p.classList.remove("show");
+      document.querySelectorAll(".path-step").forEach((s) => {
+        if (s !== step) {
+          s.classList.remove("active-step");
+          const otherPopup = s.querySelector(".duo-popup");
+          if (otherPopup) otherPopup.classList.remove("show");
+        }
       });
 
-      popup.classList.toggle("show");
-      step.style.zIndex = popup.classList.contains("show") ? "999" : "1";
-    } else {
-      document.querySelectorAll(".duo-popup.show").forEach((p) => {
-        p.classList.remove("show");
-        p.closest(".path-step").style.zIndex = "1";
-      });
+      const isOpening = !popup.classList.contains("show");
+      if (isOpening) {
+        popup.classList.add("show");
+        step.classList.add("active-step");
+      } else {
+        popup.classList.remove("show");
+        step.classList.remove("active-step");
+      }
+      return;
+    }
+
+    const activePopup = document.querySelector(".duo-popup.show");
+    if (activePopup && !e.target.closest(".duo-popup")) {
+      activePopup.classList.remove("show");
+      const activeStep = activePopup.closest(".path-step");
+      if (activeStep) activeStep.classList.remove("active-step");
     }
   });
 
