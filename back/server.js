@@ -8,11 +8,26 @@ import childRoutes from "./src/routes/childRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://ton-url-ngrok.ngrok-free.app"
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/child", childRoutes);
+
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-store");
+  next();
+});
+
+navigator.serviceWorker.getRegistrations().then(regs => {
+  regs.forEach(reg => reg.unregister());
+});
 
 app.use((req, res) => {
   res.status(404).json({ error: "Route non trouvée" });
