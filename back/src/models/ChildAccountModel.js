@@ -25,7 +25,7 @@ export class ChildAccountModel extends BaseModel {
         );
     }
 
-    static findByAdult(adultId) {
+    static findByAdultId(adultId) {
         return this.query(
             "SELECT * FROM childaccount WHERE adultId = ?",
             [adultId]

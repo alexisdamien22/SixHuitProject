@@ -40,7 +40,7 @@ export class AuthController {
   static async getChildren(req, res) {
     try {
       const adultId = req.user.id;
-      const children = await AdultAccountModel.getChildrenByAdultId(adultId);
+      const children = await ChildAccountModel.findByAdultId(adultId);
 
       res.status(200).json({
         success: true,
