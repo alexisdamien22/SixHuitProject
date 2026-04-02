@@ -7,10 +7,10 @@ export class SessionsModel extends BaseModel {
              VALUES (?, ?, ?, ?, ?)`,
       [
         childId,
-        data.session_date,
-        data.hapiness,
-        data.quality,
-        data.practice_day,
+        data.session_date || null,
+        data.hapiness !== undefined ? data.hapiness : 0,
+        data.quality !== undefined ? data.quality : 0,
+        data.practice_day || null,
       ],
     );
   }

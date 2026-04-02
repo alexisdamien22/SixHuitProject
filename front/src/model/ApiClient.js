@@ -1,19 +1,25 @@
 // --- front/src/model/ApiClient.js ---
 import { API_URL } from "../config/api.js";
 
-export class ApiClient {
-  static getHeaders() {
-    const sessionRaw = localStorage.getItem("sixhuit-session");
-    const token = sessionRaw ? JSON.parse(sessionRaw).token : null;
-
-    const headers = { "Content-Type": "application/json" };
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-    return headers;
+function getHeaders() {
+  const headers = { "Content-Type": "application/json" };
+  const sessionRaw = localStorage.getItem("sixhuit-session");
+  if (sessionRaw) {
+    try {
+      const session = JSON.parse(sessionRaw);
+      if (session.token) {
+        headers["Authorization"] = `Bearer ${session.token}`;
+      }
+    } catch (e) {}
   }
+  return headers;
+}
 
+export class ApiClient {
   static async get(path) {
     const res = await fetch(`${API_URL}${path}`, {
-      headers: this.getHeaders(),
+      method: "GET",
+      headers: getHeaders(),
     });
     return res.json();
   }
@@ -21,7 +27,7 @@ export class ApiClient {
   static async post(path, data) {
     const res = await fetch(`${API_URL}${path}`, {
       method: "POST",
-      headers: this.getHeaders(),
+      headers: getHeaders(),
       body: JSON.stringify(data),
     });
     return res.json();

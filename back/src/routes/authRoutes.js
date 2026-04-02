@@ -7,6 +7,7 @@ const router = Router();
 router.post("/register-adult", AuthController.registerAdult);
 router.post("/register-child", authMiddleware, AuthController.registerChild);
 router.post("/login", AuthController.login);
+router.get("/profile", authMiddleware, AuthController.getProfile);
 
 router.get("/me", AuthController.getProfile);
 

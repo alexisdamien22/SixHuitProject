@@ -92,7 +92,7 @@ export class HomePage {
         "div",
         {
           className: `path-step ${status} ${!isToday && status === "todo" ? "is-locked" : ""}`,
-          style: { transform: `translateX(${offset}px)`, zIndex: "1" },
+          style: { transform: `translateX(${offset}px)` },
           dataset: { day: day },
         },
         pathButtonContainer,

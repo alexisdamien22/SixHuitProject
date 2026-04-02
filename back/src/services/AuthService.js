@@ -7,120 +7,123 @@ import { WeeklyPlanModel } from "../models/WeeklyPlanModel.js";
 import { StreakModel } from "../models/StreakModel.js";
 
 export class AuthService {
-    static async registerAdult(data) {
-        const { email, password, teacher } = data;
+  static async registerAdult(data) {
+    const { email, password, teacher } = data;
 
-        const existing = await AdultAccountModel.findByEmail(email);
-        if (existing.length > 0) {
-            const err = new Error("Cet utilisateur existe déjà.");
-            err.status = 409;
-            throw err;
-        }
-
-        const hashed = await bcrypt.hash(password, 10);
-
-        const adult = await AdultAccountModel.create({
-            email,
-            password: hashed,
-            teacher: teacher ? 1 : 0,
-        });
-
-        const adultId = adult.insertId;
-
-        const token = jwt.sign(
-            { id: adultId },
-            process.env.JWT_SECRET,
-            { expiresIn: "7d" }
-        );
-
-        return {
-            message: "Compte adulte créé avec succès",
-            token,
-            adultId,
-        };
+    const existing = await AdultAccountModel.findByEmail(email);
+    if (existing.length > 0) {
+      const err = new Error("Cet utilisateur existe déjà.");
+      err.status = 409;
+      throw err;
     }
 
+    const hashed = await bcrypt.hash(password, 10);
 
-    static async registerChild(adultId, data) {
-        const child = await ChildAccountModel.create({
-            adultId,
-            name: data.name,
-            age: data.age,
-            instrument: data.instrument,
-            time_amount: data.time_amount,
-            school: data.school,
-            mascot: data.mascot
-        });
+    const adult = await AdultAccountModel.create({
+      email,
+      password: hashed,
+      teacher: teacher ? 1 : 0,
+      pin: data.pin,
+    });
 
-        const childId = child.insertId;
+    const adultId = adult.insertId;
 
-        const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+    const token = jwt.sign({ id: adultId }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
-        const mapDays = {
-            "Lundi": "monday",
-            "Mardi": "tuesday",
-            "Mercredi": "wednesday",
-            "Jeudi": "thursday",
-            "Vendredi": "friday",
-            "Samedi": "saturday",
-            "Dimanche": "sunday"
-        };
+    return {
+      message: "Compte adulte créé avec succès",
+      token,
+      adultId,
+    };
+  }
 
-        for (const day of days) {
-            const english = mapDays[day];
-            const status = data.days.includes(day) ? 1 : 0;
-            await WeeklyPlanModel.setDay(childId, english, status);
-        }
+  static async registerChild(adultId, data) {
+    const child = await ChildAccountModel.create({
+      adultId,
+      name: data.name,
+      age: data.age,
+      instrument: data.instrument,
+      time_amount: data.time_amount,
+      school: data.school,
+      mascot: data.mascot,
+    });
 
-        await StreakModel.updateStreak(childId, 0);
+    const childId = child.insertId;
 
-        return {
-            message: "Enfant créé avec succès",
-            success: true,
-            childId,
-        };
+    const days = [
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+      "Dimanche",
+    ];
+
+    const mapDays = {
+      Lundi: "monday",
+      Mardi: "tuesday",
+      Mercredi: "wednesday",
+      Jeudi: "thursday",
+      Vendredi: "friday",
+      Samedi: "saturday",
+      Dimanche: "sunday",
+    };
+
+    for (const day of days) {
+      const english = mapDays[day];
+      const status = data.days.includes(day) ? 1 : 0;
+      await WeeklyPlanModel.setDay(childId, english, status);
     }
 
+    await StreakModel.updateStreak(childId, 0);
 
-    static async login({ email, password }) {
-        const user = await AdultAccountModel.findByEmail(email);
+    return {
+      message: "Enfant créé avec succès",
+      success: true,
+      childId,
+    };
+  }
 
-        if (user.length === 0) {
-            const err = new Error("Utilisateur introuvable.");
-            err.status = 404;
-            throw err;
-        }
+  static async login({ email, password }) {
+    const user = await AdultAccountModel.findByEmail(email);
 
-        const account = user[0];
-
-        const valid = await bcrypt.compare(password, account.password_hash);
-        if (!valid) {
-            const err = new Error("Mot de passe incorrect.");
-            err.status = 401;
-            throw err;
-        }
-
-        const token = jwt.sign(
-            { id: account.id },
-            process.env.JWT_SECRET,
-            { expiresIn: "7d" }
-        );
-
-        return {
-            message: "Connexion réussie",
-            token,
-            adultId: account.id,
-        };
+    if (user.length === 0) {
+      const err = new Error("Utilisateur introuvable.");
+      err.status = 404;
+      throw err;
     }
 
-    static async getProfile(adultId) {
-        const user = await AdultAccountModel.findById(adultId);
-        if (user.length === 0) {
-            const err = new Error("Profil introuvable.");
-            err.status = 404;
-            throw err;
-        }
+    const account = user[0];
 
-        return user[0];
+    const valid = await bcrypt.compare(password, account.password_hash);
+    if (!valid) {
+      const err = new Error("Mot de passe incorrect.");
+      err.status = 401;
+      throw err;
     }
+
+    const token = jwt.sign({ id: account.id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return {
+      message: "Connexion réussie",
+      token,
+      adultId: account.id,
+    };
+  }
+
+  static async getProfile(adultId) {
+    const user = await AdultAccountModel.findById(adultId);
+    if (user.length === 0) {
+      const err = new Error("Profil introuvable.");
+      err.status = 404;
+      throw err;
+    }
+
+    return user[0];
+  }
 }
