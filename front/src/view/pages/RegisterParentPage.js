@@ -102,7 +102,7 @@ export class RegisterParentPage {
           placeholder: "Ton email",
           value: state.registerData.email,
           onInput: (e) =>
-            controller.handleInput("register-parent", "email", e.target.value),
+            controller.handleInput("register-adult", "email", e.target.value),
         }),
         el("input", {
           className: "ca-input reg-input",
@@ -111,7 +111,7 @@ export class RegisterParentPage {
           value: state.registerData.password,
           onInput: (e) =>
             controller.handleInput(
-              "register-parent",
+              "register-adult",
               "password",
               e.target.value,
             ),
@@ -123,7 +123,7 @@ export class RegisterParentPage {
           value: state.registerData.confirmPassword || "",
           onInput: (e) =>
             controller.handleInput(
-              "register-parent",
+              "register-adult",
               "confirmPassword",
               e.target.value,
             ),
@@ -144,7 +144,7 @@ export class RegisterParentPage {
       className: "ca-pin-hidden-input",
       onInput: (e) => {
         const val = e.target.value.replace(/\D/g, "").slice(0, 4);
-        controller.handleInput("register-parent", "pin", val);
+        controller.handleInput("register-adult", "pin", val);
       },
     });
 
@@ -187,12 +187,12 @@ export class RegisterParentPage {
               const pin = state.registerData.pin || "";
               if (key === "⌫") {
                 controller.handleInput(
-                  "register-parent",
+                  "register-adult",
                   "pin",
                   pin.slice(0, -1),
                 );
               } else if (pin.length < 4) {
-                controller.handleInput("register-parent", "pin", pin + key);
+                controller.handleInput("register-adult", "pin", pin + key);
               }
               const input = document.getElementById("hidden-pin-input");
               if (input) input.focus();

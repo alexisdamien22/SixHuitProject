@@ -51,7 +51,7 @@ export class AppModel {
   updateAuthData(mode, field, value) {
     if (mode === "login") {
       this.authState.loginData[field] = value;
-    } else if (mode === "register-parent") {
+    } else if (mode === "register-adult") {
       this.authState.registerData[field] = value;
     } else if (mode === "register-child") {
       this.authState.childRegisterData[field] = value;
