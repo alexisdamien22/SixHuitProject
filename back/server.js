@@ -25,10 +25,6 @@ app.use((req, res, next) => {
   next();
 });
 
-navigator.serviceWorker.getRegistrations().then(regs => {
-  regs.forEach(reg => reg.unregister());
-});
-
 app.use((req, res) => {
   res.status(404).json({ error: "Route non trouvée" });
 });
