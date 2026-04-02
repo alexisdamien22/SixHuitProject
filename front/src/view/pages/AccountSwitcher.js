@@ -12,7 +12,8 @@ export const AccountSwitcher = {
         {
           className: "switcher-item",
           dataset: { id: String(acc.id) },
-          onClick: async () => {
+          onClick: async (e) => {
+            e.preventDefault();
             localStorage.setItem("activeChildId", acc.id);
             view.toggleAccountSwitcher(false);
             if (
@@ -42,7 +43,10 @@ export const AccountSwitcher = {
       },
       el("div", {
         className: "account-switcher-overlay",
-        onClick: () => view.toggleAccountSwitcher(false),
+        onClick: (e) => {
+          e.preventDefault();
+          view.toggleAccountSwitcher(false);
+        },
       }),
       el(
         "div",
@@ -57,7 +61,8 @@ export const AccountSwitcher = {
             {
               className: "switcher-item",
               id: "btn-switch-add",
-              onClick: () => {
+              onClick: (e) => {
+                e.preventDefault();
                 view.toggleAccountSwitcher(false);
                 view.app.navigation.goTo("registerChild");
               },
@@ -76,7 +81,8 @@ export const AccountSwitcher = {
           {
             className: "switcher-item",
             id: "btn-switch-parent",
-            onClick: async () => {
+            onClick: async (e) => {
+              e.preventDefault();
               view.toggleAccountSwitcher(false);
               try {
                 const profile = await ApiClient.get("/auth/profile");
@@ -110,6 +116,7 @@ export const AccountSwitcher = {
   showPinPopup(correctPin, onSuccess) {
     const overlay = el("div", { className: "ca-pin-overlay" });
     let enteredPin = "";
+    let isProcessing = false;
 
     const updateDots = () => {
       const dots = overlay.querySelectorAll(".verify-pin-dot");
@@ -123,23 +130,32 @@ export const AccountSwitcher = {
     };
 
     const handleKey = (key) => {
+      if (isProcessing) return;
+
       if (key === "⌫") {
         enteredPin = enteredPin.slice(0, -1);
       } else if (enteredPin.length < 4) {
         enteredPin += key;
       }
+
       updateDots();
 
       if (enteredPin.length === 4) {
+        isProcessing = true;
+
         if (enteredPin === correctPin) {
           overlay.remove();
           onSuccess();
         } else {
           const container = overlay.querySelector(".verify-pin-container");
           container.classList.add("error-shake");
-          setTimeout(() => container.classList.remove("error-shake"), 400);
-          enteredPin = "";
-          updateDots();
+
+          setTimeout(() => {
+            container.classList.remove("error-shake");
+            enteredPin = "";
+            updateDots();
+            isProcessing = false;
+          }, 400);
         }
       }
     };
@@ -171,21 +187,18 @@ export const AccountSwitcher = {
       "div",
       { className: "verify-pin-keypad" },
       ...keys.map((key) => {
-        if (key === "Annuler") {
-          return el(
-            "button",
-            {
-              className: "pin-key pin-key-cancel",
-              onClick: () => overlay.remove(),
-            },
-            "Annuler",
-          );
-        }
         return el(
           "button",
           {
-            className: "pin-key",
-            onClick: () => handleKey(key),
+            className: key === "Annuler" ? "pin-key pin-key-cancel" : "pin-key",
+            onClick: (e) => {
+              e.preventDefault();
+              if (key === "Annuler") {
+                overlay.remove();
+              } else {
+                handleKey(key);
+              }
+            },
           },
           key,
         );
