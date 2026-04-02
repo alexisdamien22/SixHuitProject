@@ -35,6 +35,17 @@
   --ca-text-sub: #999999;
   --ca-text-main: #1a1a1a;
   --ca-radius-btn: 14px;
+
+  /* Ajouts pour le respect du RGAA et Switcher */
+  --color-overlay: rgba(0, 0, 0, 0.85);
+  --color-pin-dot-border: #ffffff;
+  --color-pin-dot-filled: #ffffff;
+  --color-keypad-bg: rgba(255, 255, 255, 0.1);
+  --color-keypad-text: #ffffff;
+
+  /* Contraste pour les cartes instruments */
+  --ca-instr-border: transparent;
+  --ca-instr-bg-sel: rgba(123, 47, 190, 0.2);
 }
 
 body.light-mode {
@@ -50,4 +61,14 @@ body.light-mode {
   --color-text-popup-desc: #777777;
   --ca-input-bg: #e1e8ed;
   --ca-input-text: #20252b;
+
+  --color-overlay: rgba(255, 255, 255, 0.95);
+  --color-pin-dot-border: #20252b;
+  --color-pin-dot-filled: #20252b;
+  --color-keypad-bg: #e1e8ed;
+  --color-keypad-text: #20252b;
+
+  /* Correction RGAA pour les textes gris sur blanc */
+  --color-text-popup-desc: #4b5563; /* Gris plus foncé pour contraste > 4.5:1 */
+  --ca-placeholder: #57606a;
 }
