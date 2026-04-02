@@ -1,4 +1,4 @@
-const CACHE_NAME = "six-huit";
+const CACHE_NAME = "six-huit-v1";
 
 const ASSETS_TO_CACHE = [
   "/",
@@ -17,6 +17,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)),
   );
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
@@ -31,10 +32,11 @@ self.addEventListener("activate", (event) => {
       );
     }),
   );
+  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET" || event.request.url.includes("/api/")) {
+  if (event.request.url.includes("/api/") || event.request.method !== "GET") {
     return;
   }
 
@@ -54,10 +56,4 @@ self.addEventListener("fetch", (event) => {
       })
       .catch(() => caches.match(event.request)),
   );
-});
-
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
 });

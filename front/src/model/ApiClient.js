@@ -1,4 +1,3 @@
-// --- front/src/model/ApiClient.js ---
 import { API_URL } from "../config/api.js";
 
 function getHeaders() {
@@ -17,7 +16,10 @@ function getHeaders() {
 
 export class ApiClient {
   static async get(path) {
-    const res = await fetch(`${API_URL}${path}`, {
+    const separator = path.includes("?") ? "&" : "?";
+    const url = `${API_URL}${path}${separator}t=${Date.now()}`;
+
+    const res = await fetch(url, {
       method: "GET",
       headers: getHeaders(),
     });
