@@ -134,6 +134,11 @@ export class AppView {
 
     const show =
       force !== undefined ? force : !container.classList.contains("show");
+
+    if (show) {
+      void container.offsetWidth;
+    }
+
     container.classList.toggle("show", show);
 
     if (!show && !skipReset) {
