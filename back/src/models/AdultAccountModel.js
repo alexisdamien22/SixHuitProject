@@ -19,7 +19,7 @@ export class AdultAccountModel extends BaseModel {
 
   static findById(id) {
     return this.query(
-      "SELECT id, email, teacher, created_at FROM adultaccount WHERE id = ?",
+      "SELECT id, email, teacher, pin, created_at FROM adultaccount WHERE id = ?",
       [id],
     );
   }

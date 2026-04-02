@@ -1,10 +1,8 @@
-/* === ADAPTATION DU LAYOUT POUR L'ADULTE === */
 body.parent-mode .icon-footer[data-page="podium"],
 body.parent-mode .icon-footer[data-page="music"] {
   display: none !important;
 }
 
-/* Masque le bloc "Série / Flamme" du Header */
 body.parent-mode .strik,
 body.parent-mode .header-streak,
 body.parent-mode .streak-container {
