@@ -29,7 +29,7 @@ export const AccountSwitcher = {
           "div",
           { className: "switcher-info" },
           el("span", { className: "switcher-name" }, acc.name),
-          el("span", { className: "switcher-status" }, "Élève"),
+          el("span", { className: "switcher-status" }, " Élève"),
         ),
       ),
     );

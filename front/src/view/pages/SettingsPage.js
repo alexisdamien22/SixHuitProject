@@ -32,7 +32,7 @@ export class SettingsPage {
       el(
         "button",
         {
-          className: "btn-primary mt-40 settings-logout-btn",
+          className: "parent-logout-btn",
           onClick: () => this.app.auth.logout(),
         },
         "Se déconnecter",

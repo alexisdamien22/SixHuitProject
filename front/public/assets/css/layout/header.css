@@ -21,6 +21,12 @@
   background-repeat: no-repeat;
   background-position: center;
   border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.profile-icon:active {
+  transform: scale(0.9);
 }
 
 .strik {

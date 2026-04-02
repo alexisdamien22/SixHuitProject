@@ -50,5 +50,9 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 .settings-logout-btn {
-  max-width: 250px;
+  margin-top: 40px;
+  width: 100%;
+  max-width: 300px;
+  background-color: #ffffff00;
+  border-radius: 50px;
 }
