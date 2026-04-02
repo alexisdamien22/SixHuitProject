@@ -50,7 +50,6 @@ export const AccountSwitcher = {
           "div",
           {
             className: "switcher-header",
-            style: { fontWeight: "bold", marginBottom: "15px" },
           },
           "Changer de profil",
         ),

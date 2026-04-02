@@ -90,6 +90,18 @@ export class AuthController {
     }
   }
 
+  async handleNextParentStep() {
+    const state = this.app.model.getAuthState();
+    const step = state.step || 1;
+
+    if (step === 1) {
+      this.app.model.setAuthStep(2);
+      this.triggerRender();
+    } else {
+      await this.submitParentRegistration();
+    }
+  }
+
   async submitParentRegistration() {
     const state = this.app.model.getAuthState();
     if (state.isLoading) return;
@@ -101,6 +113,7 @@ export class AuthController {
       const result = await ApiClient.post(`/auth/register-adult`, {
         email: state.registerData.email,
         password: state.registerData.password,
+        pin: state.registerData.pin,
       });
 
       if (!result || result.error || (!result.token && !result.adultId)) {
