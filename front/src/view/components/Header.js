@@ -9,16 +9,31 @@ export class Header {
     return el(
       "header",
       { className: "main-header" },
-      el("div", { className: "profile-icon header-profile-btn" }),
       el(
         "div",
-        { className: "strik" },
-        el("img", {
-          className: "strik-icon",
-          src: "/assets/img/icons/strik/flame_1.png",
-          alt: "Série de jours",
-        }),
-        el("p", { className: "strik-text" }, "0"),
+        { className: "header-left-group" },
+        el(
+          "button",
+          {
+            className: "profile-icon header-profile-btn",
+            onClick: () => this.app.view.toggleAccountSwitcher(true),
+          },
+          el("img", {
+            src: "/assets/img/icons/family.png",
+            alt: "Profile",
+            className: "header-profile-img",
+          }),
+        ),
+        el(
+          "div",
+          { className: "strik" },
+          el("img", {
+            className: "strik-icon",
+            src: "/assets/img/icons/strik/flame_1.png",
+            alt: "Streak",
+          }),
+          el("p", { className: "strik-text" }, "0"),
+        ),
       ),
       el("div", { className: "parametre", dataset: { rotation: "0" } }),
     );

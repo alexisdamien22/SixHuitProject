@@ -2,26 +2,35 @@
   display: flex;
   width: 100vw;
   height: 10dvh;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  padding: 0 15dvw;
   z-index: 1001;
   position: fixed;
   top: 0;
   left: 0;
   background: var(--color-bg-footer);
   border-bottom: 2px solid var(--color-border-light);
+  box-sizing: border-box;
+}
+
+.header-left-group {
+  display: flex;
+  align-items: center;
+  gap: 5dvw;
+  height: 100%;
 }
 
 .profile-icon {
   height: 70%;
   aspect-ratio: 1;
-  background-color: #58cc02;
-  background-image: url("../../img/mascots/camelion.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 10px;
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.15s ease;
 }
 
@@ -29,54 +38,35 @@
   transform: scale(0.9);
 }
 
+.header-profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
 .strik {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .strik-icon {
-  width: 30px;
   height: 30px;
-  transform: translateY(-4px);
+  width: auto;
+  transform: translateY(-2px);
 }
 
 .strik-text {
   color: var(--color-text-main);
-  font-size: 14px;
-}
-
-.swipe {
-  height: 70%;
-  aspect-ratio: 1;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.swipe::before {
-  content: "";
-  position: absolute;
-  width: 90%;
-  height: 90%;
-  -webkit-mask-image: url("../../img/icons/swip.png");
-  mask-image: url("../../img/icons/swip.png");
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  background-color: var(--color-button);
+  font-size: 22px;
+  margin: 0;
+  font-weight: bold;
 }
 
 .parametre {
-  height: 90%;
+  height: 80%;
   aspect-ratio: 1;
-  border-radius: 10px;
   position: relative;
   display: flex;
   align-items: center;
@@ -88,8 +78,8 @@
 .parametre::before {
   content: "";
   position: absolute;
-  width: 90%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   -webkit-mask-image: url("../../img/icons/parametre.png");
   mask-image: url("../../img/icons/parametre.png");
   -webkit-mask-size: contain;
@@ -99,9 +89,8 @@
   -webkit-mask-position: center;
   mask-position: center;
   background-color: var(--color-button);
-  transition: transform 0.2s ease;
 }
 
 .parametre:hover::before {
-  transform: rotate(10deg);
+  transform: rotate(15deg);
 }
