@@ -95,9 +95,8 @@ export const AccountSwitcher = {
                   localStorage.removeItem("activeChildId");
                   view.app.navigation.goTo("parent-home");
                 }
-              } catch (e) {
-                console.error("Security error:", e);
-                alert("Impossible de vérifier l'accès à l'Espace Parent.");
+              } catch (err) {
+                console.error(err);
               }
             },
           },
@@ -121,35 +120,24 @@ export const AccountSwitcher = {
     const updateDots = () => {
       const dots = overlay.querySelectorAll(".verify-pin-dot");
       dots.forEach((dot, i) => {
-        if (i < enteredPin.length) {
-          dot.classList.add("filled");
-        } else {
-          dot.classList.remove("filled");
-        }
+        if (i < enteredPin.length) dot.classList.add("filled");
+        else dot.classList.remove("filled");
       });
     };
 
     const handleKey = (key) => {
       if (isProcessing) return;
-
-      if (key === "⌫") {
-        enteredPin = enteredPin.slice(0, -1);
-      } else if (enteredPin.length < 4) {
-        enteredPin += key;
-      }
-
+      if (key === "⌫") enteredPin = enteredPin.slice(0, -1);
+      else if (enteredPin.length < 4) enteredPin += key;
       updateDots();
-
       if (enteredPin.length === 4) {
         isProcessing = true;
-
         if (enteredPin === correctPin) {
           overlay.remove();
           onSuccess();
         } else {
           const container = overlay.querySelector(".verify-pin-container");
           container.classList.add("error-shake");
-
           setTimeout(() => {
             container.classList.remove("error-shake");
             enteredPin = "";
@@ -182,27 +170,23 @@ export const AccountSwitcher = {
       "0",
       "⌫",
     ];
-
     const keypad = el(
       "div",
       { className: "verify-pin-keypad" },
-      ...keys.map((key) => {
-        return el(
+      ...keys.map((key) =>
+        el(
           "button",
           {
             className: key === "Annuler" ? "pin-key pin-key-cancel" : "pin-key",
             onClick: (e) => {
               e.preventDefault();
-              if (key === "Annuler") {
-                overlay.remove();
-              } else {
-                handleKey(key);
-              }
+              if (key === "Annuler") overlay.remove();
+              else handleKey(key);
             },
           },
           key,
-        );
-      }),
+        ),
+      ),
     );
 
     overlay.appendChild(

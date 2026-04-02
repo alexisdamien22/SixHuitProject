@@ -12,7 +12,7 @@
 .account-switcher-overlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: var(--color-overlay);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -33,12 +33,20 @@
 .account-switcher-container.show {
   pointer-events: auto;
 }
+
 .account-switcher-container.show .account-switcher-overlay {
   opacity: 1;
   pointer-events: auto;
 }
+
 .account-switcher-container.show .account-switcher-sheet {
   transform: translateY(0);
+}
+
+.switcher-header {
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: var(--color-text-main);
 }
 
 .switcher-list {
@@ -58,14 +66,19 @@
   background: var(--ca-input-bg);
   border-radius: 12px;
   cursor: pointer;
+  border: 1px solid var(--color-border-soft);
 }
-.switcher-avatar {
-  font-size: 24px;
-}
+
 .switcher-name {
   font-weight: bold;
   color: var(--color-text-main);
 }
+
+.switcher-status {
+  color: var(--color-text-sub);
+  font-size: 0.85em;
+}
+
 .switcher-divider {
   height: 1px;
   background: var(--color-border-light);
@@ -85,19 +98,13 @@
   color: var(--color-text-main);
 }
 
-.verify-pin-container {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
-}
-
 .verify-pin-dot {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   border: 2px solid var(--color-pin-dot-border);
-  transition: all 0.2s;
   background-color: transparent;
+  transition: all 0.2s;
 }
 
 .verify-pin-dot.filled {
@@ -124,23 +131,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
 }
 
 .pin-key:active {
   background-color: var(--ca-purple);
-  color: white;
+  color: #ffffff;
 }
 
 .pin-key-cancel {
   background-color: transparent !important;
+  border: none !important;
   font-size: 16px;
-  box-shadow: none;
-  border-radius: 12px;
-}
-
-.error-shake {
-  animation: shake 0.4s;
+  color: var(--color-text-main);
+  width: auto;
 }
 
 @keyframes shake {
@@ -155,4 +158,8 @@
   50% {
     transform: translateX(10px);
   }
+}
+
+.error-shake {
+  animation: shake 0.4s;
 }
