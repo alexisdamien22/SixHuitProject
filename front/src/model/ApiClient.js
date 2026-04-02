@@ -1,3 +1,4 @@
+// --- front/src/model/ApiClient.js ---
 import { API_URL } from "../config/api.js";
 
 function getHeaders() {
