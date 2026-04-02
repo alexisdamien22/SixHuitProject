@@ -1,4 +1,5 @@
 import { SessionStore } from "./SessionStore.js";
+import { ApiClient } from "./ApiClient.js";
 
 export class AppModel {
   constructor() {
@@ -76,24 +77,14 @@ export class AppModel {
     if (index === -1) days.push(day);
     else days.splice(index, 1);
   }
+
   async fetchChildrenAccounts() {
     try {
-      const token = this.session.getToken();
-      if (!token) return;
+      if (!this.session.getToken()) return;
 
-      const apiUrl = "http://localhost:3001/api";
+      const result = await ApiClient.get(`/auth/children`);
 
-      const response = await fetch(`${apiUrl}/auth/children`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
+      if (result && result.success) {
         this.childrenAccounts = result.children;
       } else {
         this.childrenAccounts = [];
