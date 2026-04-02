@@ -9,7 +9,7 @@
   max-width: 100vw;
   overflow-x: hidden;
   margin-bottom: 10dvh;
-  max-height: 90dvh;
+  max-height: 80dvh;
   overflow-y: auto;
   z-index: 1;
 }
