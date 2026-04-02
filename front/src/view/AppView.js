@@ -40,6 +40,19 @@ export class AppView {
   }
 
   async renderPage(name, params = {}) {
+    const activeChildId = localStorage.getItem("activeChildId");
+
+    if (name === "parent-home" && activeChildId) {
+      if (
+        this.app.child &&
+        typeof this.app.child.loadChildData === "function"
+      ) {
+        await this.app.child.loadChildData();
+      }
+      this.app.navigation.goTo("home");
+      return;
+    }
+
     this.appRoot.replaceChildren();
 
     const hideHeader = ["login", "registerParent", "registerChild"].includes(
