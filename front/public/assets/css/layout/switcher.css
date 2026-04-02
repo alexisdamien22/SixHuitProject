@@ -23,7 +23,7 @@
   background-color: var(--color-bg-footer);
   width: 100%;
   padding: 20px;
-  transform: translateY(-100%);
+  transform: translateY(-110dvh);
   transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   pointer-events: auto;
   border-bottom: 2px solid var(--ca-purple);
