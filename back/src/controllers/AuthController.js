@@ -51,4 +51,15 @@ export class AuthController {
       res.status(500).json({ error: err.message });
     }
   }
+
+  static async verifyPin(req, res) {
+    try {
+      const adultId = req.user.id;
+      const { pin } = req.body;
+      const result = await AuthService.verifyPin(adultId, pin);
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  }
 }

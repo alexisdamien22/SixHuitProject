@@ -1,4 +1,5 @@
 import { ApiClient } from "../model/ApiClient.js";
+import { AccountSwitcher } from "../view/pages/AccountSwitcher.js";
 
 export class AuthController {
   constructor(app) {
@@ -148,6 +149,39 @@ export class AuthController {
     }
   }
 
+  async handleSwitchToParent() {
+    try {
+      const profile = await ApiClient.get("/auth/profile");
+
+      if (profile && profile.hasPin) {
+        AccountSwitcher.showPinPopup(async (enteredPin, onSuccess, onError) => {
+          try {
+            const res = await ApiClient.post("/auth/verify-pin", {
+              pin: enteredPin,
+            });
+            if (res.success) {
+              onSuccess();
+              this.executeSwitchToParent();
+            } else {
+              onError();
+            }
+          } catch (e) {
+            onError();
+          }
+        });
+      } else {
+        this.executeSwitchToParent();
+      }
+    } catch (err) {
+      console.error("Erreur lors du passage au mode parent :", err);
+    }
+  }
+
+  executeSwitchToParent() {
+    this.app.model.session.clearActiveChild();
+    this.app.navigation.goTo("parent-home");
+  }
+
   async submitChildRegistration() {
     const state = this.app.model.getAuthState();
     if (state.isLoading) return;
@@ -166,25 +200,13 @@ export class AuthController {
         days: state.childRegisterData.days,
       };
 
-      const token = this.app.model.session.getToken();
+      const result = await ApiClient.post("/auth/register-child", payload);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:3001/api"}/auth/register-child`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        },
-      );
+      if (!result || result.error || !result.success) {
+        throw new Error(result?.error || "Erreur création enfant");
+      }
 
-      const result = await response.json();
-      if (!response.ok || !result.success)
-        throw new Error(result.error || "Erreur création enfant");
-
-      localStorage.setItem("activeChildId", result.childId);
+      this.app.model.session.setActiveChild(result.childId);
 
       this.app.model.setAuthStep(8);
       this.app.model.setLoading(false);
