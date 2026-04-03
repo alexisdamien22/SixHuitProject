@@ -15,30 +15,11 @@ app.use(
 );
 
 app.use(express.json());
-
-app.use((req, res, next) => {
-  res.setHeader(
-    "Cache-Control",
-    "no-store, no-cache, must-revalidate, proxy-revalidate",
-  );
-  res.setHeader("Pragma", "no-cache");
-  res.setHeader("Expires", "0");
-  res.setHeader("Surrogate-Control", "no-store");
-  next();
-});
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/child", childRoutes);
 
-app.use((req, res) => {
-  res.status(404).json({ error: "Route non trouvée" });
-});
-
-app.use((err, req, res, next) => {
-  console.error("[Serveur] Erreur fatale :", err);
-  res.status(500).json({ error: "Serveur ou base de données injoignable." });
-});
-
 app.listen(PORT, () => {
-  console.log(`🚀 API active sur le port ${PORT}`);
+  console.log(`🚀 API active on port ${PORT}`);
 });

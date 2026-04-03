@@ -9,7 +9,9 @@ function getHeaders() {
       if (session.token) {
         headers["Authorization"] = `Bearer ${session.token}`;
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error("Error parsing session", e);
+    }
   }
   return headers;
 }
@@ -18,7 +20,6 @@ export class ApiClient {
   static async get(path) {
     const separator = path.includes("?") ? "&" : "?";
     const url = `${API_URL}${path}${separator}t=${Date.now()}`;
-
     const res = await fetch(url, {
       method: "GET",
       headers: getHeaders(),

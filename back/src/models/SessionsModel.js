@@ -3,14 +3,8 @@ import { BaseModel } from "./BaseModel.js";
 export class SessionsModel extends BaseModel {
   static addSession(childId, data) {
     return this.query(
-      `INSERT INTO sessions (child_id, session_date, hapiness, quality)
-             VALUES (?, ?, ?, ?, ?)`,
-      [
-        childId,
-        data.session_date || null,
-        data.hapiness !== undefined ? data.hapiness : 0,
-        data.quality !== undefined ? data.quality : 0,
-      ],
+      "INSERT INTO sessions (child_id, session_date, happiness, quality) VALUES (?, ?, ?, ?)",
+      [childId, data.session_date, data.happiness, data.quality],
     );
   }
 

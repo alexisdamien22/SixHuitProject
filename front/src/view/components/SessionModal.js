@@ -18,8 +18,10 @@ export class SessionModal {
         {
           className: "emoji-btn",
           onClick: (e) => {
+            e.preventDefault();
             this.happiness = index;
-            document
+            const container = e.target.closest(".emoji-group");
+            container
               .querySelectorAll(".emoji-btn")
               .forEach((b) => b.classList.remove("selected"));
             e.target.classList.add("selected");
@@ -44,7 +46,9 @@ export class SessionModal {
           "select",
           {
             className: "quality-select",
-            onChange: (e) => (this.quality = parseInt(e.target.value)),
+            onchange: (e) => {
+              this.quality = parseInt(e.target.value);
+            },
           },
           el("option", { value: "0" }, "Non (0)"),
           el("option", { value: "1" }, "Oui (1)"),
@@ -55,14 +59,22 @@ export class SessionModal {
           "button",
           {
             className: "ca-btn-next",
-            onClick: () => {
-              if (this.happiness === null) return alert("Choisis un emoji !");
-              this.onComplete({
+            onClick: (e) => {
+              e.preventDefault();
+              if (this.happiness === null) {
+                alert("Choisis un emoji !");
+                return;
+              }
+
+              const dataToSend = {
                 happiness: this.happiness,
                 quality: this.quality,
                 session_date: new Date().toISOString().slice(0, 10),
                 practice_day: this.day,
-              });
+              };
+
+              console.log("Front: Data prepared in Modal:", dataToSend);
+              this.onComplete(dataToSend);
             },
           },
           "FINIR LA SÉANCE",
