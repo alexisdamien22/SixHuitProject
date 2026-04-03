@@ -119,7 +119,7 @@ export class HomePage {
     if (status === "done") {
       desc = "Bravo ! Tu as validé cette séance.";
     } else if (isToday && status === "todo") {
-      desc = "Prêt pour un défi ?";
+      desc = "Valider la leçon ?";
       button = el(
         "button",
         {
@@ -129,7 +129,7 @@ export class HomePage {
             this.handleStart(day);
           },
         },
-        "COMMENCER",
+        "VALIDER",
       );
     } else if (status === "nothing") {
       desc = "C'est un jour de repos !";
