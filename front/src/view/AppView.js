@@ -140,8 +140,6 @@ export class AppView {
     }
   }
 
-  // Localisation : front/src/view/AppView.js
-
   toggleBottomMenu(force, skipReset = false) {
     AppViewNavigation.createBottomMenu(this);
     const container = document.getElementById("bottom-menu-container");
