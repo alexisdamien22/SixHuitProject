@@ -119,7 +119,7 @@ export class HomePage {
     if (status === "done") {
       desc = "Bravo ! Tu as validé cette séance.";
     } else if (isToday && status === "todo") {
-      desc = "Prêt pour un défi ?";
+      desc = "Valider la leçon ?";
       button = el(
         "button",
         {
