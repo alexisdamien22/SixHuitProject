@@ -15,10 +15,15 @@ export class ChildService {
     const streakData = await StreakModel.getStreak(childId);
     const sessions = await SessionsModel.getSessions(childId);
 
+    let currentStreak = 0;
+    if (streakData && streakData.length > 0) {
+      currentStreak = streakData[0].current_streak;
+    }
+
     return {
       ...child[0],
       weeklyPlan: plan,
-      streak: streakData[0]?.current_streak || 0,
+      streak: currentStreak,
       sessions: sessions || [],
     };
   }
@@ -61,11 +66,17 @@ export class ChildService {
     let currentStreak = 0;
     let lastDate = null;
 
-    if (streakData.length > 0) {
+    if (streakData && streakData.length > 0) {
       currentStreak = streakData[0].current_streak;
-      lastDate = streakData[0].last_practice_date
-        ? new Date(streakData[0].last_practice_date).toISOString().slice(0, 10)
-        : null;
+      if (streakData[0].last_practice_date) {
+        const dateObj = new Date(streakData[0].last_practice_date);
+        lastDate =
+          dateObj.getFullYear() +
+          "-" +
+          String(dateObj.getMonth() + 1).padStart(2, "0") +
+          "-" +
+          String(dateObj.getDate()).padStart(2, "0");
+      }
     }
 
     const today = sessionDate;
@@ -74,11 +85,16 @@ export class ChildService {
       return;
     }
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().slice(0, 10);
+    const yesterdayObj = new Date(today);
+    yesterdayObj.setDate(yesterdayObj.getDate() - 1);
+    const yesterday =
+      yesterdayObj.getFullYear() +
+      "-" +
+      String(yesterdayObj.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(yesterdayObj.getDate()).padStart(2, "0");
 
-    if (lastDate === yesterdayStr || lastDate === null) {
+    if (lastDate === yesterday || lastDate === null) {
       currentStreak += 1;
     } else {
       currentStreak = 1;
