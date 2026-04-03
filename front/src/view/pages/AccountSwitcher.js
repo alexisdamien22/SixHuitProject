@@ -187,5 +187,5 @@ export const AccountSwitcher = {
         overlay.appendChild(dotsContainer);
         overlay.appendChild(keypad);
         document.body.appendChild(overlay);
-    },
+    }, s
 };

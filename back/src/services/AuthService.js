@@ -7,8 +7,6 @@ import { WeeklyPlanModel } from "../models/WeeklyPlanModel.js";
 import { StreakModel } from "../models/StreakModel.js";
 
 export class AuthService {
-    // Dans AuthService.js
-
     static async registerAdult(data) {
         const { email, password, teacher, pin } = data;
 

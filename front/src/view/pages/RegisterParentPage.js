@@ -205,7 +205,6 @@ export class RegisterParentPage {
         return [
             hiddenInput,
             el("p", { className: "ca-question" }, "Crée ton code PIN (4 chiffres)"),
-
             pinDisplay,
             keypad,
         ];
