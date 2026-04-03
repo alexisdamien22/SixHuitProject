@@ -40,6 +40,12 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
+    const url = new URL(event.request.url);
+
+    if (url.origin === "https://fonts.gstatic.com" || url.origin === "https://fonts.googleapis.com") {
+        return;
+    }
+
     event.respondWith(
         fetch(event.request)
             .then((response) => {
