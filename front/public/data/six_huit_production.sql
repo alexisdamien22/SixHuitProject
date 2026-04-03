@@ -22,7 +22,7 @@ CREATE TABLE `adultaccount` (
   `email` varchar(255) NOT NULL,
   `password_hash` varchar(255) DEFAULT NULL,
   `teacher` tinyint(1) DEFAULT '0',
-  `pin` varchar(4) DEFAULT NULL,
+  `pin` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)

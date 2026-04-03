@@ -1,57 +1,69 @@
 export class SessionStore {
-    constructor() {
-        this.data = {
-            token: null,
-            adultId: null,
-            childId: null,
-        };
-    }
+  constructor() {
+    this.data = {
+      token: null,
+      adultId: null,
+      childId: null,
+    };
+  }
 
-    load() {
-        const raw = localStorage.getItem("sixhuit-session");
-        if (!raw) return;
+  load() {
+    const raw = localStorage.getItem("sixhuit-session");
+    if (!raw) return;
 
-        try {
-            this.data = JSON.parse(raw);
-            console.log("Session chargée :", this.data);
-        } catch (err) {
-            console.error("Erreur de parsing session :", err);
-        }
+    try {
+      this.data = JSON.parse(raw);
+      console.log("Session chargée :", this.data);
+    } catch (err) {
+      console.error("Erreur de parsing session :", err);
     }
+  }
 
-    saveSession({ token, adultId, childId }) {
-        this.data = { token, adultId, childId };
-        localStorage.setItem("sixhuit-session", JSON.stringify(this.data));
-        console.log("Session sauvegardée :", this.data);
-    }
+  saveSession({ token, adultId, childId }) {
+    this.data = { token, adultId, childId };
+    localStorage.setItem("sixhuit-session", JSON.stringify(this.data));
+    console.log("Session sauvegardée :", this.data);
+  }
 
-    clear() {
-        this.data = { token: null, adultId: null, childId: null };
-        localStorage.removeItem("sixhuit-session");
-        console.log("Session effacée");
-    }
+  clear() {
+    this.data = { token: null, adultId: null, childId: null };
+    localStorage.removeItem("sixhuit-session");
+    console.log("Session effacée");
+  }
 
-    isLoggedIn() {
-        return !!this.data.token;
-    }
+  clearActiveChild() {
+    this.data.childId = null;
+    localStorage.removeItem("activeChildId");
+    console.log("Enfant actif effacé de la session");
+  }
 
-    getToken() {
-        return this.data.token;
-    }
+  isLoggedIn() {
+    return !!this.data.token;
+  }
 
-    getAdultId() {
-        return this.data.adultId;
-    }
+  getToken() {
+    return this.data.token;
+  }
 
-    getChildId() {
-        return this.data.childId;
-    }
+  getAdultId() {
+    return this.data.adultId;
+  }
 
-    isParent() {
-        return !!this.data.adultId;
-    }
+  getChildId() {
+    return this.data.childId;
+  }
 
-    isChild() {
-        return !!this.data.childId;
-    }
+  isParent() {
+    return !!this.data.adultId;
+  }
+
+  isChild() {
+    return !!this.data.childId;
+  }
+
+  setActiveChild(childId) {
+    this.data.childId = childId;
+    localStorage.setItem("activeChildId", childId);
+    console.log("Enfant actif défini :", childId);
+  }
 }

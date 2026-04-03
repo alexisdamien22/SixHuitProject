@@ -7,8 +7,10 @@ import { WeeklyPlanModel } from "../models/WeeklyPlanModel.js";
 import { StreakModel } from "../models/StreakModel.js";
 
 export class AuthService {
+  // Dans AuthService.js
+
   static async registerAdult(data) {
-    const { email, password, teacher } = data;
+    const { email, password, teacher, pin } = data;
 
     const existing = await AdultAccountModel.findByEmail(email);
     if (existing.length > 0) {
@@ -19,11 +21,16 @@ export class AuthService {
 
     const hashed = await bcrypt.hash(password, 10);
 
+    let hashedPin = null;
+    if (pin) {
+      hashedPin = await bcrypt.hash(pin, 10);
+    }
+
     const adult = await AdultAccountModel.create({
       email,
       password: hashed,
       teacher: teacher ? 1 : 0,
-      pin: data.pin,
+      pin: hashedPin,
     });
 
     const adultId = adult.insertId;
@@ -37,6 +44,34 @@ export class AuthService {
       token,
       adultId,
     };
+  }
+
+  static async getProfile(adultId) {
+    const user = await AdultAccountModel.findById(adultId);
+    if (user.length === 0) {
+      const err = new Error("Profil introuvable.");
+      err.status = 404;
+      throw err;
+    }
+
+    const profile = user[0];
+    const hasPin = !!profile.pin;
+    delete profile.pin;
+
+    return { ...profile, hasPin };
+  }
+
+  static async verifyPin(adultId, pin) {
+    const user = await AdultAccountModel.findById(adultId);
+    if (user.length === 0)
+      throw { status: 404, message: "Utilisateur introuvable." };
+    if (!user[0].pin)
+      throw { status: 400, message: "Aucun PIN configuré pour ce compte." };
+
+    const valid = await bcrypt.compare(pin, user[0].pin);
+    if (!valid) throw { status: 401, message: "Code PIN incorrect." };
+
+    return { success: true };
   }
 
   static async registerChild(adultId, data) {
@@ -114,16 +149,5 @@ export class AuthService {
       token,
       adultId: account.id,
     };
-  }
-
-  static async getProfile(adultId) {
-    const user = await AdultAccountModel.findById(adultId);
-    if (user.length === 0) {
-      const err = new Error("Profil introuvable.");
-      err.status = 404;
-      throw err;
-    }
-
-    return user[0];
   }
 }
