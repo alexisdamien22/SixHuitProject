@@ -129,7 +129,7 @@ export class HomePage {
             this.handleStart(day);
           },
         },
-        "COMMENCER",
+        "VALIDER",
       );
     } else if (status === "nothing") {
       desc = "C'est un jour de repos !";
