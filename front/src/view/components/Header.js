@@ -1,11 +1,28 @@
 import { el } from "../../utils/DOMBuilder.js";
+import { AppFireChange } from "../AppFireChange.js";
 
 export class Header {
   constructor(app) {
     this.app = app;
   }
 
+  update(data) {
+    const streakText = document.querySelector(".strik-text");
+    const streakIcon = document.querySelector(".strik-icon");
+
+    if (streakText && data.streak !== undefined) {
+      streakText.textContent = data.streak;
+    }
+
+    if (streakIcon && data.streak !== undefined) {
+      streakIcon.src = AppFireChange.FireTextur(data.streak);
+    }
+  }
+
   render() {
+    const childData = this.app.model.getChildData() || {};
+    const streak = childData.streak || 0;
+
     return el(
       "header",
       { className: "main-header" },
@@ -29,10 +46,10 @@ export class Header {
           { className: "strik" },
           el("img", {
             className: "strik-icon",
-            src: "/assets/img/icons/strik/flame_1.png",
+            src: AppFireChange.FireTextur(streak),
             alt: "Streak",
           }),
-          el("p", { className: "strik-text" }, "0"),
+          el("p", { className: "strik-text" }, String(streak)),
         ),
       ),
       el("div", { className: "parametre", dataset: { rotation: "0" } }),

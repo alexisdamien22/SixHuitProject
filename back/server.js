@@ -31,14 +31,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api/child", childRoutes);
 
 app.use((req, res) => {
-  res.status(404).json({ error: "Route non trouvée" });
+  res.status(404).json({ error: "Route not found" });
 });
 
 app.use((err, req, res, next) => {
-  console.error("[Serveur] Erreur fatale :", err);
-  res.status(500).json({ error: "Serveur ou base de données injoignable." });
+  console.error("[Server] Fatal error:", err);
+  res.status(500).json({ error: "Server or database unreachable" });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 API active sur le port ${PORT}`);
+  console.log(`🚀 API active on port ${PORT}`);
 });
