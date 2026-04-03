@@ -107,9 +107,8 @@ CREATE TABLE `sessions` (
   `id` int NOT NULL AUTO_INCREMENT,
   `child_id` int NOT NULL,
   `session_date` date NOT NULL,
-  `hapiness` tinyint NOT NULL,
-  `quality` tinyint NOT NULL,
-  `practice_day` tinyint(1) DEFAULT '0',
+  `happiness` tinyint NOT NULL CHECK (happiness BETWEEN 0 AND 3),
+  `quality` tinyint NOT NULL CHECK (quality BETWEEN 0 AND 2),
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `child_id` (`child_id`)

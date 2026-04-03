@@ -1,64 +1,64 @@
 .bottom-menu-container {
-  position: fixed;
-  inset: 0;
-  bottom: 10dvh;
-  z-index: 1000;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+    position: fixed;
+    inset: 0;
+    bottom: 10dvh;
+    z-index: 1000;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 .bottom-menu-overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .bottom-menu-sheet {
-  position: relative;
-  background-color: var(--color-bg-footer);
-  transform: translateY(calc(100% + 10dvh));
-  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  pointer-events: auto;
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--color-border-light);
-  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    background-color: var(--color-bg-footer);
+    transform: translateY(calc(100% + 10dvh));
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-border-light);
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
 }
 
 .bottom-menu-container.show {
-  pointer-events: auto;
+    pointer-events: auto;
 }
 
 .bottom-menu-container.show .bottom-menu-overlay {
-  opacity: 1;
-  pointer-events: auto;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .bottom-menu-container.show .bottom-menu-sheet {
-  transform: translateY(0);
+    transform: translateY(0);
 }
 
 .bottom-menu-item {
-  padding: 15px 20px;
-  background-color: var(--color-bg-main);
-  border: 2px solid var(--color-border-soft);
-  color: var(--color-text-main);
-  font-size: 18px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  cursor: pointer;
-  transition:
-    transform 0.1s ease,
-    background-color 0.2s ease;
+    padding: 15px 20px;
+    background-color: var(--color-bg-main);
+    border: 2px solid var(--color-border-soft);
+    color: var(--color-text-main);
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition:
+        transform 0.1s ease,
+        background-color 0.2s ease;
 }
 
 .bottom-menu-item:active {
-  background-color: var(--color-border-soft);
+    background-color: var(--color-border-soft);
 }
