@@ -41,12 +41,6 @@ export class RegisterParentPage {
 
         el(
           "div",
-          { className: "ca-illus-wrap" },
-          el("img", { src: illus.png, alt: illus.lbl }),
-        ),
-
-        el(
-          "div",
           { className: "ca-form-block" },
           step === 1
             ? this.buildStep1(state, controller)
@@ -211,11 +205,7 @@ export class RegisterParentPage {
     return [
       hiddenInput,
       el("p", { className: "ca-question" }, "Crée ton code PIN (4 chiffres)"),
-      el(
-        "p",
-        { className: "ca-pin-desc" },
-        "Il sécurisera l'accès à ton Espace Parent.",
-      ),
+
       pinDisplay,
       keypad,
     ];

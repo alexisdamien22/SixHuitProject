@@ -117,3 +117,12 @@ body.parent-mode .streak-container {
 .parent-logout-btn:hover {
   text-decoration: underline;
 }
+
+.ca-main-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 16px;
+  background: var(--ca-purple);
+  color: white;
+  border-radius: var(--ca-radius-btn);
+}
