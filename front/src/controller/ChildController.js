@@ -10,40 +10,29 @@ export class ChildController {
       const childId =
         this.app.model.session.getChildId() ||
         localStorage.getItem("activeChildId");
-
-      if (!childId) {
-        console.warn("Aucun childId trouvé dans la session");
-        return;
-      }
-
+      if (!childId) return;
       const data = await ApiClient.get(`/child/${childId}`);
-
-      if (data && data.error) {
-        throw new Error(data.error);
-      }
-
+      if (data && data.error) throw new Error(data.error);
       this.app.model.setChildData(data);
-
       this.app.view.updateChildData(data);
     } catch (err) {
-      console.error("Erreur lors du chargement des données enfant :", err);
+      console.error("Error loading child data:", err);
     }
   }
 
-  async updateSession(day, status) {
+  async updateSession(sessionData) {
     try {
       const childId =
         this.app.model.session.getChildId() ||
         localStorage.getItem("activeChildId");
+      if (!childId) throw new Error("No active child ID");
 
-      await ApiClient.post(`/child/${childId}/session`, {
-        day,
-        status,
-      });
+      await ApiClient.post(`/child/${childId}/session`, sessionData);
 
       await this.loadChildData();
     } catch (err) {
-      console.error("Erreur updateSession :", err);
+      console.error("Error updating session:", err);
+      throw err;
     }
   }
 
@@ -52,12 +41,10 @@ export class ChildController {
       const childId =
         this.app.model.session.getChildId() ||
         localStorage.getItem("activeChildId");
-
       await ApiClient.post(`/child/${childId}/streak`, { value });
-
       await this.loadChildData();
     } catch (err) {
-      console.error("Erreur updateStreak :", err);
+      console.error("Error updating streak:", err);
     }
   }
 }

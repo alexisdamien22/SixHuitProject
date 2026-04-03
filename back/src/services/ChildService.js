@@ -23,8 +23,6 @@ export class ChildService {
   }
 
   static async updateSession(childId, data) {
-    console.log("Service receiving data:", data);
-
     const happiness = data.happiness !== undefined ? Number(data.happiness) : 0;
     const quality = data.quality !== undefined ? Number(data.quality) : 0;
     const sessionDate =
