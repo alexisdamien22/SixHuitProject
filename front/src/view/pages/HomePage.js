@@ -1,4 +1,5 @@
 import { el } from "../../utils/DOMBuilder.js";
+import { SessionModal } from "../components/SessionModal.js";
 
 export class HomePage {
   constructor(app) {
@@ -153,12 +154,25 @@ export class HomePage {
   }
 
   async handleStart(day) {
-    await this.app.child.updateSession({
-      practice_day: day,
-      practice: 1,
-      session_date: new Date().toISOString().slice(0, 10),
-    });
-    this.app.navigation.goTo("music");
+    const sessionModal = new SessionModal(
+      this.app,
+      day,
+      async (finalSessionData) => {
+        try {
+          await this.app.child.updateSession(finalSessionData);
+
+          const modalElement = document.querySelector(".modal-overlay");
+          if (modalElement) modalElement.remove();
+          await this.app.child.loadChildData();
+          this.app.navigation.goTo("home");
+        } catch (error) {
+          console.error("Erreur lors de l'enregistrement :", error);
+          alert("Erreur lors de l'enregistrement de la séance.");
+        }
+      },
+    );
+
+    document.body.appendChild(sessionModal.render());
   }
 
   scrollToMascot() {

@@ -11,13 +11,17 @@ export class ChildController {
     }
   }
 
-  static async updateSession(req, res) {
+  async updateSession(sessionData) {
     try {
-      const childId = req.params.childId;
-      const result = await ChildService.updateSession(childId, req.body);
-      res.status(200).json(result);
+      const childId =
+        this.app.model.session.getChildId() ||
+        localStorage.getItem("activeChildId");
+      await ApiClient.post(`/child/${childId}/session`, sessionData);
+
+      await this.loadChildData();
+      this.app.navigation.goTo("home");
     } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
+      console.error("Erreur updateSession :", err);
     }
   }
 
