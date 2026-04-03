@@ -1,59 +1,59 @@
 const CACHE_NAME = "six-huit-v1";
 
 const ASSETS_TO_CACHE = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "/assets/css/style.css",
-  "/assets/img/icons/home.png",
-  "/assets/img/icons/podium.png",
-  "/assets/img/icons/music.png",
-  "/assets/img/icons/menu.png",
-  "/assets/img/icons/app-icon-86.png",
-  "/assets/img/mascots/camelion.png",
+    "/",
+    "/index.html",
+    "/manifest.json",
+    "/assets/css/style.css",
+    "/assets/img/icons/home.png",
+    "/assets/img/icons/podium.png",
+    "/assets/img/icons/music.png",
+    "/assets/img/icons/menu.png",
+    "/assets/img/icons/app-icon-86.png",
+    "/assets/img/mascots/camelion.png",
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)),
-  );
-  self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)),
+    );
+    self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                }),
+            );
         }),
-      );
-    }),
-  );
-  self.clients.claim();
+    );
+    self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.url.includes("/api/") || event.request.method !== "GET") {
-    return;
-  }
+    if (event.request.url.includes("/api/") || event.request.method !== "GET") {
+        return;
+    }
 
-  event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        if (!response || response.status !== 200 || response.type !== "basic") {
-          return response;
-        }
+    event.respondWith(
+        fetch(event.request)
+            .then((response) => {
+                if (!response || response.status !== 200 || response.type !== "basic") {
+                    return response;
+                }
 
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
+                const responseClone = response.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseClone);
+                });
 
-        return response;
-      })
-      .catch(() => caches.match(event.request)),
-  );
+                return response;
+            })
+            .catch(() => caches.match(event.request)),
+    );
 });

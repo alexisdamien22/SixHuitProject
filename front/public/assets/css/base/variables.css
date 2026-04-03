@@ -1,69 +1,69 @@
 :root {
-  color-scheme: dark;
-  --color-bg-main: #20252b;
-  --color-text-main: #ffffff;
-  --color-text-sub: #b4b4b4;
-  --color-border-soft: rgba(255, 255, 255, 0.1);
-  --color-bg-footer: #21262c;
-  --color-border-light: #2a3139;
+    color-scheme: dark;
+    --color-bg-main: #20252b;
+    --color-text-main: #ffffff;
+    --color-text-sub: #b4b4b4;
+    --color-border-soft: rgba(255, 255, 255, 0.1);
+    --color-bg-footer: #21262c;
+    --color-border-light: #2a3139;
 
-  --color-done: #58cc02;
-  --color-todo: #fda20d;
-  --color-nothing: #7e7d7d;
-  --color-done-shadow: #46a302;
-  --color-todo-shadow: #ce830a;
-  --color-nothing-shadow: #5d5d5d;
+    --color-done: #58cc02;
+    --color-todo: #fda20d;
+    --color-nothing: #7e7d7d;
+    --color-done-shadow: #46a302;
+    --color-todo-shadow: #ce830a;
+    --color-nothing-shadow: #5d5d5d;
 
-  --color-halo-border: #3a424c;
-  --color-halo-bg: rgba(255, 255, 255, 0);
-  --color-button: #747474;
-  --color-staff-line: rgba(255, 255, 255, 0.3);
+    --color-halo-border: #3a424c;
+    --color-halo-bg: rgba(255, 255, 255, 0);
+    --color-button: #747474;
+    --color-staff-line: rgba(255, 255, 255, 0.3);
 
-  --color-bg-popup: #2a3139;
-  --color-text-popup-title: #ffffff;
-  --color-text-popup-desc: #b4b4b4;
-  --color-bg-button-popup: #3a424c;
-  --color-text-button-popup: #ffffff;
+    --color-bg-popup: #2a3139;
+    --color-text-popup-title: #ffffff;
+    --color-text-popup-desc: #b4b4b4;
+    --color-bg-button-popup: #3a424c;
+    --color-text-button-popup: #ffffff;
 
-  --ca-purple: #6806ed;
-  --ca-purple-hover: #5204bc;
-  --ca-input-bg: #2a3139;
-  --ca-input-text: #ffffff;
-  --ca-placeholder: #94a3b8;
-  --ca-radius-btn: 14px;
+    --ca-purple: #6806ed;
+    --ca-purple-hover: #5204bc;
+    --ca-input-bg: #2a3139;
+    --ca-input-text: #ffffff;
+    --ca-placeholder: #94a3b8;
+    --ca-radius-btn: 14px;
 
-  --color-overlay: rgba(0, 0, 0, 0.85);
-  --color-pin-dot-border: #ffffff;
-  --color-pin-dot-filled: #ffffff;
-  --color-keypad-bg: rgba(255, 255, 255, 0.1);
-  --color-keypad-text: #ffffff;
+    --color-overlay: rgba(0, 0, 0, 0.85);
+    --color-pin-dot-border: #ffffff;
+    --color-pin-dot-filled: #ffffff;
+    --color-keypad-bg: rgba(255, 255, 255, 0.1);
+    --color-keypad-text: #ffffff;
 }
 
 body.light-mode {
-  color-scheme: light;
-  --color-bg-main: #f8fafc;
-  --color-text-main: #1e293b;
-  --color-text-sub: #475569;
-  --color-border-soft: rgba(0, 0, 0, 0.1);
-  --color-bg-footer: #ffffff;
-  --color-border-light: #cbd5e1;
+    color-scheme: light;
+    --color-bg-main: #f8fafc;
+    --color-text-main: #1e293b;
+    --color-text-sub: #475569;
+    --color-border-soft: rgba(0, 0, 0, 0.1);
+    --color-bg-footer: #ffffff;
+    --color-border-light: #cbd5e1;
 
-  --color-halo-border: #cbd5e1;
-  --color-staff-line: rgba(0, 0, 0, 0.15);
+    --color-halo-border: #cbd5e1;
+    --color-staff-line: rgba(0, 0, 0, 0.15);
 
-  --color-bg-popup: #ffffff;
-  --color-text-popup-title: #1e293b;
-  --color-text-popup-desc: #475569;
-  --color-bg-button-popup: #f1f5f9;
-  --color-text-button-popup: #1e293b;
+    --color-bg-popup: #ffffff;
+    --color-text-popup-title: #1e293b;
+    --color-text-popup-desc: #475569;
+    --color-bg-button-popup: #f1f5f9;
+    --color-text-button-popup: #1e293b;
 
-  --ca-input-bg: #f1f5f9;
-  --ca-input-text: #1e293b;
-  --ca-placeholder: #64748b;
+    --ca-input-bg: #f1f5f9;
+    --ca-input-text: #1e293b;
+    --ca-placeholder: #64748b;
 
-  --color-overlay: rgba(255, 255, 255, 0.95);
-  --color-pin-dot-border: #1e293b;
-  --color-pin-dot-filled: #1e293b;
-  --color-keypad-bg: #f1f5f9;
-  --color-keypad-text: #1e293b;
+    --color-overlay: rgba(255, 255, 255, 0.95);
+    --color-pin-dot-border: #1e293b;
+    --color-pin-dot-filled: #1e293b;
+    --color-keypad-bg: #f1f5f9;
+    --color-keypad-text: #1e293b;
 }
