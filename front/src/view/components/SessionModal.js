@@ -6,11 +6,11 @@ export class SessionModal {
     this.day = day;
     this.onComplete = onComplete;
     this.happiness = null;
-    this.quality = 0;
+    this.quality = 1;
   }
 
   render() {
-    const emojis = ["😢", "😐", "🙂", "🤩"];
+    const emojis = ["😞", "🫥", "😊", "🤩"];
 
     const emojiButtons = emojis.map((emoji, index) =>
       el(
@@ -50,9 +50,9 @@ export class SessionModal {
               this.quality = parseInt(e.target.value);
             },
           },
-          el("option", { value: "0" }, "Non (0)"),
-          el("option", { value: "1" }, "Oui (1)"),
-          el("option", { value: "2" }, "Dépassé (2)"),
+          el("option", { value: "1" }, "Oui"),
+          el("option", { value: "0" }, "Non"),
+          el("option", { value: "2" }, "Dépassé"),
         ),
 
         el(

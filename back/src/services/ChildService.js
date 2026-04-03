@@ -12,12 +12,13 @@ export class ChildService {
       throw error;
     }
     const plan = await WeeklyPlanModel.getPlan(childId);
-    const streak = await StreakModel.getStreak(childId);
+    const streakData = await StreakModel.getStreak(childId);
     const sessions = await SessionsModel.getSessions(childId);
+
     return {
       ...child[0],
       weeklyPlan: plan,
-      streak: streak[0] || { current_streak: 0, last_practice_date: null },
+      streak: streakData[0]?.current_streak || 0,
       sessions: sessions || [],
     };
   }
@@ -49,7 +50,41 @@ export class ChildService {
         await WeeklyPlanModel.setDayStatus(childId, englishDay, 1);
       }
     }
+
+    await this.calculateStreak(childId, sessionDate);
+
     return { success: true };
+  }
+
+  static async calculateStreak(childId, sessionDate) {
+    const streakData = await StreakModel.getStreak(childId);
+    let currentStreak = 0;
+    let lastDate = null;
+
+    if (streakData.length > 0) {
+      currentStreak = streakData[0].current_streak;
+      lastDate = streakData[0].last_practice_date
+        ? new Date(streakData[0].last_practice_date).toISOString().slice(0, 10)
+        : null;
+    }
+
+    const today = sessionDate;
+
+    if (lastDate === today) {
+      return;
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
+    if (lastDate === yesterdayStr || lastDate === null) {
+      currentStreak += 1;
+    } else {
+      currentStreak = 1;
+    }
+
+    await StreakModel.updateStreak(childId, currentStreak, today);
   }
 
   static async updateWeeklyPlan(childId, data) {
