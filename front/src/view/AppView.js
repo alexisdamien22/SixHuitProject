@@ -140,6 +140,8 @@ export class AppView {
     }
   }
 
+  // Localisation : front/src/view/AppView.js
+
   toggleBottomMenu(force, skipReset = false) {
     AppViewNavigation.createBottomMenu(this);
     const container = document.getElementById("bottom-menu-container");
@@ -148,20 +150,27 @@ export class AppView {
     const show =
       force !== undefined ? force : !container.classList.contains("show");
 
-    if (show) {
-      void container.offsetWidth;
-    }
-
     container.classList.toggle("show", show);
 
     if (!show && !skipReset) {
-      const hash = window.location.hash.substring(1) || "home";
-      const pages = ["home", "podium", "music", "menu"];
-      let idx = pages.indexOf(
-        hash === "settings" || hash === "profil" ? "menu" : hash,
+      const currentPageName = this.currentPage?.constructor.name;
+
+      const isMenuPage = ["ProfilPage", "SettingsPage"].includes(
+        currentPageName,
       );
-      if (idx === -1) idx = 0;
-      this.syncFooter(idx);
+
+      if (isMenuPage) {
+        this.syncFooter(3);
+      } else {
+        const pageToIconMap = {
+          HomePage: 0,
+          ParentHomePage: 0,
+          PodiumPage: 1,
+          MusicPage: 2,
+        };
+        const idx = pageToIconMap[currentPageName] ?? 0;
+        this.syncFooter(idx);
+      }
     }
   }
 
