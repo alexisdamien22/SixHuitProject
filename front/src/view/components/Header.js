@@ -10,18 +10,32 @@ export class Header {
         const streakText = document.querySelector(".strik-text");
         const streakIcon = document.querySelector(".strik-icon");
 
-        if (streakText && data.streak !== undefined) {
-            streakText.textContent = data.streak;
+        let safeStreak = 0;
+        if (data.streak !== undefined) {
+            safeStreak =
+                typeof data.streak === "object" && data.streak !== null
+                    ? Number(data.streak.current_streak) || 0
+                    : Number(data.streak) || 0;
         }
 
-        if (streakIcon && data.streak !== undefined) {
-            streakIcon.src = AppFireChange.FireTextur(data.streak);
+        if (streakText) {
+            streakText.textContent = String(safeStreak);
+        }
+
+        if (streakIcon) {
+            streakIcon.src = AppFireChange.FireTextur(safeStreak);
         }
     }
 
     render() {
         const childData = this.app.model.getChildData() || {};
-        const streak = childData.streak || 0;
+
+        let streak = childData.streak || 0;
+        if (typeof streak === "object" && streak !== null) {
+            streak = Number(streak.current_streak) || 0;
+        } else {
+            streak = Number(streak) || 0;
+        }
 
         return el(
             "header",
@@ -33,7 +47,8 @@ export class Header {
                     "button",
                     {
                         className: "profile-icon header-profile-btn",
-                        onClick: () => this.app.view.toggleAccountSwitcher(true),
+                        onClick: () =>
+                            this.app.view.toggleAccountSwitcher(true),
                     },
                     el("img", {
                         src: "/assets/img/icons/family.png",
