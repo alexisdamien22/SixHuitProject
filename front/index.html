@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Six-Huit | Apprentissage Musical</title>
@@ -13,68 +14,57 @@
     />
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="manifest" href="/manifest.json" />
-    <link
-      rel="icon"
-      href="/assets/img/icons/app-icon-86.png"
-      type="image/png"
-    />
+    <link rel="icon" href="/assets/img/icons/app-icon-86.png" type="image/png" />
     <link rel="apple-touch-icon" href="/assets/img/icons/app-icon-86.png" />
 
-    <meta
-      name="theme-color"
-      content="#2563eb"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#001a4d"
-      media="(prefers-color-scheme: dark)"
-    />
-  </head>
+    <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#001a4d" media="(prefers-color-scheme: dark)" />
+</head>
 
-  <body>
+<body>
     <div id="header-placeholder"></div>
     <div id="app"></div>
     <div id="footer-placeholder"></div>
 
     <script type="module">
-      import { AppModel } from "./src/model/AppModel.js";
-      import { AppView } from "./src/view/AppView.js";
-      import { AppController } from "./src/controller/AppController.js";
+        import { AppModel } from "./src/model/AppModel.js";
+        import { AppView } from "./src/view/AppView.js";
+        import { AppController } from "./src/controller/AppController.js";
 
-      document.addEventListener("DOMContentLoaded", async () => {
-        try {
-          const appModel = new AppModel();
-          const view = new AppView();
-          const appController = new AppController(appModel, view);
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const appModel = new AppModel();
+                const view = new AppView();
+                const appController = new AppController(appModel, view);
 
-          window.appController = appController;
-          await appController.init();
-        } catch (error) {
-          console.error(error);
-        }
-      });
-
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/sw.js", { scope: "/" })
-            .then((reg) => {
-              reg.addEventListener("updatefound", () => {
-                const newWorker = reg.installing;
-                newWorker.addEventListener("statechange", () => {
-                  if (
-                    newWorker.state === "installed" &&
-                    navigator.serviceWorker.controller
-                  ) {
-                    window.location.reload();
-                  }
-                });
-              });
-            })
-            .catch((err) => console.error(err));
+                window.appController = appController;
+                await appController.init();
+            } catch (error) {
+                console.error(error);
+            }
         });
-      }
+
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker
+                    .register("/sw.js", { scope: "/" })
+                    .then((reg) => {
+                        reg.addEventListener("updatefound", () => {
+                            const newWorker = reg.installing;
+                            newWorker.addEventListener("statechange", () => {
+                                if (
+                                    newWorker.state === "installed" &&
+                                    navigator.serviceWorker.controller
+                                ) {
+                                    window.location.reload();
+                                }
+                            });
+                        });
+                    })
+                    .catch((err) => console.error(err));
+            });
+        }
     </script>
-  </body>
+</body>
+
 </html>
