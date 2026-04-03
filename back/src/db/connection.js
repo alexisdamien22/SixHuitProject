@@ -5,6 +5,7 @@ export const db = mysql.createPool({
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_NAME || "six_huit_production",
+  port: process.env.DB_PORT || "",
   connectionLimit: 10,
 });
 
