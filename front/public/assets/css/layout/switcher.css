@@ -97,6 +97,14 @@
   z-index: 10000;
   color: var(--color-text-main);
 }
+.verify-pin-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2vw;
+  padding: 20px;
+  padding-bottom: 40px;
+}
 
 .verify-pin-dot {
   width: 20px;
