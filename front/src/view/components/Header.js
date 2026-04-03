@@ -7,8 +7,8 @@ export class Header {
     }
 
     update(data) {
-        const streakText = document.querySelector(".strik-text");
-        const streakIcon = document.querySelector(".strik-icon");
+        const streakText = document.querySelector(".streak-text");
+        const streakIcon = document.querySelector(".streak-icon");
 
         let safeStreak = 0;
         if (data.streak !== undefined) {
@@ -58,13 +58,13 @@ export class Header {
                 ),
                 el(
                     "div",
-                    { className: "strik" },
+                    { className: "streak" },
                     el("img", {
-                        className: "strik-icon",
+                        className: "streak-icon",
                         src: AppFireChange.FireTextur(streak),
                         alt: "Streak",
                     }),
-                    el("p", { className: "strik-text" }, String(streak)),
+                    el("p", { className: "streak-text" }, String(streak)),
                 ),
             ),
             el("div", { className: "parametre", dataset: { rotation: "0" } }),

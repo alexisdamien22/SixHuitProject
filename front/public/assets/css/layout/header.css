@@ -45,19 +45,19 @@
     display: block;
 }
 
-.strik {
+.streak {
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-.strik-icon {
+.streak-icon {
     height: 30px;
     width: auto;
     transform: translateY(-2px);
 }
 
-.strik-text {
+.streak-text {
     color: var(--color-text-main);
     font-size: 22px;
     margin: 0;

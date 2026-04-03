@@ -30,8 +30,8 @@ export class ProfilPage {
                     el("h3", {}, "Série actuelle"),
                     el(
                         "div",
-                        { className: "strik strik-centered" },
-                        el("span", { className: "strik-text" }, `🔥 ${streak}`),
+                        { className: "streak streak-centered" },
+                        el("span", { className: "streak-text" }, `🔥 ${streak}`),
                     ),
                 ),
                 el(
