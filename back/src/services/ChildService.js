@@ -4,42 +4,42 @@ import { StreakModel } from "../models/StreakModel.js";
 import { SessionsModel } from "../models/SessionsModel.js";
 
 export class ChildService {
-  static async getChildData(childId) {
-    const child = await ChildAccountModel.findById(childId);
-    if (child.length === 0) throw new Error("Enfant introuvable.");
+    static async getChildData(childId) {
+        const child = await ChildAccountModel.findById(childId);
+        if (child.length === 0) throw new Error("Enfant introuvable.");
 
-    const plan = await WeeklyPlanModel.getPlan(childId);
-    const streak = await StreakModel.getStreak(childId);
-    const sessions = await SessionsModel.getSessions(childId);
+        const plan = await WeeklyPlanModel.getPlan(childId);
+        const streak = await StreakModel.getStreak(childId);
+        const sessions = await SessionsModel.getSessions(childId);
 
-    return {
-      ...child[0],
-      weeklyPlan: plan,
-      streak: streak[0] || { current_streak: 0, last_practice_date: null },
-      sessions,
-    };
-  }
-
-  static async updateSession(childId, data) {
-    await SessionsModel.addSession(childId, data);
-
-    if (data.practice_day) {
-      const mapDays = {
-        Lundi: "monday",
-        Mardi: "tuesday",
-        Mercredi: "wednesday",
-        Jeudi: "thursday",
-        Vendredi: "friday",
-        Samedi: "saturday",
-        Dimanche: "sunday",
-      };
-
-      const englishDay = mapDays[data.practice_day];
-      if (englishDay) {
-        await WeeklyPlanModel.setDayStatus(childId, englishDay, 1);
-      }
+        return {
+            ...child[0],
+            weeklyPlan: plan,
+            streak: streak[0] || { current_streak: 0, last_practice_date: null },
+            sessions,
+        };
     }
 
-    return { message: "Session recorded" };
-  }
+    static async updateSession(childId, data) {
+        await SessionsModel.addSession(childId, data);
+
+        if (data.practice_day) {
+            const mapDays = {
+                Lundi: "monday",
+                Mardi: "tuesday",
+                Mercredi: "wednesday",
+                Jeudi: "thursday",
+                Vendredi: "friday",
+                Samedi: "saturday",
+                Dimanche: "sunday",
+            };
+
+            const englishDay = mapDays[data.practice_day];
+            if (englishDay) {
+                await WeeklyPlanModel.setDayStatus(childId, englishDay, 1);
+            }
+        }
+
+        return { message: "Session recorded" };
+    }
 }
