@@ -90,7 +90,3 @@
     mask-position: center;
     background-color: var(--color-button);
 }
-
-.parametre:hover::before {
-    transform: rotate(15deg);
-}

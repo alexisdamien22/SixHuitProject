@@ -13,6 +13,22 @@ export function initAppEvents(view) {
     if (e.target.id === "theme-checkbox") AppViewTheme.toggle(e.target.checked);
   });
 
+  let paramAngle = 0;
+  let paramVelocity = 0;
+  let isParamSpinning = false;
+
+  const spinParamBtn = (btn) => {
+    if (paramVelocity > 0.1) {
+      paramAngle += paramVelocity;
+      btn.style.transform = `rotate(${paramAngle}deg)`;
+      paramVelocity *= 0.985;
+      requestAnimationFrame(() => spinParamBtn(btn));
+    } else {
+      paramVelocity = 0;
+      isParamSpinning = false;
+    }
+  };
+
   document.addEventListener("click", (e) => {
     const headerProfile = e.target.closest(
       ".profile-icon, .header-profile-btn",
@@ -47,11 +63,18 @@ export function initAppEvents(view) {
 
     const paramBtn = e.target.closest(".parametre");
     if (paramBtn) {
-      const rot = parseInt(paramBtn.dataset.rotation || "0", 10) + 360;
-      paramBtn.dataset.rotation = rot;
-      paramBtn.style.transform = `rotate(${rot}deg)`;
-      view.app.navigation.goTo("settings");
-      view.syncFooter(3);
+      paramBtn.style.transition = "none";
+      paramVelocity += 8;
+      if (paramVelocity > 60) paramVelocity = 60;
+
+      if (!isParamSpinning) {
+        isParamSpinning = true;
+        spinParamBtn(paramBtn);
+      }
+      if (view.currentPage?.constructor.name !== "SettingsPage") {
+        view.app.navigation.goTo("settings");
+        view.syncFooter(3);
+      }
     }
 
     const footerIcon = e.target.closest(".icon-footer");
