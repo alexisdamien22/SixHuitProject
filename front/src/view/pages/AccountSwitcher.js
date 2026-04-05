@@ -50,7 +50,11 @@ export const AccountSwitcher = {
             el(
                 "div",
                 { className: "account-switcher-sheet" },
-                el("div", { className: "switcher-header" }, "Changer de profil"),
+                el(
+                    "div",
+                    { className: "switcher-header" },
+                    "Changer de profil",
+                ),
                 el(
                     "div",
                     { className: "switcher-list" },
@@ -70,7 +74,11 @@ export const AccountSwitcher = {
                         el(
                             "div",
                             { className: "switcher-info" },
-                            el("span", { className: "switcher-name" }, "Ajouter un enfant"),
+                            el(
+                                "span",
+                                { className: "switcher-name" },
+                                "Ajouter un enfant",
+                            ),
                         ),
                     ),
                 ),
@@ -89,7 +97,11 @@ export const AccountSwitcher = {
                     el(
                         "div",
                         { className: "switcher-info" },
-                        el("span", { className: "switcher-name" }, "Espace Parent"),
+                        el(
+                            "span",
+                            { className: "switcher-name" },
+                            "Espace Parent",
+                        ),
                     ),
                 ),
             ),
@@ -126,7 +138,9 @@ export const AccountSwitcher = {
                     },
                     () => {
                         // Callback onError
-                        const container = overlay.querySelector(".verify-pin-container");
+                        const container = overlay.querySelector(
+                            ".verify-pin-container",
+                        );
                         container.classList.add("error-shake");
                         setTimeout(() => {
                             container.classList.remove("error-shake");
@@ -157,7 +171,7 @@ export const AccountSwitcher = {
             "7",
             "8",
             "9",
-            "Annuler",
+            "",
             "0",
             "⌫",
         ];
@@ -165,20 +179,33 @@ export const AccountSwitcher = {
         const keypad = el(
             "div",
             { className: "verify-pin-keypad" },
-            ...keys.map((key) =>
-                el(
+            ...keys.map((key) => {
+                if (key === "") return el("div"); // Garde l'espace vide en bas à gauche
+                return el(
                     "button",
                     {
-                        className: key === "Annuler" ? "pin-key pin-key-cancel" : "pin-key",
+                        className: "pin-key",
                         onClick: (e) => {
                             e.preventDefault();
-                            if (key === "Annuler") overlay.remove();
-                            else handleKey(key);
+                            handleKey(key);
                         },
                     },
                     key,
-                ),
-            ),
+                );
+            }),
+        );
+
+        const cancelBtn = el(
+            "button",
+            {
+                className: "pin-key-cancel",
+                style: "margin-top: 20px; background: none; border: none; color: inherit; text-decoration: underline; font-size: 1.1rem; cursor: pointer;",
+                onClick: (e) => {
+                    e.preventDefault();
+                    overlay.remove();
+                },
+            },
+            "Annuler",
         );
 
         overlay.appendChild(
@@ -186,6 +213,7 @@ export const AccountSwitcher = {
         );
         overlay.appendChild(dotsContainer);
         overlay.appendChild(keypad);
+        overlay.appendChild(cancelBtn);
         document.body.appendChild(overlay);
     },
 };

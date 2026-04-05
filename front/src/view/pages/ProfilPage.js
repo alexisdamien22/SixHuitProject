@@ -6,6 +6,17 @@ export class ProfilPage {
     }
 
     render() {
+        const isParent =
+            this.app.model.session?.isParent &&
+            this.app.model.session.isParent();
+
+        if (isParent) {
+            return this.renderParentProfile();
+        }
+        return this.renderChildProfile();
+    }
+
+    renderChildProfile() {
         const child = this.app.model.getChildData() || {};
         const mascot = child.mascot || "👤";
         const name = child.name || "Profil";
@@ -31,7 +42,11 @@ export class ProfilPage {
                     el(
                         "div",
                         { className: "streak streak-centered" },
-                        el("span", { className: "streak-text" }, `🔥 ${streak}`),
+                        el(
+                            "span",
+                            { className: "streak-text" },
+                            `🔥 ${streak}`,
+                        ),
                     ),
                 ),
                 el(
@@ -46,6 +61,52 @@ export class ProfilPage {
                 "div",
                 { className: "history-section" },
                 el("h3", {}, "Historique des séances"),
+            ),
+        );
+    }
+
+    renderParentProfile() {
+        const parentData = this.app.model.getParentData() || {};
+        const name = parentData.name
+            ? `Parent : ${parentData.name}`
+            : "Espace Parent";
+        const email = parentData.email || "";
+
+        return el(
+            "div",
+            { className: "page profile-page parent-profile" },
+            el("div", { className: "profil-img profil-img-container" }, "🛡️"),
+            el("p", { className: "profil-name" }, name),
+
+            el(
+                "div",
+                { className: "stats-row" },
+                el(
+                    "div",
+                    { className: "card full-width" },
+                    el("h3", {}, "Type de compte"),
+                    el("p", { className: "instrument-text" }, "Administrateur"),
+                    email
+                        ? el(
+                              "p",
+                              {
+                                  style: "font-size: 0.9em; color: #888; margin-top: 5px;",
+                              },
+                              email,
+                          )
+                        : "",
+                ),
+            ),
+
+            el(
+                "div",
+                { className: "history-section" },
+                el("h3", {}, "Abonnement & Facturation"),
+                el(
+                    "p",
+                    { style: "color: #888; margin-top: 10px;" },
+                    "Ici vous pourrez gérer votre abonnement et vos informations de paiement.",
+                ),
             ),
         );
     }
