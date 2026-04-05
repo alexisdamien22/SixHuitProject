@@ -8,7 +8,8 @@ export class ProfilPage {
     render() {
         const isParent =
             this.app.model.session?.isParent &&
-            this.app.model.session.isParent();
+            this.app.model.session.isParent() &&
+            !localStorage.getItem("activeChildId");
 
         if (isParent) {
             return this.renderParentProfile();
@@ -26,10 +27,73 @@ export class ProfilPage {
             : "-";
         const streak = child.streak || 0;
 
+        const historyList = child.history || child.sessions || [];
+        const emojis = ["😞", "🫥", "😊", "🤩"];
+
+        const historyItems =
+            historyList.length > 0
+                ? historyList.map((session) => {
+                      const emoji = emojis[session.happiness] || "❓";
+                      let qualityText = "Temps respecté";
+                      if (session.quality === 0)
+                          qualityText = "Temps non respecté";
+                      if (session.quality === 2) qualityText = "Temps dépassé";
+
+                      const dateStr = session.session_date
+                          ? new Date(session.session_date).toLocaleDateString(
+                                "fr-FR",
+                            )
+                          : "Date inconnue";
+                      const dayName = session.practice_day || "Séance";
+
+                      return el(
+                          "div",
+                          {
+                              className: "history-card",
+                          },
+
+                          el(
+                              "span",
+                              { className: "history-card-date" },
+                              dateStr,
+                          ),
+
+                          el(
+                              "div",
+                              { className: "history-card-botom" },
+                              el(
+                                  "div",
+                                  { className: "history-card-emoji" },
+                                  emoji,
+                              ),
+                              el(
+                                  "span",
+                                  { className: "history-card-quality" },
+                                  qualityText,
+                              ),
+                          ),
+                      );
+                  })
+                : [
+                      el(
+                          "p",
+                          { className: "empty-history-text" },
+                          "Aucune séance enregistrée pour le moment.",
+                      ),
+                  ];
+
         return el(
             "div",
             { className: "page profile-page" },
-            el("div", { className: "profil-img profil-img-container" }, mascot),
+            el(
+                "div",
+                { className: "profil-img profil-img-container" },
+                el("img", {
+                    src: "/assets/img/mascots/camelion.png", // Vous pouvez remplacer par le chemin de la mascotte dynamique si besoin
+                    alt: "Profil Enfant",
+                    className: "profil-img-content",
+                }),
+            ),
             el("p", { className: "profil-name" }, name),
 
             el(
@@ -61,6 +125,7 @@ export class ProfilPage {
                 "div",
                 { className: "history-section" },
                 el("h3", {}, "Historique des séances"),
+                ...historyItems,
             ),
         );
     }
@@ -75,7 +140,15 @@ export class ProfilPage {
         return el(
             "div",
             { className: "page profile-page parent-profile" },
-            el("div", { className: "profil-img profil-img-container" }, "🛡️"),
+            el(
+                "div",
+                { className: "profil-img profil-img-container" },
+                el("img", {
+                    src: "/assets/img/icons/family.png",
+                    alt: "Profil Parent",
+                    className: "profil-img-content",
+                }),
+            ),
             el("p", { className: "profil-name" }, name),
 
             el(
@@ -86,15 +159,7 @@ export class ProfilPage {
                     { className: "card full-width" },
                     el("h3", {}, "Type de compte"),
                     el("p", { className: "instrument-text" }, "Administrateur"),
-                    email
-                        ? el(
-                              "p",
-                              {
-                                  style: "font-size: 0.9em; color: #888; margin-top: 5px;",
-                              },
-                              email,
-                          )
-                        : "",
+                    email ? el("p", { className: "parent-email" }, email) : "",
                 ),
             ),
 
@@ -104,7 +169,7 @@ export class ProfilPage {
                 el("h3", {}, "Abonnement & Facturation"),
                 el(
                     "p",
-                    { style: "color: #888; margin-top: 10px;" },
+                    { className: "subscription-desc" },
                     "Ici vous pourrez gérer votre abonnement et vos informations de paiement.",
                 ),
             ),
