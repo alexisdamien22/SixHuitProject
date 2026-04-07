@@ -5,7 +5,7 @@ import { HomePage } from "./pages/HomePage.js";
 import { ProfilPage } from "./pages/ProfilPage.js";
 import { SettingsPage } from "./pages/SettingsPage.js";
 import { MusicPage } from "./pages/MusicPage.js";
-import { PodiumPage } from "./pages/PodiumPage.js";
+import { CommunityPage } from "./pages/CommunityPage.js";
 import { ParentHomePage } from "./pages/ParentHomePage.js";
 
 import { LoginPage } from "./pages/LoginPage.js";
@@ -96,8 +96,8 @@ export class AppView {
             case "music":
                 page = new MusicPage(this.app);
                 break;
-            case "podium":
-                page = new PodiumPage(this.app);
+            case "community":
+                page = new CommunityPage(this.app);
                 break;
             case "parent-home":
                 page = new ParentHomePage(this.app);
@@ -113,7 +113,7 @@ export class AppView {
         const pageToIconMap = {
             home: 0,
             "parent-home": 0,
-            podium: 1,
+            community: 1,
             music: 2,
             profil: 3,
             settings: 3,
@@ -165,7 +165,7 @@ export class AppView {
                 const pageToIconMap = {
                     HomePage: 0,
                     ParentHomePage: 0,
-                    PodiumPage: 1,
+                    CommunityPage: 1,
                     MusicPage: 2,
                 };
                 const idx = pageToIconMap[currentPageName] ?? 0;

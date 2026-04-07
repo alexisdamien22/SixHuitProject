@@ -1,6 +1,6 @@
 import { el } from "../../utils/DOMBuilder.js";
 
-export class PodiumPage {
+export class CommunityPage {
     constructor(app) {
         this.app = app;
         this.recommendations = [];

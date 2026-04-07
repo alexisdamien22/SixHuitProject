@@ -6,7 +6,7 @@ const ASSETS_TO_CACHE = [
     "/manifest.json",
     "/assets/css/style.css",
     "/assets/img/icons/home.png",
-    "/assets/img/icons/podium.png",
+    "/assets/img/icons/friends.png",
     "/assets/img/icons/music.png",
     "/assets/img/icons/menu.png",
     "/assets/img/icons/app-icon-86.png",
@@ -42,14 +42,21 @@ self.addEventListener("fetch", (event) => {
 
     const url = new URL(event.request.url);
 
-    if (url.origin === "https://fonts.gstatic.com" || url.origin === "https://fonts.googleapis.com") {
+    if (
+        url.origin === "https://fonts.gstatic.com" ||
+        url.origin === "https://fonts.googleapis.com"
+    ) {
         return;
     }
 
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                if (!response || response.status !== 200 || response.type !== "basic") {
+                if (
+                    !response ||
+                    response.status !== 200 ||
+                    response.type !== "basic"
+                ) {
                     return response;
                 }
 
