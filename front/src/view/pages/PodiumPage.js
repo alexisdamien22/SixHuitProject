@@ -48,7 +48,6 @@ export class PodiumPage {
                       ),
                   ];
 
-        // --- ONGLET 1 : MON PODIUM (Actualités et liste d'amis) ---
         const tabFeed = el(
             "div",
             {
@@ -60,7 +59,6 @@ export class PodiumPage {
             el("div", { className: "social-list" }, ...friendsContent),
         );
 
-        // --- ONGLET 2 : AJOUTER (Recherche et suggestions) ---
         const tabAdd = el(
             "div",
             {
@@ -89,14 +87,13 @@ export class PodiumPage {
             el("div", { className: "social-list" }, recommendationsContent),
         );
 
-        // --- BOUTONS DES ONGLETS ---
         const tabFeedBtn = el(
             "button",
             {
                 className: "tab-btn active",
                 onClick: (e) => this.switchTab("feed", e.target),
             },
-            "Mon Podium",
+            "Mes Amis",
         );
         const tabAddBtn = el(
             "button",
