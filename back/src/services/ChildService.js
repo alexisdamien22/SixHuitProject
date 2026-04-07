@@ -72,7 +72,6 @@ export class ChildService {
             if (streakData[0].last_practice_date) {
                 const dateObj = new Date(streakData[0].last_practice_date);
 
-                // CORRECTION : On vérifie que la date est valide avant de parser
                 if (!isNaN(dateObj)) {
                     lastDate = dateObj.toISOString().split("T")[0];
                 }

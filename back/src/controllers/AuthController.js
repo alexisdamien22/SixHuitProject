@@ -63,4 +63,15 @@ export class AuthController {
             res.status(err.status || 500).json({ error: err.message });
         }
     }
+
+    static async updatePin(req, res) {
+        try {
+            const adultId = req.user.id;
+            const { newPin } = req.body;
+            const result = await AuthService.updatePin(adultId, newPin);
+            res.status(200).json(result);
+        } catch (err) {
+            res.status(err.status || 500).json({ error: err.message });
+        }
+    }
 }
