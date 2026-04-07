@@ -3,13 +3,17 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./src/routes/authRoutes.js";
 import childRoutes from "./src/routes/childRoutes.js";
+import socialRoutes from "./src/routes/socialRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(
     cors({
-        origin: ["http://localhost:5173", "https://subventricular-carlee-tormentingly.ngrok-free.dev"],
+        origin: [
+            "http://localhost:5173",
+            "https://subventricular-carlee-tormentingly.ngrok-free.dev",
+        ],
         credentials: true,
     }),
 );
@@ -29,6 +33,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/child", childRoutes);
+app.use("/api/social", socialRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ error: "Route not found" });

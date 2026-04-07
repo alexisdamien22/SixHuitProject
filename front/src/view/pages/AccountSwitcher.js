@@ -125,8 +125,9 @@ export const AccountSwitcher = {
                         overlay.remove();
                     },
                     () => {
-                        // Callback onError
-                        const container = overlay.querySelector(".verify-pin-container");
+                        const container = overlay.querySelector(
+                            ".verify-pin-container",
+                        );
                         container.classList.add("error-shake");
                         setTimeout(() => {
                             container.classList.remove("error-shake");
@@ -165,8 +166,9 @@ export const AccountSwitcher = {
         const keypad = el(
             "div",
             { className: "verify-pin-keypad" },
-            ...keys.map((key) =>
-                el(
+            ...keys.map((key) => {
+                if (key === "") return el("div");
+                return el(
                     "button",
                     {
                         className: key === "Annuler" ? "pin-key pin-key-cancel" : "pin-key",

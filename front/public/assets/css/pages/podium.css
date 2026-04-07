@@ -1,0 +1,13 @@
+.community-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10dvh;
+    padding: 20px 0 40px 0;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    max-height: 80dvh;
+    overflow-y: auto;
+}
