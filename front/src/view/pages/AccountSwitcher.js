@@ -137,7 +137,6 @@ export const AccountSwitcher = {
                         overlay.remove();
                     },
                     () => {
-                        // Callback onError
                         const container = overlay.querySelector(
                             ".verify-pin-container",
                         );

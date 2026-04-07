@@ -1,6 +1,7 @@
 import { NavigationController } from "./NavigationController.js";
 import { AuthController } from "./AuthController.js";
 import { ChildController } from "./ChildController.js";
+import { SocialController } from "./SocialController.js";
 
 export class AppController {
     constructor(appModel, appView) {
@@ -10,6 +11,7 @@ export class AppController {
         this.navigation = new NavigationController(this);
         this.auth = new AuthController(this);
         this.child = new ChildController(this);
+        this.social = new SocialController(this);
     }
 
     async init() {
@@ -31,5 +33,4 @@ export class AppController {
         await this.child.loadChildData();
         this.navigation.goTo("home");
     }
-
 }
