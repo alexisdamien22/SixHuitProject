@@ -70,10 +70,7 @@ export class AuthController {
             });
 
             if (!result || result.error || !result.token) {
-                throw new Error(
-                    result?.error ||
-                        "Erreur de communication avec le serveur (Base de données injoignable).",
-                );
+                throw new Error(result?.error || "Server error");
             }
 
             this.app.model.session.saveSession({
@@ -92,7 +89,7 @@ export class AuthController {
             }
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Identifiants incorrects.");
+            alert(err.message || "Invalid credentials");
             this.triggerRender();
         }
     }
@@ -131,10 +128,7 @@ export class AuthController {
             });
 
             if (!result || result.error || (!result.token && !result.adultId)) {
-                throw new Error(
-                    result?.error ||
-                        "Erreur lors de la création (Base de données injoignable).",
-                );
+                throw new Error(result?.error || "Registration error");
             }
 
             this.app.model.session.saveSession({
@@ -146,7 +140,7 @@ export class AuthController {
             this.app.navigation.goTo("parent-home");
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Erreur lors de la création du compte.");
+            alert(err.message || "Registration error");
             this.triggerRender();
         }
     }
@@ -180,7 +174,7 @@ export class AuthController {
                 this.executeSwitchToParent();
             }
         } catch (err) {
-            console.error("Erreur lors du passage au mode parent :", err);
+            console.error("Switch to parent mode error :", err);
         }
     }
 
@@ -215,19 +209,25 @@ export class AuthController {
             );
 
             if (!result || result.error || !result.success) {
-                throw new Error(result?.error || "Erreur création enfant");
+                throw new Error(result?.error || "Child creation error");
             }
 
             this.app.model.session.setActiveChild(result.childId);
-
             await this.app.child.loadChildData();
+
+            const savedName = state.childRegisterData.name;
+            const savedMascot = state.childRegisterData.mascot;
+
+            this.app.model.resetAuthData();
+            this.app.model.authState.childRegisterData.name = savedName;
+            this.app.model.authState.childRegisterData.mascot = savedMascot;
 
             this.app.model.setAuthStep(8);
             this.app.model.setLoading(false);
             this.triggerRender();
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Erreur réseau");
+            alert(err.message || "Network error");
             this.triggerRender();
         }
     }
@@ -235,7 +235,7 @@ export class AuthController {
     logout() {
         this.app.model.session.clear();
         localStorage.removeItem("activeChildId");
-        this.app.model.setAuthStep(1);
+        this.app.model.resetAuthData();
         this.app.navigation.goTo("login");
     }
 
