@@ -7,13 +7,13 @@ export class ChildAccountModel extends BaseModel {
        (adultId, name, age, instrument, time_amount, school, mascot, lesson_day)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-                data.adultId ?? null,
-                data.name ?? null,
-                data.age ?? null,
+                data.adultId,
+                data.name,
+                data.age,
                 data.instrument ?? null,
-                data.time_amount ?? null,
+                data.time_amount,
                 data.school ?? null,
-                data.mascot ?? null,
+                data.mascot,
                 data.lesson_day ?? null,
             ],
         );

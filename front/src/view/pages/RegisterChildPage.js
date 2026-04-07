@@ -112,18 +112,6 @@ export class RegisterChildPage {
         }
 
         const illus = STEP_ILLUS[state.step] || { png: "", lbl: "" };
-        console.log("STEP =", state.step);
-        console.log(
-            "CHILD DATA =",
-            state.childRegisterData || state.registerData,
-        );
-        console.log(
-            "IS VALID ?",
-            FormHelpers.isChildStepValid(
-                state.step,
-                state.childRegisterData || state.registerData,
-            ),
-        );
 
         const isValid = FormHelpers.isChildStepValid(
             state.step,
