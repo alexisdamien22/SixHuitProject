@@ -53,9 +53,14 @@
 }
 
 .tab-content {
+    display: none;
     flex-direction: column;
     width: 100%;
     align-items: center;
+}
+
+.tab-content.active {
+    display: flex;
 }
 
 .social-list {
@@ -64,4 +69,12 @@
     width: 100%;
     align-items: center;
     gap: 10px;
+}
+
+.user-streak {
+    font-weight: bold;
+    color: #ff9800;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
 }

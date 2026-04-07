@@ -51,9 +51,8 @@ export class PodiumPage {
         const tabFeed = el(
             "div",
             {
-                className: "tab-content",
+                className: "tab-content active",
                 id: "tab-feed",
-                style: "display: flex;",
             },
             el("h3", { className: "section-title" }, "Mes amis"),
             el("div", { className: "social-list" }, ...friendsContent),
@@ -64,7 +63,6 @@ export class PodiumPage {
             {
                 className: "tab-content",
                 id: "tab-add",
-                style: "display: none;",
             },
             el(
                 "div",
@@ -127,11 +125,11 @@ export class PodiumPage {
         const tabAdd = this.container.querySelector("#tab-add");
 
         if (tabId === "feed") {
-            tabFeed.style.display = "flex";
-            tabAdd.style.display = "none";
+            tabFeed.classList.add("active");
+            tabAdd.classList.remove("active");
         } else {
-            tabFeed.style.display = "none";
-            tabAdd.style.display = "flex";
+            tabFeed.classList.remove("active");
+            tabAdd.classList.add("active");
         }
 
         const btns = this.container.querySelectorAll(".tab-btn");
@@ -189,7 +187,6 @@ export class PodiumPage {
                 "div",
                 {
                     className: "user-streak",
-                    style: "font-weight: bold; color: #ff9800; font-size: 1.2rem; display: flex; align-items: center;",
                 },
                 `🔥 ${streak}`,
             ),
