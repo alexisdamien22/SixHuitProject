@@ -18,11 +18,16 @@ export class AuthController {
     }
 
     handleInstrumentSelect(instrumentId) {
-        this.app.model.updateAuthData("register-child", "instrument", instrumentId);
+        this.app.model.updateAuthData(
+            "register-child",
+            "instrument",
+            instrumentId,
+        );
 
         if (
             this.app.view.currentPage &&
-            typeof this.app.view.currentPage.refreshInstrumentSelection === "function"
+            typeof this.app.view.currentPage.refreshInstrumentSelection ===
+                "function"
         ) {
             this.app.view.currentPage.refreshInstrumentSelection();
         }
@@ -33,7 +38,8 @@ export class AuthController {
 
         if (
             this.app.view.currentPage &&
-            typeof this.app.view.currentPage.refreshMascotSelection === "function"
+            typeof this.app.view.currentPage.refreshMascotSelection ===
+                "function"
         ) {
             this.app.view.currentPage.refreshMascotSelection();
         }
@@ -66,7 +72,7 @@ export class AuthController {
             if (!result || result.error || !result.token) {
                 throw new Error(
                     result?.error ||
-                    "Erreur de communication avec le serveur (Base de données injoignable).",
+                        "Erreur de communication avec le serveur (Base de données injoignable).",
                 );
             }
 
@@ -127,7 +133,7 @@ export class AuthController {
             if (!result || result.error || (!result.token && !result.adultId)) {
                 throw new Error(
                     result?.error ||
-                    "Erreur lors de la création (Base de données injoignable).",
+                        "Erreur lors de la création (Base de données injoignable).",
                 );
             }
 
@@ -150,21 +156,26 @@ export class AuthController {
             const profile = await ApiClient.get("/auth/profile");
 
             if (profile && profile.hasPin) {
-                AccountSwitcher.showPinPopup(async (enteredPin, onSuccess, onError) => {
-                    try {
-                        const res = await ApiClient.post("/auth/verify-pin", {
-                            pin: enteredPin,
-                        });
-                        if (res.success) {
-                            onSuccess();
-                            this.executeSwitchToParent();
-                        } else {
+                AccountSwitcher.showPinPopup(
+                    async (enteredPin, onSuccess, onError) => {
+                        try {
+                            const res = await ApiClient.post(
+                                "/auth/verify-pin",
+                                {
+                                    pin: enteredPin,
+                                },
+                            );
+                            if (res.success) {
+                                onSuccess();
+                                this.executeSwitchToParent();
+                            } else {
+                                onError();
+                            }
+                        } catch (e) {
                             onError();
                         }
-                    } catch (e) {
-                        onError();
-                    }
-                });
+                    },
+                );
             } else {
                 this.executeSwitchToParent();
             }
@@ -190,67 +201,23 @@ export class AuthController {
                 name: state.childRegisterData.name,
                 age: parseInt(state.childRegisterData.age) || null,
                 instrument: state.childRegisterData.instrument,
-                time_amount: parseInt(state.childRegisterData.time_amount) || null,
+                time_amount:
+                    parseInt(state.childRegisterData.time_amount) || null,
                 school: state.childRegisterData.school,
                 mascot: state.childRegisterData.mascot,
                 days: state.childRegisterData.days,
             };
 
-            const result = await ApiClient.post("/auth/register-child", payload);
+            const result = await ApiClient.post(
+                "/auth/register-child",
+                payload,
+            );
 
             if (!result || result.error || !result.success) {
                 throw new Error(result?.error || "Erreur création enfant");
             }
 
             this.app.model.session.setActiveChild(result.childId);
-
-            this.app.model.setAuthStep(8);
-            this.app.model.setLoading(false);
-            this.triggerRender();
-        } catch (err) {
-            this.app.model.setLoading(false);
-            alert(err.message || "Erreur réseau");
-            this.triggerRender();
-        }
-    }
-
-    async submitChildRegistration() {
-        const state = this.app.model.getAuthState();
-        if (state.isLoading) return;
-
-        this.app.model.setLoading(true);
-        this.triggerRender();
-
-        try {
-            const payload = {
-                name: state.childRegisterData.name,
-                age: parseInt(state.childRegisterData.age) || null,
-                instrument: state.childRegisterData.instrument,
-                time_amount: parseInt(state.childRegisterData.time_amount) || null,
-                school: state.childRegisterData.school,
-                mascot: state.childRegisterData.mascot,
-                days: state.childRegisterData.days,
-            };
-
-            const token = this.app.model.session.getToken();
-
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL || "http://localhost:3001/api"}/auth/register-child`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(payload),
-                },
-            );
-
-            const result = await response.json();
-            if (!response.ok || !result.success)
-                throw new Error(result.error || "Erreur création enfant");
-
-            localStorage.setItem("activeChildId", result.childId);
 
             this.app.model.setAuthStep(8);
             this.app.model.setLoading(false);

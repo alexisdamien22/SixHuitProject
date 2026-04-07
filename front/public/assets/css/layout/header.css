@@ -90,3 +90,15 @@
     mask-position: center;
     background-color: var(--color-button);
 }
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(180deg);
+    }
+}
+.parametre.spinning {
+    animation: spin 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}

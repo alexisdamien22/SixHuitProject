@@ -88,7 +88,7 @@ export class PodiumPage {
         if (!resultsContainer) return;
 
         if (query.length < 2) {
-            resultsContainer.innerHTML = "";
+            resultsContainer.replaceChildren();
             return;
         }
 

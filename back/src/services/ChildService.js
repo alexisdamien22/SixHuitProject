@@ -29,7 +29,8 @@ export class ChildService {
     }
 
     static async updateSession(childId, data) {
-        const happiness = data.happiness !== undefined ? Number(data.happiness) : 0;
+        const happiness =
+            data.happiness !== undefined ? Number(data.happiness) : 0;
         const quality = data.quality !== undefined ? Number(data.quality) : 0;
         const sessionDate =
             data.session_date || new Date().toISOString().slice(0, 10);
@@ -70,12 +71,7 @@ export class ChildService {
             currentStreak = streakData[0].current_streak;
             if (streakData[0].last_practice_date) {
                 const dateObj = new Date(streakData[0].last_practice_date);
-                lastDate =
-                    dateObj.getFullYear() +
-                    "-" +
-                    String(dateObj.getMonth() + 1).padStart(2, "0") +
-                    "-" +
-                    String(dateObj.getDate()).padStart(2, "0");
+                lastDate = dateObj.toISOString().split("T")[0];
             }
         }
 
@@ -87,12 +83,7 @@ export class ChildService {
 
         const yesterdayObj = new Date(today);
         yesterdayObj.setDate(yesterdayObj.getDate() - 1);
-        const yesterday =
-            yesterdayObj.getFullYear() +
-            "-" +
-            String(yesterdayObj.getMonth() + 1).padStart(2, "0") +
-            "-" +
-            String(yesterdayObj.getDate()).padStart(2, "0");
+        const yesterday = yesterdayObj.toISOString().split("T")[0];
 
         if (lastDate === yesterday || lastDate === null) {
             currentStreak += 1;
