@@ -16,15 +16,26 @@ function getHeaders() {
     return headers;
 }
 
+async function handleResponse(res) {
+    if (res.status === 401) {
+        localStorage.removeItem("sixhuit-session");
+        localStorage.removeItem("activeChildId");
+
+        window.location.reload();
+
+        throw new Error("Session expirée ou non autorisée.");
+    }
+
+    return res.json();
+}
+
 export class ApiClient {
     static async get(path) {
-        const separator = path.includes("?") ? "&" : "?";
-        const url = `${API_URL}${path}${separator}t=${Date.now()}`;
-        const res = await fetch(url, {
+        const res = await fetch(`${API_URL}${path}`, {
             method: "GET",
             headers: getHeaders(),
         });
-        return res.json();
+        return handleResponse(res);
     }
 
     static async post(path, data) {
@@ -33,6 +44,6 @@ export class ApiClient {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        return res.json();
+        return handleResponse(res);
     }
 }
