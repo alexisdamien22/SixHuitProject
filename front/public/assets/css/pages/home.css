@@ -84,123 +84,139 @@
 }
 
 .done .path-dot {
-  background-color: var(--color-done);
+    background-color: var(--color-done);
 }
 .done .path-dot-shadow {
-  background-color: var(--color-done-shadow);
+    background-color: var(--color-done-shadow);
 }
 
 .todo .path-dot {
-  background-color: var(--color-todo);
+    background-color: var(--color-todo);
 }
 .todo .path-dot-shadow {
-  background-color: var(--color-todo-shadow);
+    background-color: var(--color-todo-shadow);
 }
 
 .nothing .path-dot {
-  background-color: var(--color-nothing);
+    background-color: var(--color-nothing);
 }
 .nothing .path-dot-shadow {
-  background-color: var(--color-nothing-shadow);
+    background-color: var(--color-nothing-shadow);
 }
 
 .today-halo {
-  position: absolute;
-  width: 90px;
-  height: 80px;
-  background-color: var(--color-halo-bg);
-  border-radius: 50%;
-  border: 6px solid var(--color-halo-border);
-  top: calc(50% + 10px);
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 0;
-  pointer-events: none;
-  animation: gravity-bounce 1.9s infinite;
+    position: absolute;
+    width: 90px;
+    height: 80px;
+    background-color: var(--color-halo-bg);
+    border-radius: 50%;
+    border: 6px solid var(--color-halo-border);
+    top: calc(50% + 10px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+    animation: gravity-bounce 1.9s infinite;
 }
 
 @keyframes gravity-bounce {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-    animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
-  }
-  45% {
-    transform: translate(-50%, -50%) scale(0.9);
-    opacity: 0.85;
-    animation-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(0.85);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
+    }
+    45% {
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0.85;
+        animation-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(0.85);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
 
 .path-button-container:active .path-dot,
 .path-button-container.pressed .path-dot,
 .path-dot:active {
-  transform: translateY(8px);
+    transform: translateY(8px);
 }
 
 .path-button-container:active .mascot-path,
 .path-button-container.pressed .mascot-path {
-  transform: translateX(-50%) translateY(8px);
+    transform: translateX(-50%) translateY(8px);
 }
 
 .mascot-path {
-  position: absolute;
-  width: 80px;
-  height: auto;
-  top: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  pointer-events: none;
-  transition: transform 0.1s;
+    position: absolute;
+    width: 80px;
+    height: auto;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+    transition: transform 0.1s;
 }
 
 .path-label {
-  margin-top: 20px;
-  font-weight: bold;
-  color: var(--color-text-main);
-  text-transform: uppercase;
-  font-size: 14px;
+    margin-top: 20px;
+    font-weight: bold;
+    color: var(--color-text-main);
+    text-transform: uppercase;
+    font-size: 14px;
 }
 
 .path-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
 }
 
 .path-step.active-step {
-  z-index: 9999 !important;
+    z-index: 9999 !important;
 }
 
 .duo-popup {
-  z-index: 10000;
+    z-index: 10000;
 }
 .path-button-container:has(.duo-popup:hover) .path-dot,
 .path-button-container:has(.duo-popup:active) .path-dot,
 .path-button-container:has(.duo-popup.show) .path-dot {
-  transform: none;
+    transform: none;
 }
 
 .path-button-container:has(.duo-popup:hover) .mascot-path,
 .path-button-container:has(.duo-popup:active) .mascot-path,
 .path-button-container:has(.duo-popup.show) .mascot-path {
-  transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .path-button-container:has(.duo-popup:hover) .path-dot-shadow::before,
 .path-button-container:has(.duo-popup:active) .path-dot-shadow::before,
 .path-button-container:has(.duo-popup.show) .path-dot-shadow::before {
-  height: 10px;
-  top: 20px;
+    height: 10px;
+    top: 20px;
+}
+
+.path-step:nth-child(5n + 1) {
+    transform: translateX(0px);
+}
+.path-step:nth-child(5n + 2) {
+    transform: translateX(45px);
+}
+.path-step:nth-child(5n + 3) {
+    transform: translateX(25px);
+}
+.path-step:nth-child(5n + 4) {
+    transform: translateX(-25px);
+}
+.path-step:nth-child(5n + 5) {
+    transform: translateX(-45px);
 }

@@ -11,8 +11,6 @@ export function el(tag, attributes = {}, ...children) {
             for (const [dataKey, dataValue] of Object.entries(value)) {
                 element.dataset[dataKey] = dataValue;
             }
-        } else if (key === "style" && typeof value === "object") {
-            Object.assign(element.style, value);
         } else {
             if (value === true) element.setAttribute(key, "");
             else if (value !== false && value != null)
