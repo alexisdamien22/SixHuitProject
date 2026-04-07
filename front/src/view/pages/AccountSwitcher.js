@@ -24,13 +24,13 @@ export const AccountSwitcher = {
                         view.app.navigation.goTo("home");
                     },
                 },
-                el("div", { className: "switcher-avatar" }, acc.mascot || "🎵"),
+
                 el(
                     "div",
                     { className: "switcher-info" },
                     el("span", { className: "switcher-name" }, acc.name),
-                    el("span", { className: "switcher-status" }, " Élève"),
                 ),
+                el("div", { className: "switcher-avatar" }, acc.mascot || "🎵"),
             ),
         );
 
@@ -82,7 +82,7 @@ export const AccountSwitcher = {
                 el(
                     "div",
                     {
-                        className: "switcher-item",
+                        className: "switcher-item-parent",
                         id: "btn-switch-parent",
                         onClick: (e) => {
                             e.preventDefault();
@@ -104,6 +104,8 @@ export const AccountSwitcher = {
         );
 
         document.body.appendChild(switcher);
+
+        switcher.offsetHeight;
     },
 
     showPinPopup(verifyCallback) {

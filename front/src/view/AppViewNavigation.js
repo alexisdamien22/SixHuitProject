@@ -72,6 +72,8 @@ export const AppViewNavigation = {
             ),
         );
         document.body.appendChild(bottomMenu);
+
+        bottomMenu.offsetHeight;
     },
 
     createTopMenu(view, childAccounts = []) {
@@ -90,6 +92,8 @@ export const AppViewNavigation = {
             sheet = el("div", { className: "top-menu-sheet" });
             menuContainer.appendChild(sheet);
             document.body.insertBefore(menuContainer, document.body.firstChild);
+
+            menuContainer.offsetHeight;
         } else {
             sheet = menuContainer.querySelector(".top-menu-sheet");
             sheet.textContent = "";
