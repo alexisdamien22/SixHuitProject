@@ -19,8 +19,8 @@ export class WeeklyPlanModel extends BaseModel {
         return this.query(
             `INSERT INTO weekly_plan (child_id, day_of_week, practice, status)
                 VALUES (?, ?, ?, 0)
-                ON DUPLICATE KEY UPDATE practice = VALUES(practice)`,
-            [childId, day_of_week, practice],
+                ON DUPLICATE KEY UPDATE practice = ?`,
+            [childId, day_of_week, practice, practice],
         );
     }
 }

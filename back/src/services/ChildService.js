@@ -71,7 +71,11 @@ export class ChildService {
             currentStreak = streakData[0].current_streak;
             if (streakData[0].last_practice_date) {
                 const dateObj = new Date(streakData[0].last_practice_date);
-                lastDate = dateObj.toISOString().split("T")[0];
+
+                // CORRECTION : On vérifie que la date est valide avant de parser
+                if (!isNaN(dateObj)) {
+                    lastDate = dateObj.toISOString().split("T")[0];
+                }
             }
         }
 
