@@ -65,3 +65,80 @@ input:checked + .slider:before {
     margin-top: 10dvh;
     padding: 20px;
 }
+
+.settings-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 20px 10dvh 20px;
+    margin-top: 10dvh;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.settings-title {
+    margin-bottom: 30px;
+    align-self: center;
+}
+
+.settings-container {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.settings-section-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: var(--color-text-sub);
+    margin-bottom: 10px;
+    padding-left: 10px;
+    font-family: "Baloo 2", sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.settings-card {
+    background-color: var(--ca-input-bg);
+    border: 1px solid var(--color-border-soft);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--color-border-soft);
+    color: var(--color-text-main);
+}
+
+.settings-item:last-child {
+    border-bottom: none;
+}
+
+.settings-item.clickable {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.settings-item.clickable:active {
+    background-color: var(--color-border-soft);
+}
+
+.settings-item-label {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.settings-item-arrow {
+    font-size: 24px;
+    color: var(--color-text-sub);
+    line-height: 1;
+}
+
+.mt-24 {
+    margin-top: 24px;
+}

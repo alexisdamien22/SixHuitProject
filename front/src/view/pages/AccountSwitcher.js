@@ -166,7 +166,7 @@ export const AccountSwitcher = {
             "7",
             "8",
             "9",
-            "Annuler",
+            "",
             "0",
             "⌫",
         ];
@@ -175,18 +175,16 @@ export const AccountSwitcher = {
             "div",
             { className: "verify-pin-keypad" },
             ...keys.map((key) => {
-                if (key === "") return el("div");
+                if (key === "")
+                    return el("div", { className: "pin-key empty" });
+
                 return el(
                     "button",
                     {
-                        className:
-                            key === "Annuler"
-                                ? "pin-key pin-key-cancel"
-                                : "pin-key",
+                        className: "pin-key",
                         onClick: (e) => {
                             e.preventDefault();
-                            if (key === "Annuler") overlay.remove();
-                            else handleKey(key);
+                            handleKey(key);
                         },
                     },
                     key,
@@ -194,11 +192,28 @@ export const AccountSwitcher = {
             }),
         );
 
+        const cancelBtn = el(
+            "div",
+            { className: "pin-action-container mt-24" },
+            el(
+                "button",
+                {
+                    className: "pin-cancel-btn",
+                    onClick: (e) => {
+                        e.preventDefault();
+                        overlay.remove();
+                    },
+                },
+                "Annuler",
+            ),
+        );
+
         overlay.appendChild(
             el("h2", { className: "verify-pin-title" }, "Code PIN Parent"),
         );
         overlay.appendChild(dotsContainer);
         overlay.appendChild(keypad);
+        overlay.appendChild(cancelBtn);
         document.body.appendChild(overlay);
     },
 };
