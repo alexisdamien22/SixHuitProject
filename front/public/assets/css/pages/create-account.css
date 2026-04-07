@@ -74,6 +74,7 @@
     font-weight: 700;
     margin-bottom: 8px;
     color: var(--color-text-main) !important;
+    margin-top: 20px;
 }
 
 .ca-input {

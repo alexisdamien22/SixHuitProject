@@ -64,7 +64,10 @@ export class AuthService {
         if (user.length === 0)
             throw { status: 404, message: "Utilisateur introuvable." };
         if (!user[0].pin)
-            throw { status: 400, message: "Aucun PIN configuré pour ce compte." };
+            throw {
+                status: 400,
+                message: "Aucun PIN configuré pour ce compte.",
+            };
 
         const valid = await bcrypt.compare(pin, user[0].pin);
         if (!valid) throw { status: 401, message: "Code PIN incorrect." };
@@ -81,6 +84,7 @@ export class AuthService {
             time_amount: data.time_amount,
             school: data.school,
             mascot: data.mascot,
+            lesson_day: data.lesson_day,
         });
 
         const childId = child.insertId;

@@ -7,7 +7,7 @@ export class HomePage {
         this.hasHighlighted = false;
     }
 
-    formatWeeklyPlan(rawPlan) {
+    formatWeeklyPlan(rawPlan, lessonDay = "Lundi") {
         const dayMap = {
             monday: "Lundi",
             tuesday: "Mardi",
@@ -18,15 +18,25 @@ export class HomePage {
             sunday: "Dimanche",
         };
 
-        const fullPlan = {
-            Lundi: "nothing",
-            Mardi: "nothing",
-            Mercredi: "nothing",
-            Jeudi: "nothing",
-            Vendredi: "nothing",
-            Samedi: "nothing",
-            Dimanche: "nothing",
-        };
+        const frenchDays = [
+            "Lundi",
+            "Mardi",
+            "Mercredi",
+            "Jeudi",
+            "Vendredi",
+            "Samedi",
+            "Dimanche",
+        ];
+        let startIndex = frenchDays.indexOf(lessonDay);
+        if (startIndex === -1) startIndex = 0;
+
+        const orderedDays = [
+            ...frenchDays.slice(startIndex),
+            ...frenchDays.slice(0, startIndex),
+        ];
+
+        const fullPlan = {};
+        orderedDays.forEach((day) => (fullPlan[day] = "nothing"));
 
         if (!rawPlan || !Array.isArray(rawPlan)) return fullPlan;
 
@@ -48,7 +58,12 @@ export class HomePage {
 
     async render() {
         const childData = (await this.app.model.getChildData()) || {};
-        const weeklyPlan = this.formatWeeklyPlan(childData.weeklyPlan || []);
+        const weeklyPlan = this.formatWeeklyPlan(
+            childData.weeklyPlan || [],
+            childData.lesson_day,
+        );
+
+        const pattern = [0, 45, 25, -25, -45];
 
         const frenchDays = [
             "Dimanche",
@@ -62,6 +77,7 @@ export class HomePage {
         const currentDayName = frenchDays[new Date().getDay()];
 
         const steps = Object.entries(weeklyPlan).map(([day, status], i) => {
+            const offset = pattern[i % pattern.length];
             const isToday = day === currentDayName;
 
             const extraElements = isToday
@@ -90,6 +106,7 @@ export class HomePage {
                 "div",
                 {
                     className: `path-step ${status} ${!isToday && status === "todo" ? "is-locked" : ""}`,
+                    style: { transform: `translateX(${offset}px)` },
                     dataset: { day: day },
                 },
                 pathButtonContainer,
