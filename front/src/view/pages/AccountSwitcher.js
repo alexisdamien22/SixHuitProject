@@ -179,8 +179,8 @@ export const AccountSwitcher = {
                         },
                     },
                     key,
-                ),
-            ),
+                );
+            }),
         );
 
         overlay.appendChild(

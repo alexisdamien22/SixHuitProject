@@ -53,7 +53,7 @@ export class RegisterParentPage {
                         id: "ca-main-btn",
                         className: "ca-btn-next",
                         disabled: !isValid || state.isLoading,
-                        onClick: () => controller.handleNextParentStep(),
+                        onClick: () => controller.handleNextStep("parent"),
                     },
                     btnContent,
                 ),

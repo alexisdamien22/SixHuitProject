@@ -162,7 +162,7 @@ export class RegisterChildPage {
                         id: "ca-main-btn",
                         className: "ca-btn-next",
                         disabled: !isValid || state.isLoading,
-                        onClick: () => controller.handleNextChildStep(),
+                        onClick: () => controller.handleNextStep("child"),
                     },
                     btnLabel,
                 ),
