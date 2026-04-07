@@ -4,15 +4,26 @@ export class PodiumPage {
     constructor(app) {
         this.app = app;
         this.recommendations = [];
+        this.friends = [];
+        this.searchTimer = null;
     }
 
     async render() {
         try {
-            const response = await this.app.social.getRecommendations();
-            this.recommendations = Array.isArray(response) ? response : [];
+            const [recResponse, friendsResponse] = await Promise.all([
+                this.app.social.getRecommendations(),
+                this.app.social.getFriends(),
+            ]);
+            this.recommendations = Array.isArray(recResponse)
+                ? recResponse
+                : [];
+            this.friends = Array.isArray(friendsResponse)
+                ? friendsResponse
+                : [];
         } catch (err) {
             console.error("Error fetching social data:", err);
             this.recommendations = [];
+            this.friends = [];
         }
 
         const recommendationsContent =
@@ -26,11 +37,37 @@ export class PodiumPage {
                       "Pas encore de suggestions",
                   );
 
-        this.container = el(
-            "div",
-            { className: "community-page" },
-            el("h2", { className: "ca-title" }, "Communauté"),
+        const friendsContent =
+            this.friends.length > 0
+                ? this.friends.map((f) => this.renderFriendCard(f))
+                : [
+                      el(
+                          "p",
+                          { className: "empty-text" },
+                          "Tu n'as pas encore d'amis. Va dans l'onglet Ajouter !",
+                      ),
+                  ];
 
+        // --- ONGLET 1 : MON PODIUM (Actualités et liste d'amis) ---
+        const tabFeed = el(
+            "div",
+            {
+                className: "tab-content",
+                id: "tab-feed",
+                style: "display: flex;",
+            },
+            el("h3", { className: "section-title" }, "Mes amis"),
+            el("div", { className: "social-list" }, ...friendsContent),
+        );
+
+        // --- ONGLET 2 : AJOUTER (Recherche et suggestions) ---
+        const tabAdd = el(
+            "div",
+            {
+                className: "tab-content",
+                id: "tab-add",
+                style: "display: none;",
+            },
             el(
                 "div",
                 { className: "search-bar-container" },
@@ -38,20 +75,76 @@ export class PodiumPage {
                     type: "text",
                     placeholder: "Chercher un ami...",
                     className: "ca-input",
-                    onInput: (e) => this.handleSearch(e.target.value),
+                    onInput: (e) => {
+                        clearTimeout(this.searchTimer);
+                        this.searchTimer = setTimeout(
+                            () => this.handleSearch(e.target.value),
+                            300,
+                        );
+                    },
                 }),
             ),
-
             el("div", { id: "search-results", className: "social-list" }),
-
             el("h3", { className: "section-title" }, "Suggestions d'amis"),
             el("div", { className: "social-list" }, recommendationsContent),
+        );
+
+        // --- BOUTONS DES ONGLETS ---
+        const tabFeedBtn = el(
+            "button",
+            {
+                className: "tab-btn active",
+                onClick: (e) => this.switchTab("feed", e.target),
+            },
+            "Mon Podium",
+        );
+        const tabAddBtn = el(
+            "button",
+            {
+                className: "tab-btn",
+                onClick: (e) => this.switchTab("add", e.target),
+            },
+            "Ajouter",
+        );
+        const tabsContainer = el(
+            "div",
+            { className: "tabs-container" },
+            tabFeedBtn,
+            tabAddBtn,
+        );
+
+        this.container = el(
+            "div",
+            { className: "community-page" },
+            el("h2", { className: "ca-title" }, "Communauté"),
+            tabsContainer,
+            tabFeed,
+            tabAdd,
         );
 
         return this.container;
     }
 
+    switchTab(tabId, btnTarget) {
+        const tabFeed = this.container.querySelector("#tab-feed");
+        const tabAdd = this.container.querySelector("#tab-add");
+
+        if (tabId === "feed") {
+            tabFeed.style.display = "flex";
+            tabAdd.style.display = "none";
+        } else {
+            tabFeed.style.display = "none";
+            tabAdd.style.display = "flex";
+        }
+
+        const btns = this.container.querySelectorAll(".tab-btn");
+        btns.forEach((b) => b.classList.remove("active"));
+        btnTarget.classList.add("active");
+    }
+
     renderUserCard(user, isRec = false) {
+        const isFriend = user.is_friend > 0;
+
         return el(
             "div",
             { className: "user-card" },
@@ -79,6 +172,20 @@ export class PodiumPage {
                     },
                 },
                 "+",
+            ),
+        );
+    }
+
+    renderFriendCard(friend) {
+        return el(
+            "div",
+            { className: "user-card" },
+            el("div", { className: "user-avatar" }, friend.mascot || "🎵"),
+            el(
+                "div",
+                { className: "user-info" },
+                el("div", { className: "user-name" }, friend.name),
+                el("div", { className: "user-detail" }, friend.instrument),
             ),
         );
     }
