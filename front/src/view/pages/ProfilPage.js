@@ -87,9 +87,9 @@ export class ProfilPage {
             { className: "page profile-page" },
             el(
                 "div",
-                { className: "profil-img profil-img-container" },
+                { className: "profil-img" },
                 el("img", {
-                    src: "/assets/img/mascots/camelion.png", // Vous pouvez remplacer par le chemin de la mascotte dynamique si besoin
+                    src: "/assets/img/mascots/camelion.png",
                     alt: "Profil Enfant",
                     className: "profil-img-content",
                 }),
@@ -142,7 +142,7 @@ export class ProfilPage {
             { className: "page profile-page parent-profile" },
             el(
                 "div",
-                { className: "profil-img profil-img-container" },
+                { className: "profil-img" },
                 el("img", {
                     src: "/assets/img/icons/family.png",
                     alt: "Profil Parent",

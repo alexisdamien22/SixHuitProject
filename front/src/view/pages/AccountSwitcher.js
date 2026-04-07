@@ -180,7 +180,7 @@ export const AccountSwitcher = {
             "div",
             { className: "verify-pin-keypad" },
             ...keys.map((key) => {
-                if (key === "") return el("div"); // Garde l'espace vide en bas à gauche
+                if (key === "") return el("div");
                 return el(
                     "button",
                     {
