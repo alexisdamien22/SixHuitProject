@@ -7,7 +7,7 @@ export class HomePage {
         this.hasHighlighted = false;
     }
 
-    formatWeeklyPlan(rawPlan, lessonDay = "Lundi") {
+    formatWeeklyPlan(rawPlan, lessonDay = "Lundi", history = []) {
         const dayMap = {
             monday: "Lundi",
             tuesday: "Mardi",
@@ -38,15 +38,65 @@ export class HomePage {
         const fullPlan = {};
         orderedDays.forEach((day) => (fullPlan[day] = "nothing"));
 
+        // --- 1. Calcul de la date de début de la semaine (basée sur lessonDay) ---
+        const jsDays = [
+            "Dimanche",
+            "Lundi",
+            "Mardi",
+            "Mercredi",
+            "Jeudi",
+            "Vendredi",
+            "Samedi",
+        ];
+        let targetDayIndex = jsDays.indexOf(lessonDay);
+        if (targetDayIndex === -1) targetDayIndex = 1; // Lundi par défaut
+
+        const now = new Date();
+        const currentDayIndex = now.getDay();
+        let daysAgo = currentDayIndex - targetDayIndex;
+        if (daysAgo < 0) {
+            daysAgo += 7; // Si on n'a pas encore passé le jour du cours cette semaine
+        }
+
+        const startOfCycle = new Date(now);
+        startOfCycle.setDate(now.getDate() - daysAgo);
+        startOfCycle.setHours(0, 0, 0, 0); // Début de la journée
+
+        // --- 2. Vérification des séances validées DANS CE CYCLE via l'historique ---
+        const doneDaysThisCycle = new Set();
+        history.forEach((session) => {
+            if (session.session_date) {
+                const sessionDate = new Date(session.session_date);
+                sessionDate.setHours(0, 0, 0, 0);
+                if (sessionDate >= startOfCycle && session.practice_day) {
+                    doneDaysThisCycle.add(session.practice_day);
+                }
+            }
+        });
+
+        const currentDayName = jsDays[now.getDay()];
+        const todayIndexInOrdered = orderedDays.indexOf(currentDayName);
+
         if (!rawPlan || !Array.isArray(rawPlan)) return fullPlan;
 
         rawPlan.forEach((entry) => {
             const day = dayMap[entry.day_of_week];
             if (day) {
-                if (entry.status === 1) {
+                const dayIndex = orderedDays.indexOf(day);
+                const isPast = dayIndex < todayIndexInOrdered;
+                const isFuture = dayIndex > todayIndexInOrdered;
+
+                // On ignore "entry.status" car il appartient peut-être à la semaine passée
+                if (doneDaysThisCycle.has(day)) {
                     fullPlan[day] = "done";
                 } else if (entry.practice === 1) {
-                    fullPlan[day] = "todo";
+                    if (isPast) {
+                        fullPlan[day] = "missed";
+                    } else if (isFuture) {
+                        fullPlan[day] = "todo-future";
+                    } else {
+                        fullPlan[day] = "todo";
+                    }
                 } else {
                     fullPlan[day] = "nothing";
                 }
@@ -61,6 +111,7 @@ export class HomePage {
         const weeklyPlan = this.formatWeeklyPlan(
             childData.weeklyPlan || [],
             childData.lesson_day,
+            childData.history || childData.sessions || [],
         );
 
         const frenchDays = [
@@ -102,7 +153,7 @@ export class HomePage {
             return el(
                 "div",
                 {
-                    className: `path-step ${status} ${!isToday && status === "todo" ? "is-locked" : ""}`,
+                    className: `path-step ${status} ${!isToday && (status === "todo" || status === "todo-future") ? "is-locked" : ""}`,
 
                     dataset: { day: day },
                 },
@@ -129,6 +180,13 @@ export class HomePage {
 
         if (status === "done") {
             desc = "Bravo ! Tu as validé cette séance.";
+        } else if (status === "missed") {
+            desc = "Séance manquée !";
+            button = el(
+                "button",
+                { className: "start-btn disabled", disabled: true },
+                "MANQUÉ",
+            );
         } else if (isToday && status === "todo") {
             desc = "Valider la leçon ?";
             button = el(

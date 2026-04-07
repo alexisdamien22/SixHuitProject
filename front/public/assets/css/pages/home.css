@@ -104,6 +104,20 @@
     background-color: var(--color-nothing-shadow);
 }
 
+.missed .path-dot {
+    background-color: #ff5252; /* Rouge clair */
+}
+.missed .path-dot-shadow {
+    background-color: #c62828; /* Rouge foncé (ombre) */
+}
+
+.todo-future .path-dot {
+    background-color: #e0e0e0; /* Gris clair */
+}
+.todo-future .path-dot-shadow {
+    background-color: #9e9e9e; /* Gris foncé (ombre) */
+}
+
 .today-halo {
     position: absolute;
     width: 90px;
@@ -203,20 +217,4 @@
 .path-button-container:has(.duo-popup.show) .path-dot-shadow::before {
     height: 10px;
     top: 20px;
-}
-
-.path-step:nth-child(5n + 1) {
-    transform: translateX(0px);
-}
-.path-step:nth-child(5n + 2) {
-    transform: translateX(45px);
-}
-.path-step:nth-child(5n + 3) {
-    transform: translateX(25px);
-}
-.path-step:nth-child(5n + 4) {
-    transform: translateX(-25px);
-}
-.path-step:nth-child(5n + 5) {
-    transform: translateX(-45px);
 }
