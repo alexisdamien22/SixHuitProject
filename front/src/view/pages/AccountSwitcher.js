@@ -63,6 +63,10 @@ export const AccountSwitcher = {
                             onClick: (e) => {
                                 e.preventDefault();
                                 view.toggleAccountSwitcher(false);
+
+                                view.app.model.resetAuthData();
+                                view.app.model.setAuthStep(1);
+
                                 view.app.navigation.goTo("registerChild");
                             },
                         },
@@ -104,7 +108,6 @@ export const AccountSwitcher = {
         );
 
         document.body.appendChild(switcher);
-
         switcher.offsetHeight;
     },
 
