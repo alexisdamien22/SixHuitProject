@@ -111,7 +111,7 @@ export const AccountSwitcher = {
         switcher.offsetHeight;
     },
 
-    showPinPopup(verifyCallback) {
+    showPinPopup(verifyCallback, title = "Code PIN Parent") {
         const overlay = el("div", { className: "ca-pin-overlay" });
         let enteredPin = "";
         let isProcessing = false;
@@ -213,9 +213,7 @@ export const AccountSwitcher = {
             ),
         );
 
-        overlay.appendChild(
-            el("h2", { className: "verify-pin-title" }, "Code PIN Parent"),
-        );
+        overlay.appendChild(el("h2", { className: "verify-pin-title" }, title));
         overlay.appendChild(dotsContainer);
         overlay.appendChild(keypad);
         overlay.appendChild(cancelBtn);

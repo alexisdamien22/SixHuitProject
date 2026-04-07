@@ -1,9 +1,32 @@
 import { el } from "../../utils/DOMBuilder.js";
+import { AccountSwitcher } from "./AccountSwitcher.js";
+import { ApiClient } from "../../model/ApiClient.js";
 import { AppViewTheme } from "../AppViewTheme.js";
 
 export class SettingsPage {
     constructor(app) {
         this.app = app;
+    }
+    handleChangePin() {
+        AccountSwitcher.showPinPopup(async (newPin, onSuccess, onError) => {
+            try {
+                const res = await ApiClient.post("/auth/update-pin", {
+                    newPin,
+                });
+                if (res.success) {
+                    onSuccess();
+                    setTimeout(
+                        () => alert("Code PIN modifié avec succès !"),
+                        100,
+                    );
+                } else {
+                    onError();
+                }
+            } catch (e) {
+                console.error(e);
+                onError();
+            }
+        }, "Nouveau code PIN");
     }
 
     render() {
@@ -29,7 +52,7 @@ export class SettingsPage {
             specificSections = [
                 this.createSection("Sécurité & Compte", [
                     this.createActionItem("Modifier mon code PIN", () =>
-                        console.log("Action: Modifier PIN"),
+                        this.handleChangePin(),
                     ),
                     this.createToggleItem(
                         "Rappels par email",

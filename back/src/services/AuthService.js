@@ -75,6 +75,18 @@ export class AuthService {
         return { success: true };
     }
 
+    static async updatePin(adultId, newPin) {
+        if (!newPin || newPin.length !== 4) {
+            throw {
+                status: 400,
+                message: "Le code PIN doit faire 4 caractères.",
+            };
+        }
+        const hashedPin = await bcrypt.hash(newPin, 10);
+        await AdultAccountModel.updatePin(adultId, hashedPin);
+        return { success: true, message: "Code PIN mis à jour avec succès." };
+    }
+
     static async registerChild(adultId, data) {
         const child = await ChildAccountModel.create({
             adultId,
