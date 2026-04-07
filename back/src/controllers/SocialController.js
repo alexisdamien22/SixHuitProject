@@ -27,7 +27,7 @@ export class SocialController {
 
     static async getRecommendations(req, res) {
         try {
-            const childId = req.params.childId; // On utilise params
+            const childId = req.params.childId;
             const recommendations =
                 await SocialModel.getRecommendations(childId);
             res.status(200).json(recommendations);
@@ -38,7 +38,7 @@ export class SocialController {
 
     static async getFriends(req, res) {
         try {
-            const childId = req.params.childId; // Correction : req.params au lieu de req.query
+            const childId = req.params.childId;
             const friends = await SocialModel.getFriends(childId);
             res.status(200).json(friends);
         } catch (err) {

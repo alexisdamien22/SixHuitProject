@@ -13,6 +13,7 @@ export class AuthController {
     static async registerChild(req, res) {
         try {
             const adultId = req.user.id;
+            console.log(adultId, req.body);
             const result = await AuthService.registerChild(adultId, req.body);
             res.status(201).json(result);
         } catch (err) {

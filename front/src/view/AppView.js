@@ -42,6 +42,10 @@ export class AppView {
     async renderPage(name, params = {}) {
         const activeChildId = localStorage.getItem("activeChildId");
 
+        const isParentMode =
+            this.app.model.session.isParent() && !activeChildId;
+        document.body.classList.toggle("parent-mode", isParentMode);
+
         if (name === "parent-home" && activeChildId) {
             if (
                 this.app.child &&
@@ -55,21 +59,19 @@ export class AppView {
 
         this.appRoot.replaceChildren();
 
-        const hideHeader = ["login", "registerParent", "registerChild"].includes(
-            name,
-        );
-
-        const hideFooter = ["login", "registerParent", "registerChild"].includes(
-            name,
-        );
+        const hideHeader = [
+            "login",
+            "registerParent",
+            "registerChild",
+        ].includes(name);
+        const hideFooter = [
+            "login",
+            "registerParent",
+            "registerChild",
+        ].includes(name);
 
         this.headerRoot.style.display = hideHeader ? "none" : "";
         this.footerRoot.style.display = hideFooter ? "none" : "";
-
-        const isParentMode =
-            this.app.model.session.isParent() &&
-            !localStorage.getItem("activeChildId");
-        document.body.classList.toggle("parent-mode", isParentMode);
 
         let page;
         switch (name) {
@@ -200,7 +202,9 @@ export class AppView {
 
             const children =
                 this.app.model?.childrenAccounts ||
-                (this.app.model?.getChildren ? this.app.model.getChildren() : []);
+                (this.app.model?.getChildren
+                    ? this.app.model.getChildren()
+                    : []);
 
             AccountSwitcher.create(this, children);
             switcher = document.getElementById("account-switcher-container");

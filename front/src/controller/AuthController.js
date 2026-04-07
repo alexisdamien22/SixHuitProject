@@ -198,14 +198,15 @@ export class AuthController {
 
         try {
             const payload = {
-                name: state.childRegisterData.name,
+                name: state.childRegisterData.name ?? null,
                 age: parseInt(state.childRegisterData.age) || null,
-                instrument: state.childRegisterData.instrument,
+                instrument: state.childRegisterData.instrument ?? null,
                 time_amount:
                     parseInt(state.childRegisterData.time_amount) || null,
-                school: state.childRegisterData.school,
-                mascot: state.childRegisterData.mascot,
-                days: state.childRegisterData.days,
+                school: state.childRegisterData.school ?? null,
+                mascot: state.childRegisterData.mascot ?? null,
+                days: state.childRegisterData.days ?? [],
+                lesson_day: state.childRegisterData.lesson_day || null,
             };
 
             const result = await ApiClient.post(
@@ -218,6 +219,8 @@ export class AuthController {
             }
 
             this.app.model.session.setActiveChild(result.childId);
+
+            await this.app.child.loadChildData();
 
             this.app.model.setAuthStep(8);
             this.app.model.setLoading(false);
