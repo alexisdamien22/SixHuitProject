@@ -38,9 +38,10 @@ export class SocialModel extends BaseModel {
 
     static getFriends(childId) {
         const sql = `
-            SELECT c.id, c.name, c.mascot, c.instrument
+            SELECT c.id, c.name, c.mascot, c.instrument, IFNULL(s.current_streak, 0) as streak
             FROM following f
             JOIN childaccount c ON f.followed_child_id = c.id
+            LEFT JOIN streaks s ON c.id = s.child_id
             WHERE f.following_child_id = ?
         `;
         return this.query(sql, [childId]);
