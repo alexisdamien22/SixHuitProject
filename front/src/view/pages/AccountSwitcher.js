@@ -42,15 +42,15 @@ export const AccountSwitcher = {
             },
             el("div", {
                 className: "account-switcher-overlay",
-                onClick: (e) => {
-                    e.preventDefault();
-                    view.toggleAccountSwitcher(false);
-                },
             }),
             el(
                 "div",
                 { className: "account-switcher-sheet" },
-                el("div", { className: "switcher-header" }, "Changer de profil"),
+                el(
+                    "div",
+                    { className: "switcher-header" },
+                    "Changer de profil",
+                ),
                 el(
                     "div",
                     { className: "switcher-list" },
@@ -70,7 +70,11 @@ export const AccountSwitcher = {
                         el(
                             "div",
                             { className: "switcher-info" },
-                            el("span", { className: "switcher-name" }, "Ajouter un enfant"),
+                            el(
+                                "span",
+                                { className: "switcher-name" },
+                                "Ajouter un enfant",
+                            ),
                         ),
                     ),
                 ),
@@ -89,7 +93,11 @@ export const AccountSwitcher = {
                     el(
                         "div",
                         { className: "switcher-info" },
-                        el("span", { className: "switcher-name" }, "Espace Parent"),
+                        el(
+                            "span",
+                            { className: "switcher-name" },
+                            "Espace Parent",
+                        ),
                     ),
                 ),
             ),
@@ -171,7 +179,10 @@ export const AccountSwitcher = {
                 return el(
                     "button",
                     {
-                        className: key === "Annuler" ? "pin-key pin-key-cancel" : "pin-key",
+                        className:
+                            key === "Annuler"
+                                ? "pin-key pin-key-cancel"
+                                : "pin-key",
                         onClick: (e) => {
                             e.preventDefault();
                             if (key === "Annuler") overlay.remove();

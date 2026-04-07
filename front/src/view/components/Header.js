@@ -47,8 +47,6 @@ export class Header {
                     "button",
                     {
                         className: "profile-icon header-profile-btn",
-                        onClick: () =>
-                            this.app.view.toggleAccountSwitcher(true),
                     },
                     el("img", {
                         src: "/assets/img/icons/family.png",

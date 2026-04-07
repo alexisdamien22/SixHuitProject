@@ -177,6 +177,7 @@ export class PodiumPage {
     }
 
     renderFriendCard(friend) {
+        const streak = friend.streak || 0;
         return el(
             "div",
             { className: "user-card" },
@@ -186,6 +187,14 @@ export class PodiumPage {
                 { className: "user-info" },
                 el("div", { className: "user-name" }, friend.name),
                 el("div", { className: "user-detail" }, friend.instrument),
+            ),
+            el(
+                "div",
+                {
+                    className: "user-streak",
+                    style: "font-weight: bold; color: #ff9800; font-size: 1.2rem; display: flex; align-items: center;",
+                },
+                `🔥 ${streak}`,
             ),
         );
     }
