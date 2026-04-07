@@ -9,5 +9,6 @@ router.use(authMiddleware);
 router.get("/search", SocialController.search);
 router.post("/follow", SocialController.follow);
 router.get("/recommendations", SocialController.getRecommendations);
+router.get("/friends", SocialController.getFriends);
 
 export default router;

@@ -31,4 +31,14 @@ export class SocialController {
             res.status(500).json({ error: err.message });
         }
     }
+
+    static async getFriends(req, res) {
+        try {
+            const { childId } = req.query;
+            const friends = await SocialModel.getFriends(childId);
+            res.status(200).json(friends);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    }
 }
