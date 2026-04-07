@@ -63,8 +63,6 @@ export class HomePage {
             childData.lesson_day,
         );
 
-        const pattern = [0, 45, 25, -25, -45];
-
         const frenchDays = [
             "Dimanche",
             "Lundi",
@@ -77,7 +75,6 @@ export class HomePage {
         const currentDayName = frenchDays[new Date().getDay()];
 
         const steps = Object.entries(weeklyPlan).map(([day, status], i) => {
-            const offset = pattern[i % pattern.length];
             const isToday = day === currentDayName;
 
             const extraElements = isToday
@@ -106,7 +103,7 @@ export class HomePage {
                 "div",
                 {
                     className: `path-step ${status} ${!isToday && status === "todo" ? "is-locked" : ""}`,
-                    style: { transform: `translateX(${offset}px)` },
+
                     dataset: { day: day },
                 },
                 pathButtonContainer,
