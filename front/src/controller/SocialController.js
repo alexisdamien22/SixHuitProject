@@ -12,21 +12,18 @@ export class SocialController {
 
     async search(query) {
         const childId = localStorage.getItem("activeChildId");
-        return ApiClient.get(`/social/${childId}/search?q=${query}`);
+        return ApiClient.get(
+            `/social/${childId}/search?q=${encodeURIComponent(query)}`,
+        );
     }
 
     async follow(followedId) {
-        const followerId = localStorage.getItem("activeChildId");
-        return ApiClient.post(`/social/${followerId}/follow`, { followedId });
+        const childId = localStorage.getItem("activeChildId");
+        return ApiClient.post(`/social/${childId}/follow`, { followedId });
     }
 
     async getFriends() {
         const childId = localStorage.getItem("activeChildId");
-        return ApiClient.get(`/social/friends?childId=${childId}`);
-    }
-
-    async getFriends() {
-        const childId = localStorage.getItem("activeChildId");
-        return ApiClient.get(`/social/friends?childId=${childId}`);
+        return ApiClient.get(`/social/${childId}/friends`);
     }
 }
