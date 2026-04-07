@@ -16,9 +16,9 @@ export class Footer {
                 alt: "Accueil",
             }),
             el("img", {
-                src: "/assets/img/icons/podium.png",
-                className: "footer-podium icon-footer",
-                dataset: { page: "podium" },
+                src: "/assets/img/icons/friends.png",
+                className: "footer-community icon-footer",
+                dataset: { page: "community" },
                 alt: "Classement",
             }),
             el("img", {
