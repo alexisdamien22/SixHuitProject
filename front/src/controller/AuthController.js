@@ -18,11 +18,16 @@ export class AuthController {
     }
 
     handleInstrumentSelect(instrumentId) {
-        this.app.model.updateAuthData("register-child", "instrument", instrumentId);
+        this.app.model.updateAuthData(
+            "register-child",
+            "instrument",
+            instrumentId,
+        );
 
         if (
             this.app.view.currentPage &&
-            typeof this.app.view.currentPage.refreshInstrumentSelection === "function"
+            typeof this.app.view.currentPage.refreshInstrumentSelection ===
+                "function"
         ) {
             this.app.view.currentPage.refreshInstrumentSelection();
         }
@@ -33,7 +38,8 @@ export class AuthController {
 
         if (
             this.app.view.currentPage &&
-            typeof this.app.view.currentPage.refreshMascotSelection === "function"
+            typeof this.app.view.currentPage.refreshMascotSelection ===
+                "function"
         ) {
             this.app.view.currentPage.refreshMascotSelection();
         }
@@ -66,7 +72,7 @@ export class AuthController {
             if (!result || result.error || !result.token) {
                 throw new Error(
                     result?.error ||
-                    "Erreur de communication avec le serveur (Base de données injoignable).",
+                        "Erreur de communication avec le serveur (Base de données injoignable).",
                 );
             }
 
@@ -127,7 +133,7 @@ export class AuthController {
             if (!result || result.error || (!result.token && !result.adultId)) {
                 throw new Error(
                     result?.error ||
-                    "Erreur lors de la création (Base de données injoignable).",
+                        "Erreur lors de la création (Base de données injoignable).",
                 );
             }
 
@@ -150,27 +156,45 @@ export class AuthController {
             const profile = await ApiClient.get("/auth/profile");
 
             if (profile && profile.hasPin) {
-                AccountSwitcher.showPinPopup(async (enteredPin, onSuccess, onError) => {
-                    try {
-                        const res = await ApiClient.post("/auth/verify-pin", {
-                            pin: enteredPin,
-                        });
-                        if (res.success) {
-                            onSuccess();
-                            this.executeSwitchToParent();
-                        } else {
+                AccountSwitcher.showPinPopup(
+                    async (enteredPin, onSuccess, onError) => {
+                        try {
+                            const res = await ApiClient.post(
+                                "/auth/verify-pin",
+                                {
+                                    pin: enteredPin,
+                                },
+                            );
+                            if (res.success) {
+                                onSuccess();
+                                this.executeSwitchToParent();
+                            } else {
+                                onError();
+                            }
+                        } catch (e) {
                             onError();
                         }
-                    } catch (e) {
-                        onError();
-                    }
-                });
+                    },
+                );
             } else {
                 this.executeSwitchToParent();
             }
         } catch (err) {
             console.error("Erreur lors du passage au mode parent :", err);
         }
+    }
+
+    async handleSwitchToChild(childId) {
+        this.app.model.session.setActiveChild(childId);
+
+        if (
+            this.app.child &&
+            typeof this.app.child.loadChildData === "function"
+        ) {
+            await this.app.child.loadChildData();
+        }
+
+        this.app.navigation.goTo("home");
     }
 
     executeSwitchToParent() {
@@ -190,13 +214,17 @@ export class AuthController {
                 name: state.childRegisterData.name,
                 age: parseInt(state.childRegisterData.age) || null,
                 instrument: state.childRegisterData.instrument,
-                time_amount: parseInt(state.childRegisterData.time_amount) || null,
+                time_amount:
+                    parseInt(state.childRegisterData.time_amount) || null,
                 school: state.childRegisterData.school,
                 mascot: state.childRegisterData.mascot,
                 days: state.childRegisterData.days,
             };
 
-            const result = await ApiClient.post("/auth/register-child", payload);
+            const result = await ApiClient.post(
+                "/auth/register-child",
+                payload,
+            );
 
             if (!result || result.error || !result.success) {
                 throw new Error(result?.error || "Erreur création enfant");
@@ -226,7 +254,8 @@ export class AuthController {
                 name: state.childRegisterData.name,
                 age: parseInt(state.childRegisterData.age) || null,
                 instrument: state.childRegisterData.instrument,
-                time_amount: parseInt(state.childRegisterData.time_amount) || null,
+                time_amount:
+                    parseInt(state.childRegisterData.time_amount) || null,
                 school: state.childRegisterData.school,
                 mascot: state.childRegisterData.mascot,
                 days: state.childRegisterData.days,

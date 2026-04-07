@@ -11,17 +11,10 @@ export const AccountSwitcher = {
                 {
                     className: "switcher-item",
                     dataset: { id: String(acc.id) },
-                    onClick: async (e) => {
+                    onClick: (e) => {
                         e.preventDefault();
-                        localStorage.setItem("activeChildId", acc.id);
                         view.toggleAccountSwitcher(false);
-                        if (
-                            view.app.child &&
-                            typeof view.app.child.loadChildData === "function"
-                        ) {
-                            await view.app.child.loadChildData();
-                        }
-                        view.app.navigation.goTo("home");
+                        view.app.auth.handleSwitchToChild(acc.id);
                     },
                 },
                 el("div", { className: "switcher-avatar" }, acc.mascot || "🎵"),
@@ -50,7 +43,11 @@ export const AccountSwitcher = {
             el(
                 "div",
                 { className: "account-switcher-sheet" },
-                el("div", { className: "switcher-header" }, "Changer de profil"),
+                el(
+                    "div",
+                    { className: "switcher-header" },
+                    "Changer de profil",
+                ),
                 el(
                     "div",
                     { className: "switcher-list" },
@@ -70,7 +67,11 @@ export const AccountSwitcher = {
                         el(
                             "div",
                             { className: "switcher-info" },
-                            el("span", { className: "switcher-name" }, "Ajouter un enfant"),
+                            el(
+                                "span",
+                                { className: "switcher-name" },
+                                "Ajouter un enfant",
+                            ),
                         ),
                     ),
                 ),
@@ -89,7 +90,11 @@ export const AccountSwitcher = {
                     el(
                         "div",
                         { className: "switcher-info" },
-                        el("span", { className: "switcher-name" }, "Espace Parent"),
+                        el(
+                            "span",
+                            { className: "switcher-name" },
+                            "Espace Parent",
+                        ),
                     ),
                 ),
             ),
@@ -171,7 +176,10 @@ export const AccountSwitcher = {
                 return el(
                     "button",
                     {
-                        className: key === "Annuler" ? "pin-key pin-key-cancel" : "pin-key",
+                        className:
+                            key === "Annuler"
+                                ? "pin-key pin-key-cancel"
+                                : "pin-key",
                         onClick: (e) => {
                             e.preventDefault();
                             if (key === "Annuler") overlay.remove();
@@ -181,6 +189,18 @@ export const AccountSwitcher = {
                     key,
                 );
             }),
+        );
+
+        const cancelBtn = el(
+            "button",
+            {
+                className: "pin-key-cancel",
+                onClick: (e) => {
+                    e.preventDefault();
+                    overlay.remove();
+                },
+            },
+            "Annuler",
         );
 
         overlay.appendChild(
