@@ -10,6 +10,10 @@ router.use("/:childId", checkChildOwnership);
 
 router.get("/:childId/search", SocialController.search);
 router.post("/:childId/follow", SocialController.follow);
-router.get("/:childId/recommendations", SocialController.getRecommendations);
+router.get(
+    "/:childId/:childId/recommendations",
+    SocialController.getRecommendations,
+);
+router.get("/:childId/friends", SocialController.getFriends);
 
 export default router;

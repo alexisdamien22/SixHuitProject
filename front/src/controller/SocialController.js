@@ -24,4 +24,9 @@ export class SocialController {
         const childId = localStorage.getItem("activeChildId");
         return ApiClient.get(`/social/friends?childId=${childId}`);
     }
+
+    async getFriends() {
+        const childId = localStorage.getItem("activeChildId");
+        return ApiClient.get(`/social/friends?childId=${childId}`);
+    }
 }
