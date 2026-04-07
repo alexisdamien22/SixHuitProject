@@ -3,8 +3,11 @@ import { BaseModel } from "./BaseModel.js";
 export class SocialModel extends BaseModel {
     static searchChildren(query, currentChildId) {
         return this.query(
-            "SELECT id, name, mascot, instrument FROM childaccount WHERE name LIKE ? AND id != ? LIMIT 10",
-            [`%${query}%`, currentChildId],
+            `SELECT c.id, c.name, c.mascot, c.instrument,
+                    (SELECT COUNT(*) FROM following f WHERE f.following_child_id = ? AND f.followed_child_id = c.id) as is_friend
+             FROM childaccount c 
+             WHERE c.name LIKE ? AND c.id != ? LIMIT 10`,
+            [currentChildId, `%${query}%`, currentChildId],
         );
     }
 
@@ -31,5 +34,16 @@ export class SocialModel extends BaseModel {
             LIMIT 5
         `;
         return this.query(sql, [childId, childId, childId]);
+    }
+
+    static getFriends(childId) {
+        const sql = `
+            SELECT c.id, c.name, c.mascot, c.instrument, IFNULL(s.current_streak, 0) as streak
+            FROM following f
+            JOIN childaccount c ON f.followed_child_id = c.id
+            LEFT JOIN streaks s ON c.id = s.child_id
+            WHERE f.following_child_id = ?
+        `;
+        return this.query(sql, [childId]);
     }
 }

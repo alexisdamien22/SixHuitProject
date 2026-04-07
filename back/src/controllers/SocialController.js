@@ -27,11 +27,20 @@ export class SocialController {
 
     static async getRecommendations(req, res) {
         try {
-            const childId = req.params.childId;
-
+            const childId = req.params.childId; // On utilise params
             const recommendations =
                 await SocialModel.getRecommendations(childId);
             res.status(200).json(recommendations);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    }
+
+    static async getFriends(req, res) {
+        try {
+            const childId = req.params.childId; // Correction : req.params au lieu de req.query
+            const friends = await SocialModel.getFriends(childId);
+            res.status(200).json(friends);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }

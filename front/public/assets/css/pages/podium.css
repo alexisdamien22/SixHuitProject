@@ -11,3 +11,70 @@
     max-height: 80dvh;
     overflow-y: auto;
 }
+
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: var(--color-bg-popup);
+    width: 80vw;
+    max-width: 400px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid var(--color-border-soft);
+    justify-content: space-between;
+}
+
+.tabs-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 90vw;
+    max-width: 400px;
+    justify-content: center;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 2px solid var(--color-border-soft);
+    background-color: var(--color-bg-popup);
+    color: var(--color-text-main);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background-color: var(--ca-purple);
+    color: #fff;
+    border-color: var(--ca-purple);
+}
+
+.tab-content {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+.social-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-streak {
+    font-weight: bold;
+    color: #ff9800;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
