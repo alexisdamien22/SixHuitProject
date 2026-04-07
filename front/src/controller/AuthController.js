@@ -220,6 +220,8 @@ export class AuthController {
 
             this.app.model.session.setActiveChild(result.childId);
 
+            await this.app.child.loadChildData();
+
             this.app.model.setAuthStep(8);
             this.app.model.setLoading(false);
             this.triggerRender();
