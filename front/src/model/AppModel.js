@@ -6,7 +6,10 @@ export class AppModel {
         this.session = new SessionStore();
         this.childData = null;
         this.childrenAccounts = [];
+        this.resetAuthData();
+    }
 
+    resetAuthData() {
         this.authState = {
             step: 1,
             isLoginMode: true,
@@ -15,6 +18,7 @@ export class AppModel {
             registerData: {
                 email: "",
                 password: "",
+                pin: "",
             },
             childRegisterData: {
                 name: "",
@@ -24,6 +28,7 @@ export class AppModel {
                 school: "",
                 mascot: "",
                 days: [],
+                lesson_day: "",
             },
         };
     }
@@ -90,7 +95,7 @@ export class AppModel {
                 this.childrenAccounts = [];
             }
         } catch (error) {
-            console.error("[AppModel] Erreur fetch :", error);
+            console.error("[AppModel] Error fetch :", error);
             this.childrenAccounts = [];
         }
     }
