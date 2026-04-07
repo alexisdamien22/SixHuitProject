@@ -91,15 +91,22 @@ export class AuthController {
         }
     }
 
-    async handleNextParentStep() {
+    async handleNextStep(type) {
         const state = this.app.model.getAuthState();
         const step = state.step || 1;
 
-        if (step === 1) {
-            this.app.model.setAuthStep(2);
+        const isParent = type === "parent";
+        const maxStep = isParent ? 2 : 7;
+
+        if (step < maxStep) {
+            this.app.model.setAuthStep(step + 1);
             this.triggerRender();
         } else {
-            await this.submitParentRegistration();
+            if (isParent) {
+                await this.submitParentRegistration();
+            } else {
+                await this.submitChildRegistration();
+            }
         }
     }
 
