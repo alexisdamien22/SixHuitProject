@@ -33,7 +33,6 @@ export class SettingsPage {
         const isParentMode = !localStorage.getItem("activeChildId");
         const isLightMode = document.body.classList.contains("light-mode");
 
-        // Sections communes
         const appearanceSection = this.createSection("Apparence", [
             this.createToggleItem(
                 "Thème Clair",
@@ -45,7 +44,6 @@ export class SettingsPage {
             ),
         ]);
 
-        // Contenu spécifique selon le rôle
         let specificSections;
 
         if (isParentMode) {
@@ -100,8 +98,6 @@ export class SettingsPage {
             ),
         );
     }
-
-    // --- Utilitaires de rendu (DRY) ---
 
     createSection(title, items) {
         return el(

@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
 import { AdultAccountModel } from "../models/AdultAccountModel.js";
 import { ChildAccountModel } from "../models/ChildAccountModel.js";
 import { WeeklyPlanModel } from "../models/WeeklyPlanModel.js";
@@ -18,10 +17,9 @@ export class AuthService {
         }
 
         const hashed = await bcrypt.hash(password, 10);
-
         let hashedPin = null;
         if (pin) {
-            hashedPin = await bcrypt.hash(pin, 10);
+            hashedPin = await bcrypt.hash(String(pin), 10);
         }
 
         const adult = await AdultAccountModel.create({
@@ -32,7 +30,6 @@ export class AuthService {
         });
 
         const adultId = adult.insertId;
-
         const token = jwt.sign({ id: adultId }, process.env.JWT_SECRET, {
             expiresIn: "7d",
         });
@@ -60,31 +57,40 @@ export class AuthService {
     }
 
     static async verifyPin(adultId, pin) {
-        const user = await AdultAccountModel.findById(adultId);
-        if (user.length === 0)
-            throw { status: 404, message: "Utilisateur introuvable." };
-        if (!user[0].pin)
-            throw {
-                status: 400,
-                message: "Aucun PIN configuré pour ce compte.",
-            };
+        const rows = await AdultAccountModel.query(
+            "SELECT pin FROM adultaccount WHERE id = ?",
+            [adultId],
+        );
 
-        const valid = await bcrypt.compare(pin, user[0].pin);
-        if (!valid) throw { status: 401, message: "Code PIN incorrect." };
+        if (rows.length === 0) {
+            throw { status: 404, message: "Utilisateur introuvable." };
+        }
+
+        const hashedPin = rows[0].pin;
+        if (!hashedPin) {
+            throw { status: 400, message: "Aucun PIN configuré." };
+        }
+
+        const valid = await bcrypt.compare(String(pin), hashedPin);
+        if (!valid) {
+            throw { status: 401, message: "Code PIN incorrect." };
+        }
 
         return { success: true };
     }
 
     static async updatePin(adultId, newPin) {
-        if (!newPin || newPin.length !== 4) {
+        if (!newPin || String(newPin).length !== 4) {
             throw {
                 status: 400,
-                message: "Le code PIN doit faire 4 caractères.",
+                message: "Le code PIN doit faire 4 chiffres.",
             };
         }
-        const hashedPin = await bcrypt.hash(newPin, 10);
+
+        const hashedPin = await bcrypt.hash(String(newPin), 10);
         await AdultAccountModel.updatePin(adultId, hashedPin);
-        return { success: true, message: "Code PIN mis à jour avec succès." };
+
+        return { success: true, message: "Code PIN mis à jour." };
     }
 
     static async registerChild(adultId, data) {
@@ -100,7 +106,6 @@ export class AuthService {
         });
 
         const childId = child.insertId;
-
         const days = [
             "Lundi",
             "Mardi",
@@ -110,7 +115,6 @@ export class AuthService {
             "Samedi",
             "Dimanche",
         ];
-
         const mapDays = {
             Lundi: "monday",
             Mardi: "tuesday",
@@ -128,40 +132,21 @@ export class AuthService {
         }
 
         await StreakModel.updateStreak(childId, 0);
-
-        return {
-            message: "Enfant créé avec succès",
-            success: true,
-            childId,
-        };
+        return { message: "Enfant créé avec succès", success: true, childId };
     }
 
     static async login({ email, password }) {
         const user = await AdultAccountModel.findByEmail(email);
-
-        if (user.length === 0) {
-            const err = new Error("Utilisateur introuvable.");
-            err.status = 404;
-            throw err;
-        }
+        if (user.length === 0)
+            throw { status: 404, message: "Utilisateur introuvable." };
 
         const account = user[0];
-
         const valid = await bcrypt.compare(password, account.password_hash);
-        if (!valid) {
-            const err = new Error("Mot de passe incorrect.");
-            err.status = 401;
-            throw err;
-        }
+        if (!valid) throw { status: 401, message: "Mot de passe incorrect." };
 
         const token = jwt.sign({ id: account.id }, process.env.JWT_SECRET, {
             expiresIn: "7d",
         });
-
-        return {
-            message: "Connexion réussie",
-            token,
-            adultId: account.id,
-        };
+        return { message: "Connexion réussie", token, adultId: account.id };
     }
 }

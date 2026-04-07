@@ -24,7 +24,6 @@ export const AccountSwitcher = {
                         view.app.navigation.goTo("home");
                     },
                 },
-
                 el(
                     "div",
                     { className: "switcher-info" },
@@ -40,9 +39,7 @@ export const AccountSwitcher = {
                 id: "account-switcher-container",
                 className: "account-switcher-container",
             },
-            el("div", {
-                className: "account-switcher-overlay",
-            }),
+            el("div", { className: "account-switcher-overlay" }),
             el(
                 "div",
                 { className: "account-switcher-sheet" },
@@ -63,10 +60,8 @@ export const AccountSwitcher = {
                             onClick: (e) => {
                                 e.preventDefault();
                                 view.toggleAccountSwitcher(false);
-
                                 view.app.model.resetAuthData();
                                 view.app.model.setAuthStep(1);
-
                                 view.app.navigation.goTo("registerChild");
                             },
                         },
@@ -119,8 +114,7 @@ export const AccountSwitcher = {
         const updateDots = () => {
             const dots = overlay.querySelectorAll(".verify-pin-dot");
             dots.forEach((dot, i) => {
-                if (i < enteredPin.length) dot.classList.add("filled");
-                else dot.classList.remove("filled");
+                dot.classList.toggle("filled", i < enteredPin.length);
             });
         };
 
@@ -132,24 +126,24 @@ export const AccountSwitcher = {
 
             if (enteredPin.length === 4) {
                 isProcessing = true;
-                verifyCallback(
-                    enteredPin,
-                    () => {
-                        overlay.remove();
-                    },
-                    () => {
-                        const container = overlay.querySelector(
-                            ".verify-pin-container",
-                        );
-                        container.classList.add("error-shake");
-                        setTimeout(() => {
-                            container.classList.remove("error-shake");
-                            enteredPin = "";
-                            updateDots();
-                            isProcessing = false;
-                        }, 400);
-                    },
-                );
+                setTimeout(() => {
+                    verifyCallback(
+                        enteredPin,
+                        () => overlay.remove(),
+                        () => {
+                            const container = overlay.querySelector(
+                                ".verify-pin-container",
+                            );
+                            container.classList.add("error-shake");
+                            setTimeout(() => {
+                                container.classList.remove("error-shake");
+                                enteredPin = "";
+                                updateDots();
+                                isProcessing = false;
+                            }, 400);
+                        },
+                    );
+                }, 200);
             }
         };
 
@@ -175,14 +169,12 @@ export const AccountSwitcher = {
             "0",
             "⌫",
         ];
-
         const keypad = el(
             "div",
             { className: "verify-pin-keypad" },
             ...keys.map((key) => {
                 if (key === "")
                     return el("div", { className: "pin-key empty" });
-
                 return el(
                     "button",
                     {
