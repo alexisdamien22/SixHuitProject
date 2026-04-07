@@ -106,11 +106,7 @@ export class ProfilPage {
                     el(
                         "div",
                         { className: "streak streak-centered" },
-                        el(
-                            "span",
-                            { className: "streak-text" },
-                            `🔥 ${streak}`,
-                        ),
+                        el("span", { className: "streak-text" }, `🔥 ${streak}`),
                     ),
                 ),
                 el(
