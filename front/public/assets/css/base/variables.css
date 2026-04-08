@@ -8,10 +8,14 @@
     --color-border-light: #2a3139;
 
     --color-done: #58cc02;
-    --color-todo: #fda20d;
+
     --color-nothing: #7e7d7d;
     --color-done-shadow: #46a302;
-    --color-todo-shadow: #ce830a;
+    --color-todo: #007bff;
+    --color-todo-shadow: #0056b3;
+    --color-future: #ff9800;
+    --color-future-shadow: #e68900;
+
     --color-nothing-shadow: #5d5d5d;
 
     --color-halo-border: #3a424c;

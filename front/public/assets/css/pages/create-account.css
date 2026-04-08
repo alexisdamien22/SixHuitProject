@@ -276,3 +276,16 @@
         opacity: 0;
     }
 }
+.forgot-email-prompt {
+    margin: 15px 0;
+}
+
+.forgot-email-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.flex-1 {
+    flex: 1;
+}

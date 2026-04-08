@@ -17,8 +17,22 @@ export class AppController {
     async init() {
         console.log("AppController INIT");
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const resetToken = urlParams.get("resetToken");
+
         await this.model.loadSession();
         this.view.init(this);
+
+        if (resetToken) {
+            this.model.setResetToken(resetToken);
+            window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname,
+            );
+            this.navigation.goTo("resetPassword");
+            return;
+        }
 
         if (!this.model.session.isLoggedIn()) {
             this.navigation.goTo("login");

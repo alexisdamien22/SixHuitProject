@@ -62,7 +62,6 @@ export class SessionModal {
                         onClick: (e) => {
                             e.preventDefault();
                             if (this.happiness === null) {
-                                alert("Choisis un emoji !");
                                 return;
                             }
 

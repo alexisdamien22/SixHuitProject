@@ -11,6 +11,7 @@ import { ParentHomePage } from "./pages/ParentHomePage.js";
 import { LoginPage } from "./pages/LoginPage.js";
 import { RegisterParentPage } from "./pages/RegisterParentPage.js";
 import { RegisterChildPage } from "./pages/RegisterChildPage.js";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage.js";
 
 import { AccountSwitcher } from "./pages/AccountSwitcher.js";
 
@@ -62,11 +63,13 @@ export class AppView {
         const hideHeader = [
             "login",
             "registerParent",
+            "resetPassword",
             "registerChild",
         ].includes(name);
         const hideFooter = [
             "login",
             "registerParent",
+            "resetPassword",
             "registerChild",
         ].includes(name);
 
@@ -83,6 +86,9 @@ export class AppView {
                 break;
             case "registerParent":
                 page = new RegisterParentPage(this.app);
+                break;
+            case "resetPassword":
+                page = new ResetPasswordPage(this.app);
                 break;
             case "registerChild":
                 page = new RegisterChildPage(this.app);

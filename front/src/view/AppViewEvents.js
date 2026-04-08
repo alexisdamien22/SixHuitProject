@@ -20,6 +20,20 @@ export function initAppEvents(view) {
         const headerProfile = e.target.closest(
             ".profile-icon, .header-profile-btn",
         );
+
+        if (
+            headerProfile ||
+            e.target.closest(".icon-footer") ||
+            e.target.closest(".parametre")
+        ) {
+            const activePopup = document.querySelector(".duo-popup.show");
+            if (activePopup) {
+                activePopup.classList.remove("show");
+                const activeStep = activePopup.closest(".path-step");
+                if (activeStep) activeStep.classList.remove("active-step");
+            }
+        }
+
         if (headerProfile) {
             view.toggleAccountSwitcher();
             return;

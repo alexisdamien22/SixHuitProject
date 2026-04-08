@@ -89,8 +89,33 @@ export class AuthController {
             }
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Invalid credentials");
             this.triggerRender();
+        }
+    }
+
+    async forgotPassword(email) {
+        try {
+            const result = await ApiClient.post(`/auth/forgot-password`, {
+                email,
+            });
+            if (result && result.error) throw new Error(result.error);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async resetPassword(newPassword) {
+        const token = this.app.model.getResetToken();
+        try {
+            const result = await ApiClient.post(`/auth/reset-password`, {
+                token,
+                newPassword,
+            });
+            if (result && result.error) throw new Error(result.error);
+            return result;
+        } catch (err) {
+            throw err;
         }
     }
 
@@ -140,7 +165,6 @@ export class AuthController {
             this.app.navigation.goTo("parent-home");
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Registration error");
             this.triggerRender();
         }
     }
@@ -227,7 +251,6 @@ export class AuthController {
             this.triggerRender();
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Network error");
             this.triggerRender();
         }
     }
