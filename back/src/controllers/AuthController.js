@@ -94,4 +94,14 @@ export class AuthController {
             res.status(err.status || 500).json({ error: err.message });
         }
     }
+    static async verifyPassword(req, res) {
+        try {
+            const adultId = req.user.id;
+            const { password } = req.body;
+            const result = await AuthService.verifyPassword(adultId, password);
+            res.status(200).json(result);
+        } catch (err) {
+            res.status(err.status || 500).json({ error: err.message });
+        }
+    }
 }

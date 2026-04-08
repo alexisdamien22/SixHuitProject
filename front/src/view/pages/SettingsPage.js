@@ -7,26 +7,48 @@ export class SettingsPage {
     constructor(app) {
         this.app = app;
     }
-    handleChangePin() {
-        AccountSwitcher.showPinPopup(async (newPin, onSuccess, onError) => {
-            try {
-                const res = await ApiClient.post("/auth/update-pin", {
-                    newPin,
-                });
-                if (res.success) {
-                    onSuccess();
-                    setTimeout(
-                        () => alert("Code PIN modifié avec succès !"),
-                        100,
-                    );
-                } else {
-                    onError();
-                }
-            } catch (e) {
-                console.error(e);
-                onError();
+
+    async handleChangePin() {
+        const password = prompt(
+            "Pour modifier votre code PIN, veuillez saisir le mot de passe de votre compte :",
+        );
+
+        if (!password) return;
+
+        try {
+            const verifyRes = await ApiClient.post("/auth/verify-password", {
+                password,
+            });
+
+            if (verifyRes.success) {
+                AccountSwitcher.showPinPopup(
+                    async (newPin, onUpdateSuccess, onUpdateError) => {
+                        try {
+                            const updateRes = await ApiClient.post(
+                                "/auth/update-pin",
+                                { newPin },
+                            );
+                            if (updateRes.success) {
+                                onUpdateSuccess();
+                                alert("Code PIN mis à jour avec succès !");
+                            } else {
+                                onUpdateError();
+                            }
+                        } catch (e) {
+                            onUpdateError();
+                        }
+                    },
+                    "Nouveau code PIN",
+                );
+            } else {
+                alert("Mot de passe incorrect.");
             }
-        }, "Nouveau code PIN");
+        } catch (err) {
+            alert(
+                "Erreur de vérification : " +
+                    (err.message || "Serveur injoignable"),
+            );
+        }
     }
 
     render() {
@@ -44,7 +66,7 @@ export class SettingsPage {
             ),
         ]);
 
-        let specificSections;
+        let specificSections = [];
 
         if (isParentMode) {
             specificSections = [
@@ -56,7 +78,7 @@ export class SettingsPage {
                         "Rappels par email",
                         "email-notif",
                         true,
-                        () => console.log("Action: Toggle Email"),
+                        () => {},
                     ),
                 ]),
             ];
@@ -67,11 +89,9 @@ export class SettingsPage {
                         "Effets sonores",
                         "sound-effects",
                         true,
-                        () => console.log("Action: Toggle Sound"),
+                        () => {},
                     ),
-                    this.createActionItem("Changer ma mascotte", () =>
-                        console.log("Action: Changer Mascotte"),
-                    ),
+                    this.createActionItem("Changer ma mascotte", () => {}),
                 ]),
             ];
         }
@@ -80,14 +100,12 @@ export class SettingsPage {
             "div",
             { className: "page settings-page" },
             el("h2", { className: "ca-title settings-title" }, "Paramètres"),
-
             el(
                 "div",
                 { className: "settings-container" },
                 appearanceSection,
                 ...specificSections,
             ),
-
             el(
                 "button",
                 {
