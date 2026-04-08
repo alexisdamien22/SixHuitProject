@@ -155,15 +155,13 @@ export class LoginPage {
                                     document.getElementById(
                                         "forgot-email-input",
                                     ).value;
-                                if (!email) return alert("Email requis");
+                                if (!email) return;
                                 e.target.textContent = "...";
                                 e.target.disabled = true;
                                 try {
                                     await this.app.auth.forgotPassword(email);
-                                    alert("Email envoyé si le compte existe.");
                                     overlay.remove();
                                 } catch (err) {
-                                    alert("Erreur");
                                     e.target.textContent = "Envoyer";
                                     e.target.disabled = false;
                                 }

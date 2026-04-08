@@ -26,7 +26,6 @@ export class SettingsPage {
                                 );
                                 if (updateRes.success) {
                                     onUpdateSuccess();
-                                    alert("Code PIN mis à jour avec succès !");
                                 } else {
                                     onUpdateError();
                                 }
@@ -37,14 +36,8 @@ export class SettingsPage {
                         "Nouveau code PIN",
                     );
                 } else {
-                    alert("Mot de passe incorrect.");
                 }
-            } catch (err) {
-                alert(
-                    "Erreur de vérification : " +
-                        (err.message || "Serveur injoignable"),
-                );
-            }
+            } catch (err) {}
         });
     }
 

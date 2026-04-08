@@ -89,7 +89,6 @@ export class AuthController {
             }
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Invalid credentials");
             this.triggerRender();
         }
     }
@@ -166,7 +165,6 @@ export class AuthController {
             this.app.navigation.goTo("parent-home");
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Registration error");
             this.triggerRender();
         }
     }
@@ -253,7 +251,6 @@ export class AuthController {
             this.triggerRender();
         } catch (err) {
             this.app.model.setLoading(false);
-            alert(err.message || "Network error");
             this.triggerRender();
         }
     }

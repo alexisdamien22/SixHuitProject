@@ -41,16 +41,13 @@ export class ResetPasswordPage {
                         onClick: async (e) => {
                             const p1 = document.getElementById("rp-pass").value;
                             const p2 = document.getElementById("rp-conf").value;
-                            if (p1 !== p2 || p1.length < 6)
-                                return alert("Erreur de mot de passe");
+                            if (p1 !== p2 || p1.length < 6) return;
 
                             e.target.disabled = true;
                             try {
                                 await this.app.auth.resetPassword(p1);
-                                alert("Succès ! Connectez-vous.");
                                 this.app.navigation.goTo("login");
                             } catch (err) {
-                                alert(err.message);
                                 e.target.disabled = false;
                             }
                         },

@@ -229,7 +229,6 @@ export class HomePage {
                     this.app.navigation.goTo("home");
                 } catch (error) {
                     console.error("Erreur lors de l'enregistrement :", error);
-                    alert("Erreur lors de l'enregistrement de la séance.");
                 }
             },
         );
