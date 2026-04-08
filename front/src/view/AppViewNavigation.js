@@ -75,18 +75,6 @@ export const AppViewNavigation = {
                         onClick: () => {
                             view.toggleBottomMenu(false, true);
                             view.syncFooter(3);
-                            view.app.navigation.goTo("tuner");
-                        },
-                    },
-                    el("span", {}, "Accordeur"),
-                ),
-                el(
-                    "div",
-                    {
-                        className: "bottom-menu-item",
-                        onClick: () => {
-                            view.toggleBottomMenu(false, true);
-                            view.syncFooter(3);
                             view.app.navigation.goTo("settings");
                         },
                     },
