@@ -154,7 +154,7 @@ export class ParentChildSettingsPage {
     async handleToggle(field, value) {
         const childId = this.childData.id;
         try {
-            await ApiClient.post(`/child/${childId}/settings`, {
+            await ApiClient.patch(`/child/${childId}/settings`, {
                 [field]: value,
             });
             this.childData[field] = value ? 1 : 0;
@@ -164,10 +164,9 @@ export class ParentChildSettingsPage {
     async handleFreezeStreak(isActive) {
         const childId = this.childData.id;
         try {
-            await ApiClient.post(`/child/${childId}/settings`, {
+            await ApiClient.patch(`/child/${childId}/settings`, {
                 freeze: isActive,
             });
-
             const data = await ApiClient.get(`/child/${childId}`);
             this.childData = data;
         } catch (err) {}

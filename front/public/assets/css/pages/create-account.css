@@ -289,3 +289,17 @@
 .flex-1 {
     flex: 1;
 }
+.ca-back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+
+    background: var(--color-bg-popup);
+    border: 2px solid var(--color-border-soft);
+    color: var(--color-text-main);
+}
+
+.ca-content {
+    padding-top: 60px;
+}

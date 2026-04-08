@@ -35,4 +35,13 @@ export class ApiClient {
         });
         return res.json();
     }
+
+    static async patch(path, data) {
+        const res = await fetch(`${API_URL}${path}`, {
+            method: "PATCH",
+            headers: getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return res.json();
+    }
 }
