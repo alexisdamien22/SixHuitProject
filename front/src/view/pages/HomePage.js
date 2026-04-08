@@ -38,7 +38,6 @@ export class HomePage {
         const fullPlan = {};
         orderedDays.forEach((day) => (fullPlan[day] = "nothing"));
 
-        // --- 1. Calcul de la date de début de la semaine (basée sur lessonDay) ---
         const jsDays = [
             "Dimanche",
             "Lundi",
@@ -49,20 +48,19 @@ export class HomePage {
             "Samedi",
         ];
         let targetDayIndex = jsDays.indexOf(lessonDay);
-        if (targetDayIndex === -1) targetDayIndex = 1; // Lundi par défaut
+        if (targetDayIndex === -1) targetDayIndex = 1;
 
         const now = new Date();
         const currentDayIndex = now.getDay();
         let daysAgo = currentDayIndex - targetDayIndex;
         if (daysAgo < 0) {
-            daysAgo += 7; // Si on n'a pas encore passé le jour du cours cette semaine
+            daysAgo += 7;
         }
 
         const startOfCycle = new Date(now);
         startOfCycle.setDate(now.getDate() - daysAgo);
-        startOfCycle.setHours(0, 0, 0, 0); // Début de la journée
+        startOfCycle.setHours(0, 0, 0, 0);
 
-        // --- 2. Vérification des séances validées DANS CE CYCLE via l'historique ---
         const doneDaysThisCycle = new Set();
         history.forEach((session) => {
             if (session.session_date) {
@@ -86,7 +84,6 @@ export class HomePage {
                 const isPast = dayIndex < todayIndexInOrdered;
                 const isFuture = dayIndex > todayIndexInOrdered;
 
-                // On ignore "entry.status" car il appartient peut-être à la semaine passée
                 if (doneDaysThisCycle.has(day)) {
                     fullPlan[day] = "done";
                 } else if (entry.practice === 1) {

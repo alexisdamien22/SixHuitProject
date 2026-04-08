@@ -126,7 +126,7 @@ export class LoginPage {
                 el("h2", { className: "ca-title" }, "Réinitialisation"),
                 el(
                     "p",
-                    { style: "margin: 15px 0;" },
+                    { className: "forgot-email-prompt" },
                     "Saisissez votre email :",
                 ),
                 el("input", {
@@ -137,7 +137,7 @@ export class LoginPage {
                 }),
                 el(
                     "div",
-                    { style: "display: flex; gap: 10px; margin-top: 20px;" },
+                    { className: "forgot-email-actions" },
                     el(
                         "button",
                         {
@@ -149,8 +149,7 @@ export class LoginPage {
                     el(
                         "button",
                         {
-                            className: "ca-btn-next",
-                            style: "flex: 1;",
+                            className: "ca-btn-next flex-1",
                             onClick: async (e) => {
                                 const email =
                                     document.getElementById(

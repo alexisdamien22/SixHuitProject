@@ -25,7 +25,6 @@ export class AppController {
 
         if (resetToken) {
             this.model.setResetToken(resetToken);
-            // Nettoie l'URL pour cacher le jeton de sécurité
             window.history.replaceState(
                 {},
                 document.title,
