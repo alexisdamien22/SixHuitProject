@@ -56,7 +56,30 @@ export const AppViewNavigation = {
                     },
                     el("span", {}, "Compte"),
                 ),
-
+                el(
+                    "div",
+                    {
+                        className: "bottom-menu-item",
+                        onClick: () => {
+                            view.toggleBottomMenu(false, true);
+                            view.syncFooter(3);
+                            view.app.navigation.goTo("metronome");
+                        },
+                    },
+                    el("span", {}, "Métronome"),
+                ),
+                el(
+                    "div",
+                    {
+                        className: "bottom-menu-item",
+                        onClick: () => {
+                            view.toggleBottomMenu(false, true);
+                            view.syncFooter(3);
+                            view.app.navigation.goTo("tuner");
+                        },
+                    },
+                    el("span", {}, "Accordeur"),
+                ),
                 el(
                     "div",
                     {

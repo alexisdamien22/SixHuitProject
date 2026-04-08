@@ -1,0 +1,94 @@
+.metronome-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.metronome-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+}
+
+.bpm-display {
+    text-align: center;
+}
+
+#bpm-value {
+    font-family: "Coiny", cursive;
+    font-size: 80px;
+    color: var(--ca-purple);
+    display: block;
+    line-height: 1;
+}
+
+.bpm-label {
+    font-weight: bold;
+    color: var(--color-text-sub);
+    letter-spacing: 2px;
+}
+
+.visual-indicator {
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.dot {
+    width: 20px;
+    height: 20px;
+    background: var(--color-border-soft);
+    border-radius: 50%;
+    transition: transform 0.1s;
+}
+
+.dot.active {
+    background: var(--color-done);
+    transform: scale(1.8);
+    box-shadow: 0 0 15px var(--color-done);
+}
+
+.bpm-slider {
+    width: 80%;
+    max-width: 300px;
+    accent-color: var(--ca-purple);
+}
+
+.tempo-controls {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.tempo-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: var(--ca-input-bg);
+    color: var(--color-text-main);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.play-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    background: var(--ca-purple);
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 var(--ca-purple-hover);
+}
+
+.play-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 var(--ca-purple-hover);
+}

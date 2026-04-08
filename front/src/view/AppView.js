@@ -9,6 +9,8 @@ import { CommunityPage } from "./pages/CommunityPage.js";
 import { ParentHomePage } from "./pages/ParentHomePage.js";
 import { ParentChildDetailsPage } from "./pages/ParentChildDetailsPage.js";
 import { ParentChildSettingsPage } from "./pages/ParentChildSettingsPage.js";
+import { MetronomePage } from "./pages/MetronomePage.js";
+import { TunerPage } from "./pages/TunerPage.js";
 
 import { LoginPage } from "./pages/LoginPage.js";
 import { RegisterParentPage } from "./pages/RegisterParentPage.js";
@@ -116,6 +118,12 @@ export class AppView {
             case "parentChildSettings":
                 page = new ParentChildSettingsPage(this.app);
                 break;
+            case "metronome":
+                page = new MetronomePage(this.app);
+                break;
+            case "tuner":
+                page = new TunerPage(this.app);
+                break;
             default:
                 page = this.createErrorPage(name);
         }
@@ -131,6 +139,8 @@ export class AppView {
             music: 2,
             profil: 3,
             settings: 3,
+            metronome: 3,
+            tuner: 3,
         };
         const activeFooterIndex = pageToIconMap[name];
         if (activeFooterIndex !== undefined) {
@@ -169,9 +179,12 @@ export class AppView {
         if (!show && !skipReset) {
             const currentPageName = this.currentPage?.constructor.name;
 
-            const isMenuPage = ["ProfilPage", "SettingsPage"].includes(
-                currentPageName,
-            );
+            const isMenuPage = [
+                "ProfilPage",
+                "SettingsPage",
+                "MetronomePage",
+                "TunerPage",
+            ].includes(currentPageName);
 
             if (isMenuPage) {
                 this.syncFooter(3);

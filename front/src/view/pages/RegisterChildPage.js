@@ -96,7 +96,7 @@ export class RegisterChildPage {
     async render() {
         const state = this.app.model.getAuthState();
         const controller = this.app.auth;
-        const currentStep = state.step || 1; // Variable définie ici pour être utilisée dans tout le rendu
+        const currentStep = state.step || 1;
 
         if (currentStep === 8) {
             return el(
@@ -145,7 +145,7 @@ export class RegisterChildPage {
         return el(
             "div",
             { className: "ca-screen" },
-            // Bouton de retour placé en haut de la hiérarchie visuelle
+
             el(
                 "button",
                 {
