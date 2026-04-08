@@ -86,15 +86,12 @@ export class AuthService {
             const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/?resetToken=${token}`;
 
             const transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 465,
-                secure: true,
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT),
+                secure: process.env.SMTP_PORT == 465,
                 auth: {
                     user: process.env.SMTP_USER,
                     pass: process.env.SMTP_PASS,
-                },
-                tls: {
-                    rejectUnauthorized: false,
                 },
             });
 
@@ -104,16 +101,16 @@ export class AuthService {
                     to: email,
                     subject: "Password Reset",
                     html: `
-                        <div style="font-family: sans-serif; text-align: center;">
-                            <h2>Password Reset</h2>
-                            <p>Click the button below to reset your password:</p>
-                            <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background: #6806ed; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a>
-                            <p style="font-size: 12px; color: #888; margin-top: 20px;">This link expires in 1 hour.</p>
-                        </div>
-                    `,
+            <div style="font-family: sans-serif; text-align: center;">
+                <h2>Password Reset</h2>
+                <p>Click the button below to reset your password:</p>
+                <a href="${resetLink}" style="display: inline-block; padding: 12px 24px; background: #6806ed; color: white; text-decoration: none; border-radius: 8px;">Reset Password</a>
+                <p style="font-size: 11px; color: #888; margin-top: 20px;">This email was sent from support@sixhuit.fr</p>
+            </div>
+        `,
                 });
-            } catch (mailError) {
-                console.error("Nodemailer Error:", mailError.message);
+            } catch (error) {
+                console.error("SMTP Error:", error.message);
                 throw { status: 503, message: "Email service unavailable" };
             }
         }
