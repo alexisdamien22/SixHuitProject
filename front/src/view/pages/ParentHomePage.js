@@ -11,103 +11,39 @@ export class ParentHomePage {
             typeof this.app.model.fetchChildrenAccounts === "function"
         ) {
             await this.app.model.fetchChildrenAccounts();
-        } else {
-            console.warn(
-                "[ParentHomePage] ATTENTION: fetchChildrenAccounts n'existe pas dans le modèle !",
-            );
         }
-
-        const parentData = this.app.model.getParentData() || {};
-        const welcomeName = parentData.name ? `, ${parentData.name}` : "";
 
         const children = this.app.model?.childrenAccounts || [];
 
         return el(
             "div",
-            {
-                className: "parent-screen page",
-            },
-            el("h1", {}, "Espace Parent"),
+            { className: "parent-screen page" },
+            el("h1", { className: "ca-title" }, "Espace Parent"),
             el(
                 "p",
                 { className: "parent-welcome-text" },
-                `Bienvenue dans ton tableau de bord${welcomeName} !`,
+                "Gère tes enfants et leurs progrès.",
             ),
 
             el(
                 "div",
-                {
-                    className: "ca-form-block parent-info-block",
-                },
-                el(
-                    "p",
-                    { className: "ca-question" },
-                    "Gère les profils enfants ici.",
-                ),
-                children.length === 0
-                    ? el(
+                { className: "parent-children-list" },
+                children.length > 0
+                    ? children.map((child) => this.renderChildCard(child))
+                    : el(
                           "p",
-                          { className: "parent-info-desc" },
-                          "Crée un profil pour que ton enfant puisse commencer ses sessions de musique.",
-                      )
-                    : "",
+                          { className: "parent-no-child" },
+                          "Aucun enfant associé.",
+                      ),
+            ),
 
-                el(
-                    "div",
-                    { className: "parent-children-list" },
-                    children.length > 0
-                        ? children.map((child) =>
-                              el(
-                                  "div",
-                                  { className: "parent-child-card" },
-                                  el(
-                                      "div",
-                                      { className: "parent-child-info" },
-                                      el(
-                                          "span",
-                                          { className: "parent-child-avatar" },
-                                          child.mascot || "🎵",
-                                      ),
-                                      el(
-                                          "span",
-                                          { className: "parent-child-name" },
-                                          child.name,
-                                      ),
-                                  ),
-                                  el(
-                                      "button",
-                                      {
-                                          className: "parent-child-edit-btn",
-                                          onClick: () => {
-                                              localStorage.setItem(
-                                                  "viewingChildId",
-                                                  child.id,
-                                              );
-                                              this.app.navigation.goTo(
-                                                  "parentChildDetails",
-                                              );
-                                          },
-                                      },
-                                      "Voir le profil",
-                                  ),
-                              ),
-                          )
-                        : el(
-                              "p",
-                              { className: "parent-no-child" },
-                              "Aucun enfant associé pour le moment.",
-                          ),
-                ),
-
-                el(
-                    "button",
-                    {
-                        className: "ca-btn-next parent-add-btn",
-                        onClick: () =>
-                            this.app.navigation.goTo("registerChild"),
-                    },
-                    "+ Ajouter un profil enfant",
-                ),
+            el(
+                "button",
+                {
+                    className: "ca-btn-next parent-add-btn",
+                    onClick: () => this.app.navigation.goTo("registerChild"),
+                },
+                "+ Ajouter un profil enfant",
             ),
 
             el(
@@ -121,6 +57,52 @@ export class ParentHomePage {
                     },
                 },
                 "Se déconnecter",
+            ),
+        );
+    }
+
+    renderChildCard(child) {
+        return el(
+            "div",
+            {
+                className: "parent-child-card clickable-card",
+                onClick: () => {
+                    // Action par défaut : Voir les statistiques
+                    localStorage.setItem("viewingChildId", child.id);
+                    this.app.navigation.goTo("parentChildDetails");
+                },
+            },
+            el(
+                "div",
+                { className: "parent-child-info" },
+                el(
+                    "span",
+                    { className: "parent-child-avatar" },
+                    child.mascot || "🎵",
+                ),
+                el(
+                    "div",
+                    { className: "name-stack" },
+                    el("span", { className: "parent-child-name" }, child.name),
+                    el(
+                        "span",
+                        { className: "parent-child-sub" },
+                        "Voir les progrès ›",
+                    ),
+                ),
+            ),
+            // Bouton spécifique pour les réglages
+            el(
+                "button",
+                {
+                    className: "card-settings-btn",
+                    onClick: (e) => {
+                        e.stopPropagation(); // EMPÊCHE de déclencher le clic de la carte (statistiques)
+                        localStorage.setItem("editingChildId", child.id);
+                        this.app.navigation.goTo("parentChildSettings");
+                    },
+                },
+                "⚙️",
             ),
         );
     }

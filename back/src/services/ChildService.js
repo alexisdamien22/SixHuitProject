@@ -2,6 +2,7 @@ import { ChildAccountModel } from "../models/ChildAccountModel.js";
 import { WeeklyPlanModel } from "../models/WeeklyPlanModel.js";
 import { StreakModel } from "../models/StreakModel.js";
 import { SessionsModel } from "../models/SessionsModel.js";
+import { SocialModel } from "../models/SocialModel.js";
 
 export class ChildService {
     static async getChildData(childId) {
@@ -11,9 +12,13 @@ export class ChildService {
             error.status = 404;
             throw error;
         }
-        const plan = await WeeklyPlanModel.getPlan(childId);
-        const streakData = await StreakModel.getStreak(childId);
-        const sessions = await SessionsModel.getSessions(childId);
+
+        const [plan, streakData, sessions, friends] = await Promise.all([
+            WeeklyPlanModel.getPlan(childId),
+            StreakModel.getStreak(childId),
+            SessionsModel.getSessions(childId),
+            SocialModel.getFriends(childId),
+        ]);
 
         let currentStreak = 0;
         if (streakData && streakData.length > 0) {
@@ -25,6 +30,7 @@ export class ChildService {
             weeklyPlan: plan,
             streak: currentStreak,
             sessions: sessions || [],
+            friends: friends || [],
         };
     }
 

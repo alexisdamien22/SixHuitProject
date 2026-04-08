@@ -10,340 +10,268 @@ export class ParentChildDetailsPage {
 
     async render() {
         const childId = localStorage.getItem("viewingChildId");
-
-        // Si les données ne sont pas chargées, ou si on regarde un autre enfant
         if (!this.childData || this.childData.id != childId) {
             this.isLoading = true;
-            this.childData = null; // Réinitialiser les données si l'ID de l'enfant change
             try {
                 const data = await ApiClient.get(`/child/${childId}`);
-                if (data && !data.error) {
-                    this.childData = data;
-                } else {
-                    throw new Error(
-                        data?.error ||
-                            "Impossible de récupérer les données de l'enfant.",
-                    );
-                }
+                this.childData = data || { name: "Profil introuvable" };
             } catch (err) {
-                console.error(
-                    "Erreur lors de la récupération des détails de l'enfant:",
-                    err,
-                );
-                this.childData = { id: childId, name: "Profil introuvable" };
+                this.childData = { name: "Erreur" };
             } finally {
                 this.isLoading = false;
             }
         }
 
-        if (this.isLoading || !this.childData) {
+        if (this.isLoading)
             return el(
                 "div",
                 { className: "page page-centered" },
                 "Chargement...",
             );
-        }
-        const child = this.childData;
 
-        const mascot = child.mascot || "🎵";
-        const name = child.name || "Profil introuvable";
-        const rawInstrument = child.instrument || "";
-        const instrument = rawInstrument
-            ? rawInstrument.charAt(0).toUpperCase() + rawInstrument.slice(1)
-            : "-";
-        const streak = child.streak || 0;
+        const history = this.childData.sessions || [];
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
 
-        const historyList = child.history || child.sessions || [];
-        const emojis = ["😞", "🫥", "😊", "🤩"];
-
-        // --- KPI Statistiques ---
-        const totalSessions = historyList.length;
-        const successfulSessions = historyList.filter(
-            (s) => s.quality === 1 || s.quality === 2,
-        ).length;
-        const successRate =
-            totalSessions > 0
-                ? Math.round((successfulSessions / totalSessions) * 100)
-                : 0;
-
-        // --- Graphique des 7 dernières séances ---
-        // On prend les 7 dernières (historyList est trié du plus récent au plus ancien), et on inverse pour l'ordre chronologique
-        const recentSessions = historyList.slice(0, 7).reverse();
-
-        const graphBars =
-            recentSessions.length > 0
-                ? recentSessions.map((session) => {
-                      const heightPercent = ((session.happiness + 1) / 4) * 100;
-
-                      let bgColor = "#58cc02"; // Vert: temps respecté
-                      if (session.quality === 0) bgColor = "#ff5252"; // Rouge: non respecté
-                      if (session.quality === 2) bgColor = "#ffc800"; // Jaune: dépassé
-
-                      const dateObj = new Date(session.session_date);
-                      const dateStr = !isNaN(dateObj)
-                          ? dateObj.toLocaleDateString("fr-FR", {
-                                day: "numeric",
-                                month: "short",
-                            })
-                          : "?";
-
-                      return el(
-                          "div",
-                          {
-                              style: "display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1;",
-                          },
-                          // Barre de progression
-                          el(
-                              "div",
-                              {
-                                  style: "height: 120px; width: 100%; max-width: 24px; background: var(--color-bg-soft, #f0f0f0); border-radius: 6px; display: flex; align-items: flex-end; overflow: hidden;",
-                              },
-                              el("div", {
-                                  style: `height: ${heightPercent}%; width: 100%; background-color: ${bgColor}; border-radius: 6px; transition: height 0.5s ease-out;`,
-                              }),
-                          ),
-                          // Date
-                          el(
-                              "span",
-                              {
-                                  style: "font-size: 11px; color: #888; text-align: center; line-height: 1.2; white-space: nowrap;",
-                              },
-                              dateStr,
-                          ),
-                          // Émoji d'humeur
-                          el(
-                              "span",
-                              { style: "font-size: 14px;" },
-                              emojis[session.happiness] || "❓",
-                          ),
-                      );
-                  })
-                : [
-                      el(
-                          "p",
-                          {
-                              className: "empty-history-text",
-                              style: "width: 100%; text-align: center; color: #888;",
-                          },
-                          "Pas encore assez de données pour le graphique.",
-                      ),
-                  ];
-
-        const graphWidget = el(
-            "div",
-            {
-                style: "display: flex; justify-content: space-between; align-items: flex-end; padding: 20px; background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 15px; width: 100%; gap: 5px; box-sizing: border-box;",
-            },
-            ...graphBars,
-        );
-
-        // Légende du graphique
-        const graphLegend = el(
-            "div",
-            {
-                style: "display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-top: 15px; font-size: 12px; color: #666;",
-            },
-            el(
-                "div",
-                { style: "display: flex; align-items: center; gap: 5px;" },
-                el("div", {
-                    style: "width: 10px; height: 10px; border-radius: 3px; background-color: #58cc02;",
-                }),
-                "Temps respecté",
-            ),
-            el(
-                "div",
-                { style: "display: flex; align-items: center; gap: 5px;" },
-                el("div", {
-                    style: "width: 10px; height: 10px; border-radius: 3px; background-color: #ffc800;",
-                }),
-                "Temps dépassé",
-            ),
-            el(
-                "div",
-                { style: "display: flex; align-items: center; gap: 5px;" },
-                el("div", {
-                    style: "width: 10px; height: 10px; border-radius: 3px; background-color: #ff5252;",
-                }),
-                "Non respecté",
-            ),
-        );
-
-        // Liste des amis (à connecter avec tes vraies données d'amis du backend)
-        const friendsList = child.friends || [];
-        const friendsItems =
-            friendsList.length > 0
-                ? friendsList.map((friend) =>
-                      el(
-                          "div",
-                          {
-                              className: "user-card",
-                              style: "margin-bottom: 10px;",
-                          },
-                          el(
-                              "div",
-                              { className: "user-avatar" },
-                              friend.mascot || "🎵",
-                          ),
-                          el(
-                              "div",
-                              { className: "user-info" },
-                              el(
-                                  "div",
-                                  { className: "user-name" },
-                                  friend.name,
-                              ),
-                          ),
-                      ),
-                  )
-                : el(
-                      "p",
-                      { className: "empty-history-text" },
-                      "Aucun ami ajouté pour le moment.",
-                  );
+        const filteredSessions = history
+            .filter((s) => new Date(s.session_date) >= twoMonthsAgo)
+            .sort(
+                (a, b) => new Date(a.session_date) - new Date(b.session_date),
+            );
 
         return el(
             "div",
-            { className: "page profile-page", style: "padding-bottom: 40px;" },
+            { className: "page parent-details-page" },
+            this.renderHeader(),
+            el(
+                "div",
+                { className: "stats-container" },
+                // Graphique 1 : Moral
+                el(
+                    "div",
+                    { className: "dashboard-section" },
+                    el(
+                        "h3",
+                        { className: "section-title" },
+                        "Évolution du moral",
+                    ),
+                    el(
+                        "div",
+                        { className: "graph-and-axis" },
+                        el(
+                            "div",
+                            { className: "graph-wrapper" },
+                            this.renderYAxisMood(),
+                            this.renderCurveGraph(
+                                filteredSessions,
+                                "happiness",
+                                3,
+                            ),
+                        ),
+                        this.renderXAxis(filteredSessions),
+                    ),
+                ),
+                // Graphique 2 : Objectifs
+                el(
+                    "div",
+                    { className: "dashboard-section" },
+                    el(
+                        "h3",
+                        { className: "section-title" },
+                        "Respect des objectifs",
+                    ),
+                    el(
+                        "div",
+                        { className: "graph-and-axis" },
+                        el(
+                            "div",
+                            { className: "graph-wrapper" },
+                            this.renderYAxisQuality(),
+                            this.renderBarGraph(filteredSessions),
+                        ),
+                        this.renderXAxis(filteredSessions),
+                    ),
+                ),
+            ),
+            el(
+                "div",
+                { className: "dashboard-section" },
+                el("h3", { className: "section-title" }, "Dernières séances"),
+                el(
+                    "div",
+                    { className: "history-list" },
+                    history.length > 0
+                        ? history
+                              .slice(0, 10)
+                              .map((s) => this.renderHistoryRow(s))
+                        : el(
+                              "p",
+                              { className: "empty-text" },
+                              "Aucune donnée.",
+                          ),
+                ),
+            ),
+        );
+    }
 
+    renderHeader() {
+        return el(
+            "div",
+            { className: "details-header" },
             el(
                 "button",
                 {
-                    className: "start-btn",
-                    style: "margin-bottom: 20px; align-self: flex-start;",
-                    onClick: () => this.app.navigation.goTo("parentHome"),
+                    className: "back-circle-btn",
+                    onClick: () => this.app.navigation.goTo("parent-home"),
                 },
-                "← Retour",
+                "‹",
             ),
-
             el(
                 "div",
-                { className: "profil-img" },
-                // On affiche la mascotte directement ou son image
-                el(
-                    "div",
-                    {
-                        className: "profil-img-content",
-                        style: "font-size: 60px; display: flex; align-items: center; justify-content: center; background: var(--color-bg-soft); box-shadow: 0 4px 10px rgba(0,0,0,0.1);",
-                    },
-                    mascot,
-                ),
-            ),
-            el(
-                "h2",
-                { className: "profil-name", style: "margin-bottom: 5px;" },
-                name,
-            ),
-            el(
-                "p",
-                {
-                    style: "text-align: center; color: #888; margin-bottom: 25px; font-weight: 500;",
-                },
-                instrument,
-            ),
-
-            // --- GRILLE DE STATS ---
-            el(
-                "div",
-                {
-                    className: "stats-row",
-                    style: "display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-bottom: 25px;",
-                },
-                el(
-                    "div",
-                    {
-                        className: "card",
-                        style: "padding: 15px; margin: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 16px; background: white;",
-                    },
-                    el(
-                        "h3",
-                        {
-                            style: "font-size: 13px; color: #888; margin-bottom: 10px; text-align: center;",
-                        },
-                        "Série de feu",
-                    ),
-                    el(
-                        "div",
-                        {
-                            style: "font-size: 28px; font-weight: bold; text-align: center;",
-                        },
-                        `🔥 ${streak}`,
-                    ),
-                ),
-                el(
-                    "div",
-                    {
-                        className: "card",
-                        style: "padding: 15px; margin: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 16px; background: white;",
-                    },
-                    el(
-                        "h3",
-                        {
-                            style: "font-size: 13px; color: #888; margin-bottom: 10px; text-align: center;",
-                        },
-                        "Réussite",
-                    ),
-                    el(
-                        "div",
-                        {
-                            style: "font-size: 28px; font-weight: bold; color: #58cc02; text-align: center;",
-                        },
-                        `${successRate}%`,
-                    ),
-                ),
-                el(
-                    "div",
-                    {
-                        className: "card",
-                        style: "padding: 20px 15px; margin: 0; grid-column: span 2; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 16px; background: white; display: flex; justify-content: space-between; align-items: center;",
-                    },
-                    el(
-                        "h3",
-                        { style: "font-size: 15px; color: #555; margin: 0;" },
-                        "Total des séances jouées",
-                    ),
-                    el(
-                        "div",
-                        {
-                            style: "font-size: 24px; font-weight: bold; color: var(--color-primary, #6806ed);",
-                        },
-                        totalSessions,
-                    ),
-                ),
-            ),
-
-            // --- GRAPHIQUE ---
-            el(
-                "div",
-                { className: "history-section", style: "width: 100%;" },
-                el(
-                    "h3",
-                    { style: "margin-bottom: 5px; font-size: 18px;" },
-                    "Performance récente",
-                ),
+                { className: "header-info" },
+                el("h2", { className: "ca-title" }, this.childData.name),
                 el(
                     "p",
-                    {
-                        style: "font-size: 13px; color: #888; line-height: 1.4;",
-                    },
-                    "Évolution de l'humeur (hauteur) et du respect du temps (couleur) sur les 7 dernières séances.",
+                    { className: "subtitle" },
+                    this.childData.instrument || "Instrument non défini",
                 ),
-                graphWidget,
-                graphLegend,
             ),
-
-            // --- AMIS ---
             el(
                 "div",
-                {
-                    className: "history-section",
-                    style: "margin-top: 30px; width: 100%;",
-                },
-                el("h3", {}, "Amis de l'enfant"),
-                ...(Array.isArray(friendsItems)
-                    ? friendsItems
-                    : [friendsItems]),
+                { className: "header-mascot" },
+                this.childData.mascot || "🦊",
             ),
+        );
+    }
+
+    renderYAxisMood() {
+        return el(
+            "div",
+            { className: "graph-y-axis" },
+            el("span", {}, "🤩"), // Niveau 3
+            el("span", {}, "😊"), // Niveau 2
+            el("span", {}, "🫥"), // Niveau 1 (AJOUTÉ)
+            el("span", {}, "😞"), // Niveau 0
+        );
+    }
+
+    renderYAxisQuality() {
+        return el(
+            "div",
+            { className: "graph-y-axis labels" },
+            el("span", {}, "Top"),
+            el("span", {}, "Ok"),
+            el("span", {}, "Nul"),
+        );
+    }
+
+    renderXAxis(data) {
+        if (data.length < 2) return el("div", { className: "graph-x-axis" });
+        const points = [
+            data[0],
+            data[Math.floor(data.length / 2)],
+            data[data.length - 1],
+        ];
+        return el(
+            "div",
+            { className: "graph-x-axis" },
+            points.map((s) => {
+                const d = new Date(s.session_date);
+                return el(
+                    "span",
+                    { className: "x-label" },
+                    d.toLocaleDateString("fr-FR", {
+                        day: "numeric",
+                        month: "short",
+                    }),
+                );
+            }),
+        );
+    }
+
+    renderCurveGraph(data, key, maxVal) {
+        if (data.length < 2)
+            return el(
+                "div",
+                { className: "graph-empty" },
+                "Données insuffisantes",
+            );
+        const width = 1000,
+            height = 200,
+            padding = 10;
+        const gW = width - padding * 2,
+            gH = height - padding * 2;
+        const stepX = gW / (data.length - 1);
+        const points = data.map((s, i) => ({
+            x: padding + i * stepX,
+            y: height - padding - (s[key] / maxVal) * gH,
+        }));
+        let d = `M ${points[0].x} ${points[0].y}`;
+        for (let i = 0; i < points.length - 1; i++) {
+            const p0 = points[i],
+                p1 = points[i + 1],
+                cpX = (p0.x + p1.x) / 2;
+            d += ` C ${cpX} ${p0.y}, ${cpX} ${p1.y}, ${p1.x} ${p1.y}`;
+        }
+        const svg = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg",
+        );
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.setAttribute("preserveAspectRatio", "none");
+        svg.innerHTML = `<path d="${d}" class="path-curve" />`;
+        return svg;
+    }
+
+    renderBarGraph(data) {
+        if (data.length === 0)
+            return el(
+                "div",
+                { className: "graph-empty" },
+                "Données insuffisantes",
+            );
+        const colors = ["#ff5252", "#58cc02", "#ffb900"];
+        return el(
+            "div",
+            { className: "bar-chart" },
+            data.map((s) =>
+                el(
+                    "div",
+                    { className: "bar-container" },
+                    el("div", {
+                        className: "bar-fill",
+                        style: `height: ${((s.quality + 1) / 3) * 100}%; background: ${colors[s.quality]}`,
+                    }),
+                ),
+            ),
+        );
+    }
+
+    renderHistoryRow(session) {
+        const date = new Date(session.session_date).toLocaleDateString(
+            "fr-FR",
+            { day: "numeric", month: "short" },
+        );
+        const emojis = ["😞", "🫥", "😊", "🤩"];
+        const qIcons = [
+            "❌ Temps ignoré",
+            "✅ Temps respecté",
+            "🔥 Séance bonus",
+        ];
+        return el(
+            "div",
+            { className: "history-row" },
+            el(
+                "div",
+                { className: "row-main" },
+                el("span", { className: "row-date" }, date),
+                el(
+                    "span",
+                    { className: "row-quality" },
+                    qIcons[session.quality],
+                ),
+            ),
+            el("div", { className: "row-mood" }, emojis[session.happiness]),
         );
     }
 }
