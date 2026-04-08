@@ -39,13 +39,17 @@ export class ParentHomePage {
                 {
                     className: "ca-form-block parent-info-block",
                 },
-                el("p", { className: "ca-question" }, "Gère les profils enfants ici."),
+                el(
+                    "p",
+                    { className: "ca-question" },
+                    "Gère les profils enfants ici.",
+                ),
                 children.length === 0
                     ? el(
-                        "p",
-                        { className: "parent-info-desc" },
-                        "Crée un profil pour que ton enfant puisse commencer ses sessions de musique.",
-                    )
+                          "p",
+                          { className: "parent-info-desc" },
+                          "Crée un profil pour que ton enfant puisse commencer ses sessions de musique.",
+                      )
                     : "",
 
                 el(
@@ -53,38 +57,54 @@ export class ParentHomePage {
                     { className: "parent-children-list" },
                     children.length > 0
                         ? children.map((child) =>
-                            el(
-                                "div",
-                                { className: "parent-child-card" },
-                                el(
-                                    "div",
-                                    { className: "parent-child-info" },
-                                    el(
-                                        "span",
-                                        { className: "parent-child-avatar" },
-                                        child.mascot || "🎵",
-                                    ),
-                                    el("span", { className: "parent-child-name" }, child.name),
-                                ),
-                                el(
-                                    "button",
-                                    { className: "parent-child-edit-btn" },
-                                    "Modifier",
-                                ),
-                            ),
-                        )
+                              el(
+                                  "div",
+                                  { className: "parent-child-card" },
+                                  el(
+                                      "div",
+                                      { className: "parent-child-info" },
+                                      el(
+                                          "span",
+                                          { className: "parent-child-avatar" },
+                                          child.mascot || "🎵",
+                                      ),
+                                      el(
+                                          "span",
+                                          { className: "parent-child-name" },
+                                          child.name,
+                                      ),
+                                  ),
+                                  el(
+                                      "button",
+                                      {
+                                          className: "parent-child-edit-btn",
+                                          onClick: () => {
+                                              localStorage.setItem(
+                                                  "viewingChildId",
+                                                  child.id,
+                                              );
+                                              this.app.navigation.goTo(
+                                                  "parentChildDetails",
+                                              );
+                                          },
+                                      },
+                                      "Voir le profil",
+                                  ),
+                              ),
+                          )
                         : el(
-                            "p",
-                            { className: "parent-no-child" },
-                            "Aucun enfant associé pour le moment.",
-                        ),
+                              "p",
+                              { className: "parent-no-child" },
+                              "Aucun enfant associé pour le moment.",
+                          ),
                 ),
 
                 el(
                     "button",
                     {
                         className: "ca-btn-next parent-add-btn",
-                        onClick: () => this.app.navigation.goTo("registerChild"),
+                        onClick: () =>
+                            this.app.navigation.goTo("registerChild"),
                     },
                     "+ Ajouter un profil enfant",
                 ),

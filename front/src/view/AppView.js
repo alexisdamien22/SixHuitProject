@@ -7,6 +7,7 @@ import { SettingsPage } from "./pages/SettingsPage.js";
 import { MusicPage } from "./pages/MusicPage.js";
 import { CommunityPage } from "./pages/CommunityPage.js";
 import { ParentHomePage } from "./pages/ParentHomePage.js";
+import { ParentChildDetailsPage } from "./pages/ParentChildDetailsPage.js";
 
 import { LoginPage } from "./pages/LoginPage.js";
 import { RegisterParentPage } from "./pages/RegisterParentPage.js";
@@ -107,6 +108,9 @@ export class AppView {
                 break;
             case "parent-home":
                 page = new ParentHomePage(this.app);
+                break;
+            case "parentChildDetails":
+                page = new ParentChildDetailsPage(this.app);
                 break;
             default:
                 page = this.createErrorPage(name);
