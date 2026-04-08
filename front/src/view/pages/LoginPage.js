@@ -12,7 +12,7 @@ export class LoginPage {
         const controller = this.app.auth;
         const isValid = FormHelpers.isLoginValid(state.loginData);
         const btnContent = state.isLoading
-            ? el("span", { className: "ca-spinner" }, "Chargement...")
+            ? el("span", { className: "ca-spinner" }, "...")
             : "Se connecter";
 
         return el(
@@ -27,14 +27,12 @@ export class LoginPage {
                     { className: "ca-step-label" },
                     "Connecte-toi pour continuer",
                 ),
-
                 el(
                     "div",
                     { className: "ca-illus-wrap" },
                     el("img", { src: ICONS.guitare, alt: "Prêt ?" }),
                     el("span", { className: "ca-illus-name" }, "Prêt ?"),
                 ),
-
                 el(
                     "div",
                     { className: "ca-form-block" },
@@ -45,14 +43,11 @@ export class LoginPage {
                     ),
                     el(
                         "form",
-                        {
-                            onSubmit: (e) => e.preventDefault(),
-                            onsubmit: (e) => e.preventDefault(),
-                        },
+                        { onSubmit: (e) => e.preventDefault() },
                         el("input", {
                             className: "ca-input login-input",
                             type: "email",
-                            placeholder: "Ton email",
+                            placeholder: "Email",
                             value: state.loginData.email,
                             onInput: (e) =>
                                 controller.handleInput(
@@ -64,7 +59,7 @@ export class LoginPage {
                         el("input", {
                             className: "ca-input login-input",
                             type: "password",
-                            placeholder: "Ton mot de passe",
+                            placeholder: "Mot de passe",
                             value: state.loginData.password,
                             onInput: (e) =>
                                 controller.handleInput(
@@ -87,7 +82,6 @@ export class LoginPage {
                         "Mot de passe oublié ?",
                     ),
                 ),
-
                 el(
                     "button",
                     {
@@ -123,26 +117,23 @@ export class LoginPage {
     }
 
     showForgotPasswordModal() {
-        const state = this.app.model.getAuthState();
-
         const overlay = el(
             "div",
             { className: "modal-overlay" },
             el(
                 "div",
                 { className: "session-modal" },
-                el("h2", { className: "ca-title" }, "Mot de passe oublié"),
+                el("h2", { className: "ca-title" }, "Réinitialisation"),
                 el(
                     "p",
-                    { style: "margin: 15px 0; color: var(--color-text-main);" },
-                    "Entrez votre email pour recevoir un lien de réinitialisation.",
+                    { style: "margin: 15px 0;" },
+                    "Saisissez votre email :",
                 ),
                 el("input", {
                     type: "email",
                     id: "forgot-email-input",
                     className: "ca-input",
-                    placeholder: "Ton email",
-                    value: state.loginData.email || "",
+                    placeholder: "Email",
                 }),
                 el(
                     "div",
@@ -159,33 +150,23 @@ export class LoginPage {
                         "button",
                         {
                             className: "ca-btn-next",
-                            style: "flex: 1; padding: 12px;",
+                            style: "flex: 1;",
                             onClick: async (e) => {
-                                e.preventDefault();
-                                const emailInput =
+                                const email =
                                     document.getElementById(
                                         "forgot-email-input",
-                                    );
-                                const email = emailInput.value.trim();
-                                if (!email)
-                                    return alert("Veuillez entrer un email.");
-
-                                const btn = e.target;
-                                btn.textContent = "Envoi...";
-                                btn.disabled = true;
-
+                                    ).value;
+                                if (!email) return alert("Email requis");
+                                e.target.textContent = "...";
+                                e.target.disabled = true;
                                 try {
                                     await this.app.auth.forgotPassword(email);
-                                    alert(
-                                        "Si cet email existe, un lien de réinitialisation a été envoyé.",
-                                    );
+                                    alert("Email envoyé si le compte existe.");
                                     overlay.remove();
                                 } catch (err) {
-                                    alert(
-                                        "Erreur lors de la demande. Veuillez réessayer.",
-                                    );
-                                    btn.textContent = "Envoyer";
-                                    btn.disabled = false;
+                                    alert("Erreur");
+                                    e.target.textContent = "Envoyer";
+                                    e.target.disabled = false;
                                 }
                             },
                         },

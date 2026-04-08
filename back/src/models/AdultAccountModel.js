@@ -33,10 +33,10 @@ export class AdultAccountModel extends BaseModel {
         ]);
     }
 
-    static saveResetToken(email, token, expires) {
+    static saveResetToken(email, token) {
         return this.query(
-            "UPDATE adultaccount SET reset_token = ?, reset_token_expires = ? WHERE email = ?",
-            [token, expires, email],
+            "UPDATE adultaccount SET reset_token = ?, reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = ?",
+            [token, email],
         );
     }
 
