@@ -13,9 +13,8 @@
 }
 
 .profil-img {
-    font-size: 100px;
-    width: 120px;
-    aspect-ratio: 1;
+    width: 50vw;
+    height: 50vw;
     border-radius: 50%;
     object-fit: cover;
     border: 5px solid var(--color-border-soft);
