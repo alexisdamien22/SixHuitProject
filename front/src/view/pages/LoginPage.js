@@ -12,7 +12,7 @@ export class LoginPage {
         const controller = this.app.auth;
         const isValid = FormHelpers.isLoginValid(state.loginData);
         const btnContent = state.isLoading
-            ? el("span", { className: "ca-spinner" }, "Chargement...")
+            ? el("span", { className: "ca-spinner" }, "...")
             : "Se connecter";
 
         return el(
@@ -22,49 +22,66 @@ export class LoginPage {
                 "div",
                 { className: "ca-content" },
                 el("h1", { className: "ca-title" }, "Connexion"),
-                el("p", { className: "ca-step-label" }, "Connecte-toi pour continuer"),
-
+                el(
+                    "p",
+                    { className: "ca-step-label" },
+                    "Connecte-toi pour continuer",
+                ),
                 el(
                     "div",
                     { className: "ca-illus-wrap" },
                     el("img", { src: ICONS.guitare, alt: "Prêt ?" }),
                     el("span", { className: "ca-illus-name" }, "Prêt ?"),
                 ),
-
                 el(
                     "div",
                     { className: "ca-form-block" },
-                    el("p", { className: "ca-question" }, "Content de te revoir !"),
+                    el(
+                        "p",
+                        { className: "ca-question" },
+                        "Content de te revoir !",
+                    ),
                     el(
                         "form",
-                        {
-                            onSubmit: (e) => e.preventDefault(),
-                            onsubmit: (e) => e.preventDefault(),
-                        },
+                        { onSubmit: (e) => e.preventDefault() },
                         el("input", {
                             className: "ca-input login-input",
                             type: "email",
-                            placeholder: "Ton email",
+                            placeholder: "Email",
                             value: state.loginData.email,
                             onInput: (e) =>
-                                controller.handleInput("login", "email", e.target.value),
+                                controller.handleInput(
+                                    "login",
+                                    "email",
+                                    e.target.value,
+                                ),
                         }),
                         el("input", {
                             className: "ca-input login-input",
                             type: "password",
-                            placeholder: "Ton mot de passe",
+                            placeholder: "Mot de passe",
                             value: state.loginData.password,
                             onInput: (e) =>
-                                controller.handleInput("login", "password", e.target.value),
+                                controller.handleInput(
+                                    "login",
+                                    "password",
+                                    e.target.value,
+                                ),
                         }),
                     ),
                     el(
                         "a",
-                        { href: "#", className: "ca-forgot-pass" },
+                        {
+                            href: "#",
+                            className: "ca-forgot-pass",
+                            onClick: (e) => {
+                                e.preventDefault();
+                                this.showForgotPasswordModal();
+                            },
+                        },
                         "Mot de passe oublié ?",
                     ),
                 ),
-
                 el(
                     "button",
                     {
@@ -97,6 +114,65 @@ export class LoginPage {
                 ),
             ),
         );
+    }
+
+    showForgotPasswordModal() {
+        const overlay = el(
+            "div",
+            { className: "modal-overlay" },
+            el(
+                "div",
+                { className: "session-modal" },
+                el("h2", { className: "ca-title" }, "Réinitialisation"),
+                el(
+                    "p",
+                    { className: "forgot-email-prompt" },
+                    "Saisissez votre email :",
+                ),
+                el("input", {
+                    type: "email",
+                    id: "forgot-email-input",
+                    className: "ca-input",
+                    placeholder: "Email",
+                }),
+                el(
+                    "div",
+                    { className: "forgot-email-actions" },
+                    el(
+                        "button",
+                        {
+                            className: "pin-cancel-btn",
+                            onClick: () => overlay.remove(),
+                        },
+                        "Annuler",
+                    ),
+                    el(
+                        "button",
+                        {
+                            className: "ca-btn-next flex-1",
+                            onClick: async (e) => {
+                                const email =
+                                    document.getElementById(
+                                        "forgot-email-input",
+                                    ).value;
+                                if (!email) return;
+                                e.target.textContent = "...";
+                                e.target.disabled = true;
+                                try {
+                                    await this.app.auth.forgotPassword(email);
+                                    overlay.remove();
+                                } catch (err) {
+                                    e.target.textContent = "Envoyer";
+                                    e.target.disabled = false;
+                                }
+                            },
+                        },
+                        "Envoyer",
+                    ),
+                ),
+            ),
+        );
+        document.body.appendChild(overlay);
     }
 
     refreshBtn() {

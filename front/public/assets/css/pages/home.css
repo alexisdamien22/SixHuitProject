@@ -19,6 +19,23 @@
     flex-direction: column;
     align-items: center;
     position: relative;
+    z-index: 1;
+}
+
+.path-step:nth-child(5n + 1) {
+    transform: translateX(0px);
+}
+.path-step:nth-child(5n + 2) {
+    transform: translateX(45px);
+}
+.path-step:nth-child(5n + 3) {
+    transform: translateX(25px);
+}
+.path-step:nth-child(5n + 4) {
+    transform: translateX(-25px);
+}
+.path-step:nth-child(5n + 5) {
+    transform: translateX(-45px);
 }
 
 .path-button-container {
@@ -36,6 +53,19 @@
     border-radius: 50%;
     position: absolute;
     left: 0;
+}
+
+.path-dot-shadow {
+    top: 10px;
+    z-index: 1;
+}
+
+.path-dot {
+    top: 0;
+    z-index: 2;
+    border: 1px solid var(--color-border-soft);
+    cursor: pointer;
+    transition: transform 0.05s;
 }
 
 .path-dot-shadow::before {
@@ -58,19 +88,12 @@
     top: 28px;
 }
 
-.path-dot-shadow {
-    top: 10px;
-    z-index: 1;
+.done .path-dot {
+    background-color: var(--color-done);
 }
-
-.path-dot {
-    top: 0;
-    z-index: 2;
-    border: 1px solid var(--color-border-soft);
-    cursor: pointer;
-    transition: transform 0.05s;
+.done .path-dot-shadow {
+    background-color: var(--color-done-shadow);
 }
-
 .done .path-dot::before {
     content: "";
     position: absolute;
@@ -81,13 +104,6 @@
     background-position: center;
     opacity: 0.2;
     pointer-events: none;
-}
-
-.done .path-dot {
-    background-color: var(--color-done);
-}
-.done .path-dot-shadow {
-    background-color: var(--color-done-shadow);
 }
 
 .todo .path-dot {
@@ -102,6 +118,20 @@
 }
 .nothing .path-dot-shadow {
     background-color: var(--color-nothing-shadow);
+}
+
+.missed .path-dot {
+    background-color: #ff5252;
+}
+.missed .path-dot-shadow {
+    background-color: #c62828;
+}
+
+.todo-future .path-dot {
+    background-color: var(--color-future);
+}
+.todo-future .path-dot-shadow {
+    background-color: var(--color-future-shadow);
 }
 
 .today-halo {
@@ -123,12 +153,10 @@
     0% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
-        animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
     }
     45% {
         transform: translate(-50%, -50%) scale(0.9);
         opacity: 0.85;
-        animation-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
     }
     50% {
         transform: translate(-50%, -50%) scale(0.85);
@@ -146,11 +174,6 @@
     transform: translateY(8px);
 }
 
-.path-button-container:active .mascot-path,
-.path-button-container.pressed .mascot-path {
-    transform: translateX(-50%) translateY(8px);
-}
-
 .mascot-path {
     position: absolute;
     width: 80px;
@@ -163,20 +186,17 @@
     transition: transform 0.1s;
 }
 
+.path-button-container:active .mascot-path,
+.path-button-container.pressed .mascot-path {
+    transform: translateX(-50%) translateY(8px);
+}
+
 .path-label {
     margin-top: 20px;
     font-weight: bold;
     color: var(--color-text-main);
     text-transform: uppercase;
     font-size: 14px;
-}
-
-.path-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 1;
 }
 
 .path-step.active-step {
@@ -186,6 +206,7 @@
 .duo-popup {
     z-index: 10000;
 }
+
 .path-button-container:has(.duo-popup:hover) .path-dot,
 .path-button-container:has(.duo-popup:active) .path-dot,
 .path-button-container:has(.duo-popup.show) .path-dot {
@@ -203,20 +224,4 @@
 .path-button-container:has(.duo-popup.show) .path-dot-shadow::before {
     height: 10px;
     top: 20px;
-}
-
-.path-step:nth-child(5n + 1) {
-    transform: translateX(0px);
-}
-.path-step:nth-child(5n + 2) {
-    transform: translateX(45px);
-}
-.path-step:nth-child(5n + 3) {
-    transform: translateX(25px);
-}
-.path-step:nth-child(5n + 4) {
-    transform: translateX(-25px);
-}
-.path-step:nth-child(5n + 5) {
-    transform: translateX(-45px);
 }

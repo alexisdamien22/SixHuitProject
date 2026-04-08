@@ -7,26 +7,90 @@ export class SettingsPage {
     constructor(app) {
         this.app = app;
     }
-    handleChangePin() {
-        AccountSwitcher.showPinPopup(async (newPin, onSuccess, onError) => {
+
+    async handleChangePin() {
+        this.showPasswordModal(async (password) => {
             try {
-                const res = await ApiClient.post("/auth/update-pin", {
-                    newPin,
-                });
-                if (res.success) {
-                    onSuccess();
-                    setTimeout(
-                        () => alert("Code PIN modifié avec succès !"),
-                        100,
+                const verifyRes = await ApiClient.post(
+                    "/auth/verify-password",
+                    { password },
+                );
+
+                if (verifyRes.success) {
+                    AccountSwitcher.showPinPopup(
+                        async (newPin, onUpdateSuccess, onUpdateError) => {
+                            try {
+                                const updateRes = await ApiClient.post(
+                                    "/auth/update-pin",
+                                    { newPin },
+                                );
+                                if (updateRes.success) {
+                                    onUpdateSuccess();
+                                } else {
+                                    onUpdateError();
+                                }
+                            } catch (e) {
+                                onUpdateError();
+                            }
+                        },
+                        "Nouveau code PIN",
                     );
                 } else {
-                    onError();
                 }
-            } catch (e) {
-                console.error(e);
-                onError();
+            } catch (err) {}
+        });
+    }
+
+    showPasswordModal(onConfirm) {
+        const input = el("input", {
+            type: "password",
+            placeholder: "Mot de passe",
+            className: "modal-input",
+        });
+        const confirmBtn = el(
+            "button",
+            { className: "modal-btn confirm" },
+            "Confirmer",
+        );
+        const cancelBtn = el(
+            "button",
+            { className: "modal-btn cancel" },
+            "Annuler",
+        );
+
+        const modal = el(
+            "div",
+            { className: "modal-overlay" },
+            el(
+                "div",
+                { className: "modal-content" },
+                el("h3", {}, "Sécurité"),
+                el(
+                    "p",
+                    {},
+                    "Veuillez saisir votre mot de passe pour modifier le PIN",
+                ),
+                input,
+                el(
+                    "div",
+                    { className: "modal-actions" },
+                    cancelBtn,
+                    confirmBtn,
+                ),
+            ),
+        );
+
+        confirmBtn.onclick = () => {
+            const val = input.value;
+            if (val) {
+                modal.remove();
+                onConfirm(val);
             }
-        }, "Nouveau code PIN");
+        };
+
+        cancelBtn.onclick = () => modal.remove();
+        document.body.appendChild(modal);
+        input.focus();
     }
 
     render() {
@@ -44,7 +108,7 @@ export class SettingsPage {
             ),
         ]);
 
-        let specificSections;
+        let specificSections = [];
 
         if (isParentMode) {
             specificSections = [
@@ -56,7 +120,7 @@ export class SettingsPage {
                         "Rappels par email",
                         "email-notif",
                         true,
-                        () => console.log("Action: Toggle Email"),
+                        () => {},
                     ),
                 ]),
             ];
@@ -67,11 +131,9 @@ export class SettingsPage {
                         "Effets sonores",
                         "sound-effects",
                         true,
-                        () => console.log("Action: Toggle Sound"),
+                        () => {},
                     ),
-                    this.createActionItem("Changer ma mascotte", () =>
-                        console.log("Action: Changer Mascotte"),
-                    ),
+                    this.createActionItem("Changer ma mascotte", () => {}),
                 ]),
             ];
         }
@@ -80,14 +142,12 @@ export class SettingsPage {
             "div",
             { className: "page settings-page" },
             el("h2", { className: "ca-title settings-title" }, "Paramètres"),
-
             el(
                 "div",
                 { className: "settings-container" },
                 appearanceSection,
                 ...specificSections,
             ),
-
             el(
                 "button",
                 {

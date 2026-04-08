@@ -7,7 +7,7 @@ export class HomePage {
         this.hasHighlighted = false;
     }
 
-    formatWeeklyPlan(rawPlan, lessonDay = "Lundi") {
+    formatWeeklyPlan(rawPlan, lessonDay = "Lundi", history = []) {
         const dayMap = {
             monday: "Lundi",
             tuesday: "Mardi",
@@ -27,6 +27,7 @@ export class HomePage {
             "Samedi",
             "Dimanche",
         ];
+
         let startIndex = frenchDays.indexOf(lessonDay);
         if (startIndex === -1) startIndex = 0;
 
@@ -38,15 +39,59 @@ export class HomePage {
         const fullPlan = {};
         orderedDays.forEach((day) => (fullPlan[day] = "nothing"));
 
+        const jsDays = [
+            "Dimanche",
+            "Lundi",
+            "Mardi",
+            "Mercredi",
+            "Jeudi",
+            "Vendredi",
+            "Samedi",
+        ];
+
+        const now = new Date();
+        const currentDayName = jsDays[now.getDay()];
+
+        let targetDayIndex = jsDays.indexOf(lessonDay);
+        if (targetDayIndex === -1) targetDayIndex = 1;
+
+        let daysAgo = now.getDay() - targetDayIndex;
+        if (daysAgo < 0) daysAgo += 7;
+
+        const startOfCycle = new Date(now);
+        startOfCycle.setDate(now.getDate() - daysAgo);
+        startOfCycle.setHours(0, 0, 0, 0);
+
+        const doneDaysThisCycle = new Set();
+        history.forEach((session) => {
+            if (session.session_date) {
+                const sessionDate = new Date(session.session_date);
+                if (sessionDate >= startOfCycle && session.practice_day) {
+                    doneDaysThisCycle.add(session.practice_day);
+                }
+            }
+        });
+
+        const todayIndexInOrdered = orderedDays.indexOf(currentDayName);
+
         if (!rawPlan || !Array.isArray(rawPlan)) return fullPlan;
 
         rawPlan.forEach((entry) => {
             const day = dayMap[entry.day_of_week];
             if (day) {
-                if (entry.status === 1) {
+                const dayIndex = orderedDays.indexOf(day);
+                const isPast = dayIndex < todayIndexInOrdered;
+
+                if (doneDaysThisCycle.has(day) || entry.status === 1) {
                     fullPlan[day] = "done";
                 } else if (entry.practice === 1) {
-                    fullPlan[day] = "todo";
+                    if (day === currentDayName) {
+                        fullPlan[day] = "todo";
+                    } else if (isPast) {
+                        fullPlan[day] = "missed";
+                    } else {
+                        fullPlan[day] = "todo-future";
+                    }
                 } else {
                     fullPlan[day] = "nothing";
                 }
@@ -61,9 +106,10 @@ export class HomePage {
         const weeklyPlan = this.formatWeeklyPlan(
             childData.weeklyPlan || [],
             childData.lesson_day,
+            childData.history || childData.sessions || [],
         );
 
-        const frenchDays = [
+        const jsDays = [
             "Dimanche",
             "Lundi",
             "Mardi",
@@ -72,7 +118,7 @@ export class HomePage {
             "Vendredi",
             "Samedi",
         ];
-        const currentDayName = frenchDays[new Date().getDay()];
+        const currentDayName = jsDays[new Date().getDay()];
 
         const steps = Object.entries(weeklyPlan).map(([day, status], i) => {
             const isToday = day === currentDayName;
@@ -102,8 +148,7 @@ export class HomePage {
             return el(
                 "div",
                 {
-                    className: `path-step ${status} ${!isToday && status === "todo" ? "is-locked" : ""}`,
-
+                    className: `path-step ${status} ${!isToday && (status === "todo" || status === "todo-future") ? "is-locked" : ""}`,
                     dataset: { day: day },
                 },
                 pathButtonContainer,
@@ -129,6 +174,13 @@ export class HomePage {
 
         if (status === "done") {
             desc = "Bravo ! Tu as validé cette séance.";
+        } else if (status === "missed") {
+            desc = "Séance manquée !";
+            button = el(
+                "button",
+                { className: "start-btn disabled", disabled: true },
+                "MANQUÉ",
+            );
         } else if (isToday && status === "todo") {
             desc = "Valider la leçon ?";
             button = el(
@@ -170,7 +222,6 @@ export class HomePage {
             async (finalSessionData) => {
                 try {
                     await this.app.child.updateSession(finalSessionData);
-
                     const modalElement =
                         document.querySelector(".modal-overlay");
                     if (modalElement) modalElement.remove();
@@ -178,11 +229,9 @@ export class HomePage {
                     this.app.navigation.goTo("home");
                 } catch (error) {
                     console.error("Erreur lors de l'enregistrement :", error);
-                    alert("Erreur lors de l'enregistrement de la séance.");
                 }
             },
         );
-
         document.body.appendChild(sessionModal.render());
     }
 

@@ -30,6 +30,7 @@ export class AppModel {
                 days: [],
                 lesson_day: "",
             },
+            resetToken: null,
         };
     }
 
@@ -70,6 +71,14 @@ export class AppModel {
 
     setAuthStep(step) {
         this.authState.step = step;
+    }
+
+    setResetToken(token) {
+        this.authState.resetToken = token;
+    }
+
+    getResetToken() {
+        return this.authState.resetToken;
     }
 
     setLoading(isLoading) {
