@@ -1,4 +1,5 @@
 import { el } from "../../utils/DOMBuilder.js";
+import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
 
 export class CommunityPage {
     constructor(app) {
@@ -161,9 +162,20 @@ export class CommunityPage {
                 {
                     className: "start-btn add-friend-btn",
                     onClick: async (e) => {
-                        await this.app.social.follow(user.id);
-                        e.target.textContent = "Suivi";
-                        e.target.disabled = true;
+                        try {
+                            await this.app.social.follow(user.id);
+                            e.target.textContent = "Suivi";
+                            e.target.disabled = true;
+                            FlashMessageManager.show(
+                                `${user.name} ajouté(e) avec succès !`,
+                                "success",
+                            );
+                        } catch (err) {
+                            FlashMessageManager.show(
+                                "Impossible d'ajouter cet ami.",
+                                "error",
+                            );
+                        }
                     },
                 },
                 "+",

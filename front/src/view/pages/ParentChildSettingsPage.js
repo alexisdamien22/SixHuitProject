@@ -1,5 +1,6 @@
 import { el } from "../../utils/DOMBuilder.js";
 import { ApiClient } from "../../model/ApiClient.js";
+import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
 
 export class ParentChildSettingsPage {
     constructor(app) {
@@ -158,7 +159,10 @@ export class ParentChildSettingsPage {
                 [field]: value,
             });
             this.childData[field] = value ? 1 : 0;
-        } catch (err) {}
+            FlashMessageManager.show("Réglages mis à jour.", "success");
+        } catch (err) {
+            FlashMessageManager.show("Erreur lors de la mise à jour.", "error");
+        }
     }
 
     async handleFreezeStreak(isActive) {
@@ -169,7 +173,15 @@ export class ParentChildSettingsPage {
             });
             const data = await ApiClient.get(`/child/${childId}`);
             this.childData = data;
-        } catch (err) {}
+            FlashMessageManager.show(
+                isActive
+                    ? "Série gelée avec succès ❄️"
+                    : "Gel de la série désactivé",
+                "success",
+            );
+        } catch (err) {
+            FlashMessageManager.show("Erreur lors de l'opération.", "error");
+        }
     }
 
     handleDeleteProfile() {
