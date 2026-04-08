@@ -24,9 +24,16 @@ export class ChildController {
         const result = await ChildService.updateStreak(childId, req.body);
         res.status(200).json(result);
     }
+
     static async updateSettings(req, res) {
         const childId = req.params.childId;
         const result = await ChildService.updateSettings(childId, req.body);
+        res.status(200).json(result);
+    }
+
+    static async deleteChild(req, res) {
+        const childId = req.params.childId;
+        const result = await ChildService.deleteChild(childId);
         res.status(200).json(result);
     }
 }

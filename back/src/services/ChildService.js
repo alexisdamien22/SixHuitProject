@@ -34,6 +34,32 @@ export class ChildService {
         };
     }
 
+    static async deleteChild(childId) {
+        await ChildAccountModel.query(
+            "DELETE FROM sessions WHERE child_id = ?",
+            [childId],
+        );
+        await ChildAccountModel.query(
+            "DELETE FROM weekly_plan WHERE child_id = ?",
+            [childId],
+        );
+        await ChildAccountModel.query(
+            "DELETE FROM streaks WHERE child_id = ?",
+            [childId],
+        );
+        await ChildAccountModel.query(
+            "DELETE FROM following WHERE following_child_id = ? OR followed_child_id = ?",
+            [childId, childId],
+        );
+
+        const result = await ChildAccountModel.query(
+            "DELETE FROM childaccount WHERE id = ?",
+            [childId],
+        );
+
+        return { success: true };
+    }
+
     static async updateSession(childId, data) {
         const happiness =
             data.happiness !== undefined ? Number(data.happiness) : 0;
@@ -64,70 +90,53 @@ export class ChildService {
         }
 
         await this.calculateStreak(childId, sessionDate);
-
         return { success: true };
     }
+
     static async calculateStreak(childId, sessionDate) {
         const streakData = await StreakModel.getStreak(childId);
         const childRows = await ChildAccountModel.findById(childId);
-
         if (!childRows || childRows.length === 0) return;
         const child = childRows[0];
-
         let currentStreak = 0;
         let lastDate = null;
-
         if (streakData && streakData.length > 0) {
             currentStreak = streakData[0].current_streak;
             if (streakData[0].last_practice_date) {
                 const dateObj = new Date(streakData[0].last_practice_date);
-                if (!isNaN(dateObj)) {
+                if (!isNaN(dateObj))
                     lastDate = dateObj.toISOString().split("T")[0];
-                }
             }
         }
-
         const today = sessionDate;
-
-        if (lastDate === today) {
-            return;
-        }
-
+        if (lastDate === today) return;
         const yesterdayObj = new Date(today);
         yesterdayObj.setDate(yesterdayObj.getDate() - 1);
         const yesterday = yesterdayObj.toISOString().split("T")[0];
-
         const now = new Date();
         const freezeUntil = child.freeze_until
             ? new Date(child.freeze_until)
             : null;
         const isFrozen = freezeUntil && freezeUntil >= now;
-
         if (lastDate === yesterday || lastDate === null) {
             currentStreak += 1;
         } else {
-            if (isFrozen) {
-                currentStreak += 1;
-            } else {
-                currentStreak = 1;
-            }
+            currentStreak = isFrozen ? currentStreak + 1 : 1;
         }
-
         await StreakModel.updateStreak(childId, currentStreak, today);
     }
 
     static async updateWeeklyPlan(childId, data) {
         return { success: true };
     }
-
     static async updateStreak(childId, data) {
         return { success: true };
     }
+
     static async updateSettings(childId, settings) {
         let sql = "UPDATE childaccount SET ";
         const params = [];
         const updates = [];
-
         if (settings.is_public !== undefined) {
             updates.push("is_public = ?");
             params.push(settings.is_public ? 1 : 0);
@@ -143,12 +152,9 @@ export class ChildService {
                 : null;
             params.push(date);
         }
-
         if (updates.length === 0) return { success: true };
-
         sql += updates.join(", ") + " WHERE id = ?";
         params.push(childId);
-
         await ChildAccountModel.query(sql, params);
         return { success: true };
     }

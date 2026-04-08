@@ -17,31 +17,44 @@ function getHeaders() {
 }
 
 export class ApiClient {
-    static async get(path) {
-        const separator = path.includes("?") ? "&" : "?";
-        const url = `${API_URL}${path}${separator}t=${Date.now()}`;
-        const res = await fetch(url, {
-            method: "GET",
+    static async request(path, method = "GET", data = null) {
+        const options = {
+            method,
             headers: getHeaders(),
-        });
+        };
+
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+
+        let url = `${API_URL}${path}`;
+        if (method === "GET") {
+            const separator = path.includes("?") ? "&" : "?";
+            url += `${separator}t=${Date.now()}`;
+        }
+
+        const res = await fetch(url, options);
+
+        if (!res.ok) {
+            throw new Error(`API Error: ${res.status}`);
+        }
+
         return res.json();
+    }
+
+    static async get(path) {
+        return this.request(path, "GET");
     }
 
     static async post(path, data) {
-        const res = await fetch(`${API_URL}${path}`, {
-            method: "POST",
-            headers: getHeaders(),
-            body: JSON.stringify(data),
-        });
-        return res.json();
+        return this.request(path, "POST", data);
     }
 
     static async patch(path, data) {
-        const res = await fetch(`${API_URL}${path}`, {
-            method: "PATCH",
-            headers: getHeaders(),
-            body: JSON.stringify(data),
-        });
-        return res.json();
+        return this.request(path, "PATCH", data);
+    }
+
+    static async delete(path) {
+        return this.request(path, "DELETE");
     }
 }

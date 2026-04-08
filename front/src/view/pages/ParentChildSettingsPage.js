@@ -61,11 +61,9 @@ export class ParentChildSettingsPage {
                     ),
                 ),
             ),
-
             el(
                 "div",
                 { className: "settings-container" },
-
                 this.createSection("Permissions Sociales", [
                     this.createToggleItem(
                         "Autoriser les amis",
@@ -84,7 +82,6 @@ export class ParentChildSettingsPage {
                         (e) => this.handleToggle("is_public", e.target.checked),
                     ),
                 ]),
-
                 this.createSection("Série & Motivation", [
                     el(
                         "div",
@@ -96,7 +93,7 @@ export class ParentChildSettingsPage {
                             el(
                                 "p",
                                 {},
-                                "Activez cette option pour une pause d'une semaine. La série (streak) ne sera pas perdue même si l'enfant ne joue pas.",
+                                "Activez cette option pour une pause d'une semaine. La série (streak) ne sera pas perdue.",
                             ),
                         ),
                         this.createToggleItem(
@@ -107,13 +104,12 @@ export class ParentChildSettingsPage {
                         ),
                     ),
                 ]),
-
                 this.createSection("Zone de danger", [
                     el(
                         "button",
                         {
                             className: "danger-action-btn",
-                            onClick: () => this.handleDeleteProfile(),
+                            onClick: () => this.showDeleteModal(),
                         },
                         "Supprimer le profil de " + this.childData.name,
                     ),
@@ -152,45 +148,80 @@ export class ParentChildSettingsPage {
         );
     }
 
-    async handleToggle(field, value) {
-        const childId = this.childData.id;
+    showDeleteModal() {
+        const modal = el(
+            "div",
+            { className: "custom-modal-overlay" },
+            el(
+                "div",
+                { className: "custom-modal" },
+                el("h3", {}, "Action Irréversible"),
+                el(
+                    "p",
+                    {},
+                    `Supprimer définitivement le profil de **${this.childData.name}** ?`,
+                ),
+                el(
+                    "div",
+                    { className: "modal-actions" },
+                    el(
+                        "button",
+                        {
+                            className: "modal-btn-cancel",
+                            onClick: () => modal.remove(),
+                        },
+                        "Annuler",
+                    ),
+                    el(
+                        "button",
+                        {
+                            className: "modal-btn-confirm",
+                            onClick: () => this.executeDeletion(modal),
+                        },
+                        "Supprimer",
+                    ),
+                ),
+            ),
+        );
+        document.body.appendChild(modal);
+    }
+
+    async executeDeletion(modal) {
         try {
-            await ApiClient.patch(`/child/${childId}/settings`, {
+            await ApiClient.delete(`/child/${this.childData.id}`);
+            modal.remove();
+            FlashMessageManager.show("Profil supprimé.", "success");
+            this.app.navigation.goTo("parent-home");
+        } catch (err) {
+            FlashMessageManager.show("Erreur lors de la suppression.", "error");
+        }
+    }
+
+    async handleToggle(field, value) {
+        try {
+            await ApiClient.patch(`/child/${this.childData.id}/settings`, {
                 [field]: value,
             });
             this.childData[field] = value ? 1 : 0;
             FlashMessageManager.show("Réglages mis à jour.", "success");
         } catch (err) {
-            FlashMessageManager.show("Erreur lors de la mise à jour.", "error");
+            FlashMessageManager.show("Erreur de mise à jour.", "error");
         }
     }
 
     async handleFreezeStreak(isActive) {
-        const childId = this.childData.id;
         try {
-            await ApiClient.patch(`/child/${childId}/settings`, {
+            await ApiClient.patch(`/child/${this.childData.id}/settings`, {
                 freeze: isActive,
             });
-            const data = await ApiClient.get(`/child/${childId}`);
+            const data = await ApiClient.get(`/child/${this.childData.id}`);
             this.childData = data;
             FlashMessageManager.show(
-                isActive
-                    ? "Série gelée avec succès ❄️"
-                    : "Gel de la série désactivé",
+                isActive ? "Série gelée ❄️" : "Gel désactivé",
                 "success",
             );
         } catch (err) {
-            FlashMessageManager.show("Erreur lors de l'opération.", "error");
-        }
-    }
-
-    handleDeleteProfile() {
-        if (
-            confirm(
-                `Êtes-vous sûr de vouloir supprimer le profil de ${this.childData.name} ? Cette action est irréversible.`,
-            )
-        ) {
-            this.app.navigation.goTo("parent-home");
+            FlashMessageManager.show("Erreur opération.", "error");
         }
     }
 }

@@ -20,4 +20,9 @@ router.patch(
     "/:childId/settings",
     asyncHandler(ChildController.updateSettings),
 );
+router.delete(
+    "/:childId",
+    checkChildOwnership,
+    asyncHandler(ChildController.deleteChild),
+);
 export default router;
