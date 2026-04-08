@@ -1,4 +1,4 @@
-/* --- 1. CONFIGURATION MODE PARENT (Masquage des éléments enfant) --- */
+/* --- 1. CONFIGURATION MODE PARENT (Masquage) --- */
 body.parent-mode .icon-footer[data-page="community"],
 body.parent-mode .icon-footer[data-page="music"],
 body.parent-mode .streak,
@@ -9,7 +9,8 @@ body.parent-mode .streak-container {
 
 /* --- 2. LAYOUTS DE PAGES & SCROLLBAR --- */
 .parent-screen,
-.parent-details-page {
+.parent-details-page,
+.parent-settings-page {
     padding: 20px;
     margin-top: 10dvh;
     padding-bottom: 12dvh;
@@ -32,7 +33,7 @@ body.parent-mode .streak-container {
     border-radius: 10px;
 }
 
-/* --- 3. TYPOGRAPHIE & TEXTES --- */
+/* --- 3. ÉLÉMENTS DE TEXTE --- */
 .parent-screen h1 {
     margin-bottom: 10px;
 }
@@ -116,7 +117,7 @@ body.parent-mode .streak-container {
     font-weight: bold;
     padding: 10px 20px;
     border-radius: 50px;
-    background-color: transparent;
+    background-color: #ffffff00;
     border: 2px solid #ff2b3d;
     transition:
         background-color 0.3s,
@@ -150,7 +151,7 @@ body.parent-mode .streak-container {
     color: var(--color-text-main);
 }
 
-/* --- 6. HEADER DÉTAILS ENFANT --- */
+/* --- 6. HEADER DÉTAILS --- */
 .details-header {
     display: flex;
     align-items: center;
@@ -177,7 +178,7 @@ body.parent-mode .streak-container {
     border: 1px solid var(--color-border-soft);
 }
 
-/* --- 7. GRILLE DE STATS & DASHBOARD --- */
+/* --- 7. STRUCTURE DES GRAPHIQUES (CORRIGÉE) --- */
 .stats-container {
     display: flex;
     flex-direction: column;
@@ -197,27 +198,17 @@ body.parent-mode .streak-container {
     box-sizing: border-box;
 }
 
-.section-title {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--color-text-sub);
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-/* --- 8. STRUCTURE DES GRAPHIQUES & AXES --- */
 .graph-and-axis {
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-top: 10px;
 }
 
 .graph-wrapper {
     display: flex;
     gap: 10px;
-    height: 150px;
-    margin-top: 10px;
+    height: 160px;
     align-items: center;
     width: 100%;
 }
@@ -240,14 +231,14 @@ body.parent-mode .streak-container {
     text-align: center;
 }
 
+/* Axe X (Dates) - Aligné avec les graphiques */
 .graph-x-axis {
     display: flex;
     justify-content: space-between;
-    padding-left: 45px; /* Compense l'axe Y */
-    margin-top: 10px;
+    margin-left: 45px; /* Compense exactement l'axe Y + Gap */
+    margin-top: 8px;
     border-top: 1px solid var(--color-border-soft);
     padding-top: 8px;
-    width: 100%;
     box-sizing: border-box;
 }
 
@@ -257,11 +248,11 @@ body.parent-mode .streak-container {
     font-weight: bold;
 }
 
-/* --- 9. STYLES GRAPHIQUES (SVG & BARRES) --- */
+/* Styles visuels des graphs */
 svg {
     flex: 1;
     height: 100%;
-    overflow: hidden; /* Empêche le dépassement des lignes */
+    overflow: hidden; /* Empêche la ligne de dépasser */
     border-radius: 8px;
 }
 
@@ -306,11 +297,10 @@ svg {
     font-size: 14px;
 }
 
-/* --- 10. LISTE HISTORIQUE (DÉTAILS) --- */
+/* --- 8. HISTORIQUE & LISTES --- */
 .history-list {
     width: 100%;
 }
-
 .history-row {
     display: flex;
     justify-content: space-between;
@@ -318,7 +308,6 @@ svg {
     padding: 12px 0;
     border-bottom: 1px solid var(--color-border-soft);
 }
-
 .history-row:last-child {
     border-bottom: none;
 }
@@ -339,7 +328,7 @@ svg {
     font-size: 20px;
 }
 
-/* --- 11. KPI STATS (GRADUATIONS & COULEURS) --- */
+/* --- 9. KPI STATS (GRADUATIONS) --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -359,27 +348,14 @@ svg {
     border: 1px solid var(--color-border-soft);
 }
 
-.stat-value {
-    font-size: 22px;
-    font-weight: 800;
-    margin-top: 5px;
-    font-family: "Coiny", cursive;
-}
-.streak-highlight .stat-value {
-    color: var(--color-future);
-}
-.month-highlight .stat-value {
-    color: var(--color-todo);
-}
 .rate-highlight .stat-value {
     color: #8b5cf6;
 }
-/* La carte entière */
+
+/* --- 10. INTERACTION CARTES --- */
 .parent-child-card.clickable-card {
     cursor: pointer;
-    transition:
-        transform 0.1s ease,
-        background-color 0.2s;
+    transition: 0.1s ease;
     position: relative;
     border: 2px solid transparent;
 }
@@ -389,16 +365,11 @@ svg {
     background-color: var(--color-border-soft);
 }
 
-.parent-child-card.clickable-card:hover {
-    border-color: var(--ca-purple);
-}
-
 .name-stack {
     display: flex;
     flex-direction: column;
     text-align: left;
 }
-
 .parent-child-sub {
     font-size: 11px;
     color: var(--ca-purple);
@@ -406,7 +377,6 @@ svg {
     text-transform: uppercase;
 }
 
-/* Le bouton Réglages sur la carte */
 .card-settings-btn {
     width: 44px;
     height: 44px;
@@ -418,13 +388,11 @@ svg {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 2; /* S'assure qu'il est au-dessus de la carte */
-    transition: background 0.2s;
+    z-index: 2;
+    transition: 0.2s;
 }
 
-.card-settings-btn:hover {
-    background: var(--color-border-soft);
-}
+/* --- 11. RÉGLAGES SPÉCIAUX (FREEZE, DANGER) --- */
 .settings-card-special {
     display: flex;
     justify-content: space-between;
@@ -443,7 +411,6 @@ svg {
     color: var(--ca-purple);
     font-size: 16px;
 }
-
 .special-info p {
     margin: 5px 0 0 0;
     font-size: 12px;
@@ -451,7 +418,6 @@ svg {
     line-height: 1.4;
     max-width: 80%;
 }
-
 .danger-action-btn {
     width: 100%;
     padding: 15px;
@@ -461,8 +427,4 @@ svg {
     font-weight: bold;
     cursor: pointer;
     text-align: left;
-}
-
-.danger-action-btn:active {
-    background: rgba(255, 82, 82, 0.1);
 }

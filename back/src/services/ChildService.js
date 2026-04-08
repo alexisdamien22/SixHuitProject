@@ -67,9 +67,13 @@ export class ChildService {
 
         return { success: true };
     }
-
     static async calculateStreak(childId, sessionDate) {
         const streakData = await StreakModel.getStreak(childId);
+        const childRows = await ChildAccountModel.findById(childId);
+
+        if (!childRows || childRows.length === 0) return;
+        const child = childRows[0];
+
         let currentStreak = 0;
         let lastDate = null;
 
@@ -85,6 +89,7 @@ export class ChildService {
 
         const today = sessionDate;
 
+        // Si l'enfant a déjà validé une séance aujourd'hui, on ne change rien
         if (lastDate === today) {
             return;
         }
@@ -93,10 +98,25 @@ export class ChildService {
         yesterdayObj.setDate(yesterdayObj.getDate() - 1);
         const yesterday = yesterdayObj.toISOString().split("T")[0];
 
+        // --- LOGIQUE DE PROTECTION (FREEZE) ---
+        const now = new Date();
+        const freezeUntil = child.freeze_until
+            ? new Date(child.freeze_until)
+            : null;
+        const isFrozen = freezeUntil && freezeUntil >= now;
+
         if (lastDate === yesterday || lastDate === null) {
+            // Cas normal : on incrémente
             currentStreak += 1;
         } else {
-            currentStreak = 1;
+            // Cas de rupture de chaîne : on vérifie si c'était gelé
+            if (isFrozen) {
+                // Le gel protège la streak, on repart de l'ancienne valeur + 1 (pour la séance du jour)
+                currentStreak += 1;
+            } else {
+                // Pas de gel : retour à 1
+                currentStreak = 1;
+            }
         }
 
         await StreakModel.updateStreak(childId, currentStreak, today);
@@ -107,6 +127,36 @@ export class ChildService {
     }
 
     static async updateStreak(childId, data) {
+        return { success: true };
+    }
+    static async updateSettings(childId, settings) {
+        let sql = "UPDATE childaccount SET ";
+        const params = [];
+        const updates = [];
+
+        if (settings.is_public !== undefined) {
+            updates.push("is_public = ?");
+            params.push(settings.is_public ? 1 : 0);
+        }
+        if (settings.allow_friends !== undefined) {
+            updates.push("allow_friends = ?");
+            params.push(settings.allow_friends ? 1 : 0);
+        }
+        if (settings.freeze !== undefined) {
+            updates.push("freeze_until = ?");
+            // Si freeze est true, on met la date à J+7, sinon on vide (null)
+            const date = settings.freeze
+                ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                : null;
+            params.push(date);
+        }
+
+        if (updates.length === 0) return { success: true };
+
+        sql += updates.join(", ") + " WHERE id = ?";
+        params.push(childId);
+
+        await ChildAccountModel.query(sql, params);
         return { success: true };
     }
 }

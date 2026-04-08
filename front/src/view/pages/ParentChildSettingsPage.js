@@ -14,7 +14,6 @@ export class ParentChildSettingsPage {
         if (!this.childData || this.childData.id != childId) {
             this.isLoading = true;
             try {
-                // On récupère les données actuelles de l'enfant (y compris permissions si tu les as en DB)
                 const data = await ApiClient.get(`/child/${childId}`);
                 this.childData = data;
             } catch (err) {
@@ -24,12 +23,18 @@ export class ParentChildSettingsPage {
             }
         }
 
-        if (this.isLoading)
+        if (this.isLoading) {
             return el(
                 "div",
                 { className: "page page-centered" },
                 "Chargement des réglages...",
             );
+        }
+
+        // Vérification si la streak est actuellement gelée (date future)
+        const isCurrentlyFrozen = this.childData.freeze_until
+            ? new Date(this.childData.freeze_until) > new Date()
+            : false;
 
         return el(
             "div",
@@ -66,14 +71,18 @@ export class ParentChildSettingsPage {
                     this.createToggleItem(
                         "Autoriser les amis",
                         "allow-friends",
-                        true, // À lier à ta DB plus tard
-                        (e) => console.log("Amis:", e.target.checked),
+                        !!this.childData.allow_friends,
+                        (e) =>
+                            this.handleToggle(
+                                "allow_friends",
+                                e.target.checked,
+                            ),
                     ),
                     this.createToggleItem(
                         "Apparaître dans la recherche",
                         "public-profile",
-                        false,
-                        (e) => console.log("Public:", e.target.checked),
+                        !!this.childData.is_public,
+                        (e) => this.handleToggle("is_public", e.target.checked),
                     ),
                 ]),
 
@@ -92,8 +101,11 @@ export class ParentChildSettingsPage {
                                 "Activez cette option pour une pause d'une semaine. La série (streak) ne sera pas perdue même si l'enfant ne joue pas.",
                             ),
                         ),
-                        this.createToggleItem("", "freeze-streak", false, (e) =>
-                            this.handleFreezeStreak(e.target.checked),
+                        this.createToggleItem(
+                            "",
+                            "freeze-streak",
+                            isCurrentlyFrozen,
+                            (e) => this.handleFreezeStreak(e.target.checked),
                         ),
                     ),
                 ]),
@@ -143,9 +155,35 @@ export class ParentChildSettingsPage {
         );
     }
 
+    async handleToggle(field, value) {
+        const childId = this.childData.id;
+        try {
+            // Utilisation du endpoint PATCH pour mettre à jour les réglages individuels
+            await ApiClient.post(`/child/${childId}/settings`, {
+                [field]: value,
+            });
+            // On met à jour l'état local pour refléter le changement
+            this.childData[field] = value ? 1 : 0;
+        } catch (err) {
+            alert("Erreur lors de la mise à jour des permissions.");
+        }
+    }
+
     async handleFreezeStreak(isActive) {
-        // Logique API pour geler la streak
-        alert(isActive ? "Série gelée pour 7 jours !" : "Série dégelée.");
+        const childId = this.childData.id;
+        try {
+            await ApiClient.post(`/child/${childId}/settings`, {
+                freeze: isActive,
+            });
+            alert(
+                isActive ? "Série gelée pour 7 jours ! ❄️" : "Série dégelée.",
+            );
+            // Rafraîchissement des données pour mettre à jour la date interne
+            const data = await ApiClient.get(`/child/${childId}`);
+            this.childData = data;
+        } catch (err) {
+            alert("Erreur lors du gel de la série.");
+        }
     }
 
     handleDeleteProfile() {
@@ -154,7 +192,7 @@ export class ParentChildSettingsPage {
                 `Êtes-vous sûr de vouloir supprimer le profil de ${this.childData.name} ? Cette action est irréversible.`,
             )
         ) {
-            // Logique API delete
+            // Logique API delete (À implémenter dans le futur)
             this.app.navigation.goTo("parent-home");
         }
     }
