@@ -27,6 +27,7 @@ export class HomePage {
             "Samedi",
             "Dimanche",
         ];
+
         let startIndex = frenchDays.indexOf(lessonDay);
         if (startIndex === -1) startIndex = 0;
 
@@ -47,15 +48,15 @@ export class HomePage {
             "Vendredi",
             "Samedi",
         ];
+
+        const now = new Date();
+        const currentDayName = jsDays[now.getDay()];
+
         let targetDayIndex = jsDays.indexOf(lessonDay);
         if (targetDayIndex === -1) targetDayIndex = 1;
 
-        const now = new Date();
-        const currentDayIndex = now.getDay();
-        let daysAgo = currentDayIndex - targetDayIndex;
-        if (daysAgo < 0) {
-            daysAgo += 7;
-        }
+        let daysAgo = now.getDay() - targetDayIndex;
+        if (daysAgo < 0) daysAgo += 7;
 
         const startOfCycle = new Date(now);
         startOfCycle.setDate(now.getDate() - daysAgo);
@@ -65,14 +66,12 @@ export class HomePage {
         history.forEach((session) => {
             if (session.session_date) {
                 const sessionDate = new Date(session.session_date);
-                sessionDate.setHours(0, 0, 0, 0);
                 if (sessionDate >= startOfCycle && session.practice_day) {
                     doneDaysThisCycle.add(session.practice_day);
                 }
             }
         });
 
-        const currentDayName = jsDays[now.getDay()];
         const todayIndexInOrdered = orderedDays.indexOf(currentDayName);
 
         if (!rawPlan || !Array.isArray(rawPlan)) return fullPlan;
@@ -82,17 +81,16 @@ export class HomePage {
             if (day) {
                 const dayIndex = orderedDays.indexOf(day);
                 const isPast = dayIndex < todayIndexInOrdered;
-                const isFuture = dayIndex > todayIndexInOrdered;
 
-                if (doneDaysThisCycle.has(day)) {
+                if (doneDaysThisCycle.has(day) || entry.status === 1) {
                     fullPlan[day] = "done";
                 } else if (entry.practice === 1) {
-                    if (isPast) {
-                        fullPlan[day] = "missed";
-                    } else if (isFuture) {
-                        fullPlan[day] = "todo-future";
-                    } else {
+                    if (day === currentDayName) {
                         fullPlan[day] = "todo";
+                    } else if (isPast) {
+                        fullPlan[day] = "missed";
+                    } else {
+                        fullPlan[day] = "todo-future";
                     }
                 } else {
                     fullPlan[day] = "nothing";
@@ -111,7 +109,7 @@ export class HomePage {
             childData.history || childData.sessions || [],
         );
 
-        const frenchDays = [
+        const jsDays = [
             "Dimanche",
             "Lundi",
             "Mardi",
@@ -120,7 +118,7 @@ export class HomePage {
             "Vendredi",
             "Samedi",
         ];
-        const currentDayName = frenchDays[new Date().getDay()];
+        const currentDayName = jsDays[new Date().getDay()];
 
         const steps = Object.entries(weeklyPlan).map(([day, status], i) => {
             const isToday = day === currentDayName;
@@ -151,7 +149,6 @@ export class HomePage {
                 "div",
                 {
                     className: `path-step ${status} ${!isToday && (status === "todo" || status === "todo-future") ? "is-locked" : ""}`,
-
                     dataset: { day: day },
                 },
                 pathButtonContainer,
@@ -225,7 +222,6 @@ export class HomePage {
             async (finalSessionData) => {
                 try {
                     await this.app.child.updateSession(finalSessionData);
-
                     const modalElement =
                         document.querySelector(".modal-overlay");
                     if (modalElement) modalElement.remove();
@@ -237,7 +233,6 @@ export class HomePage {
                 }
             },
         );
-
         document.body.appendChild(sessionModal.render());
     }
 
