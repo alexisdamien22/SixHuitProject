@@ -22,7 +22,11 @@ export class LoginPage {
                 "div",
                 { className: "ca-content" },
                 el("h1", { className: "ca-title" }, "Connexion"),
-                el("p", { className: "ca-step-label" }, "Connecte-toi pour continuer"),
+                el(
+                    "p",
+                    { className: "ca-step-label" },
+                    "Connecte-toi pour continuer",
+                ),
 
                 el(
                     "div",
@@ -34,7 +38,11 @@ export class LoginPage {
                 el(
                     "div",
                     { className: "ca-form-block" },
-                    el("p", { className: "ca-question" }, "Content de te revoir !"),
+                    el(
+                        "p",
+                        { className: "ca-question" },
+                        "Content de te revoir !",
+                    ),
                     el(
                         "form",
                         {
@@ -47,7 +55,11 @@ export class LoginPage {
                             placeholder: "Ton email",
                             value: state.loginData.email,
                             onInput: (e) =>
-                                controller.handleInput("login", "email", e.target.value),
+                                controller.handleInput(
+                                    "login",
+                                    "email",
+                                    e.target.value,
+                                ),
                         }),
                         el("input", {
                             className: "ca-input login-input",
@@ -55,12 +67,23 @@ export class LoginPage {
                             placeholder: "Ton mot de passe",
                             value: state.loginData.password,
                             onInput: (e) =>
-                                controller.handleInput("login", "password", e.target.value),
+                                controller.handleInput(
+                                    "login",
+                                    "password",
+                                    e.target.value,
+                                ),
                         }),
                     ),
                     el(
                         "a",
-                        { href: "#", className: "ca-forgot-pass" },
+                        {
+                            href: "#",
+                            className: "ca-forgot-pass",
+                            onClick: (e) => {
+                                e.preventDefault();
+                                this.showForgotPasswordModal();
+                            },
+                        },
                         "Mot de passe oublié ?",
                     ),
                 ),
@@ -97,6 +120,81 @@ export class LoginPage {
                 ),
             ),
         );
+    }
+
+    showForgotPasswordModal() {
+        const state = this.app.model.getAuthState();
+
+        const overlay = el(
+            "div",
+            { className: "modal-overlay" },
+            el(
+                "div",
+                { className: "session-modal" },
+                el("h2", { className: "ca-title" }, "Mot de passe oublié"),
+                el(
+                    "p",
+                    { style: "margin: 15px 0; color: var(--color-text-main);" },
+                    "Entrez votre email pour recevoir un lien de réinitialisation.",
+                ),
+                el("input", {
+                    type: "email",
+                    id: "forgot-email-input",
+                    className: "ca-input",
+                    placeholder: "Ton email",
+                    value: state.loginData.email || "",
+                }),
+                el(
+                    "div",
+                    { style: "display: flex; gap: 10px; margin-top: 20px;" },
+                    el(
+                        "button",
+                        {
+                            className: "pin-cancel-btn",
+                            onClick: () => overlay.remove(),
+                        },
+                        "Annuler",
+                    ),
+                    el(
+                        "button",
+                        {
+                            className: "ca-btn-next",
+                            style: "flex: 1; padding: 12px;",
+                            onClick: async (e) => {
+                                e.preventDefault();
+                                const emailInput =
+                                    document.getElementById(
+                                        "forgot-email-input",
+                                    );
+                                const email = emailInput.value.trim();
+                                if (!email)
+                                    return alert("Veuillez entrer un email.");
+
+                                const btn = e.target;
+                                btn.textContent = "Envoi...";
+                                btn.disabled = true;
+
+                                try {
+                                    await this.app.auth.forgotPassword(email);
+                                    alert(
+                                        "Si cet email existe, un lien de réinitialisation a été envoyé.",
+                                    );
+                                    overlay.remove();
+                                } catch (err) {
+                                    alert(
+                                        "Erreur lors de la demande. Veuillez réessayer.",
+                                    );
+                                    btn.textContent = "Envoyer";
+                                    btn.disabled = false;
+                                }
+                            },
+                        },
+                        "Envoyer",
+                    ),
+                ),
+            ),
+        );
+        document.body.appendChild(overlay);
     }
 
     refreshBtn() {

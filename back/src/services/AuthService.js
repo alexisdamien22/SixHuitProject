@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 import { AdultAccountModel } from "../models/AdultAccountModel.js";
 import { ChildAccountModel } from "../models/ChildAccountModel.js";
 import { WeeklyPlanModel } from "../models/WeeklyPlanModel.js";
@@ -91,6 +93,90 @@ export class AuthService {
         await AdultAccountModel.updatePin(adultId, hashedPin);
 
         return { success: true, message: "Code PIN mis à jour." };
+    }
+
+    static async forgotPassword(email) {
+        if (!email) {
+            throw { status: 400, message: "L'adresse email est requise." };
+        }
+
+        const user = await AdultAccountModel.findByEmail(email);
+
+        if (user.length > 0) {
+            const token = crypto.randomBytes(32).toString("hex");
+
+            // Expire dans 1 heure (format MySQL DATETIME)
+            const expires = new Date(Date.now() + 3600000)
+                .toISOString()
+                .slice(0, 19)
+                .replace("T", " ");
+
+            await AdultAccountModel.saveResetToken(email, token, expires);
+
+            const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/?resetToken=${token}`;
+
+            try {
+                const transporter = nodemailer.createTransport({
+                    service: "gmail", // Si vous utilisez un autre fournisseur, remplacez par host/port
+                    auth: {
+                        user: process.env.SMTP_USER,
+                        pass: process.env.SMTP_PASS,
+                    },
+                });
+
+                await transporter.sendMail({
+                    from: `"L'équipe SixHuit" <${process.env.SMTP_USER}>`,
+                    to: email,
+                    subject: "Réinitialisation de votre mot de passe",
+                    html: `
+                        <div style="font-family: sans-serif; text-align: center; padding: 20px;">
+                            <h2>Réinitialisation de mot de passe</h2>
+                            <p>Vous avez demandé à réinitialiser votre mot de passe sur SixHuit.</p>
+                            <a href="${resetLink}" style="display: inline-block; padding: 12px 24px; margin: 20px 0; background-color: #6c5ce7; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                                Créer un nouveau mot de passe
+                            </a>
+                            <p style="color: #888; font-size: 12px;">Ce lien expire dans 1 heure.</p>
+                            <p style="color: #888; font-size: 12px;">Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
+                        </div>
+                    `,
+                });
+                console.log(
+                    `[Email] Lien de réinitialisation envoyé à ${email}`,
+                );
+            } catch (err) {
+                console.error("[Erreur d'envoi d'email] :", err);
+            }
+        }
+
+        // On renvoie un succès générique pour ne pas divulguer si l'email existe ou non (Sécurité)
+        return {
+            success: true,
+            message: "Si l'email existe, un lien a été envoyé.",
+        };
+    }
+
+    static async resetPassword(token, newPassword) {
+        if (!token || !newPassword) {
+            throw {
+                status: 400,
+                message: "Token et nouveau mot de passe requis.",
+            };
+        }
+
+        const user = await AdultAccountModel.findByResetToken(token);
+        if (user.length === 0) {
+            throw {
+                status: 400,
+                message: "Lien de réinitialisation invalide ou expiré.",
+            };
+        }
+
+        const hashed = await bcrypt.hash(newPassword, 10);
+        await AdultAccountModel.updatePassword(user[0].id, hashed);
+        return {
+            success: true,
+            message: "Mot de passe réinitialisé avec succès.",
+        };
     }
 
     static async registerChild(adultId, data) {

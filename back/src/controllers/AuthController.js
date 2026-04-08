@@ -30,6 +30,26 @@ export class AuthController {
         }
     }
 
+    static async forgotPassword(req, res) {
+        try {
+            const { email } = req.body;
+            const result = await AuthService.forgotPassword(email);
+            res.status(200).json(result);
+        } catch (err) {
+            res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async resetPassword(req, res) {
+        try {
+            const { token, newPassword } = req.body;
+            const result = await AuthService.resetPassword(token, newPassword);
+            res.status(200).json(result);
+        } catch (err) {
+            res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
     static async getProfile(req, res) {
         try {
             const result = await AuthService.getProfile(req.user.id);

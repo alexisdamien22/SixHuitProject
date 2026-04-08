@@ -32,4 +32,25 @@ export class AdultAccountModel extends BaseModel {
             id,
         ]);
     }
+
+    static saveResetToken(email, token, expires) {
+        return this.query(
+            "UPDATE adultaccount SET reset_token = ?, reset_token_expires = ? WHERE email = ?",
+            [token, expires, email],
+        );
+    }
+
+    static findByResetToken(token) {
+        return this.query(
+            "SELECT * FROM adultaccount WHERE reset_token = ? AND reset_token_expires > NOW()",
+            [token],
+        );
+    }
+
+    static updatePassword(id, hashedPassword) {
+        return this.query(
+            "UPDATE adultaccount SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?",
+            [hashedPassword, id],
+        );
+    }
 }

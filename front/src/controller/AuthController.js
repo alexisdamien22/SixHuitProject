@@ -94,6 +94,32 @@ export class AuthController {
         }
     }
 
+    async forgotPassword(email) {
+        try {
+            const result = await ApiClient.post(`/auth/forgot-password`, {
+                email,
+            });
+            if (result && result.error) throw new Error(result.error);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async resetPassword(newPassword) {
+        const token = this.app.model.getResetToken();
+        try {
+            const result = await ApiClient.post(`/auth/reset-password`, {
+                token,
+                newPassword,
+            });
+            if (result && result.error) throw new Error(result.error);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
+
     async handleNextStep(type) {
         const state = this.app.model.getAuthState();
         const step = state.step || 1;
