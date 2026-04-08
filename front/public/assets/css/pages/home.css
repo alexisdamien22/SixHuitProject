@@ -128,10 +128,10 @@
 }
 
 .todo-future .path-dot {
-    background-color: #e0e0e0;
+    background-color: var(--color-future);
 }
 .todo-future .path-dot-shadow {
-    background-color: #9e9e9e;
+    background-color: var(--color-future-shadow);
 }
 
 .today-halo {
