@@ -9,46 +9,95 @@ export class SettingsPage {
     }
 
     async handleChangePin() {
-        const password = prompt(
-            "Pour modifier votre code PIN, veuillez saisir le mot de passe de votre compte :",
-        );
+        this.showPasswordModal(async (password) => {
+            try {
+                const verifyRes = await ApiClient.post(
+                    "/auth/verify-password",
+                    { password },
+                );
 
-        if (!password) return;
-
-        try {
-            const verifyRes = await ApiClient.post("/auth/verify-password", {
-                password,
-            });
-
-            if (verifyRes.success) {
-                AccountSwitcher.showPinPopup(
-                    async (newPin, onUpdateSuccess, onUpdateError) => {
-                        try {
-                            const updateRes = await ApiClient.post(
-                                "/auth/update-pin",
-                                { newPin },
-                            );
-                            if (updateRes.success) {
-                                onUpdateSuccess();
-                                alert("Code PIN mis à jour avec succès !");
-                            } else {
+                if (verifyRes.success) {
+                    AccountSwitcher.showPinPopup(
+                        async (newPin, onUpdateSuccess, onUpdateError) => {
+                            try {
+                                const updateRes = await ApiClient.post(
+                                    "/auth/update-pin",
+                                    { newPin },
+                                );
+                                if (updateRes.success) {
+                                    onUpdateSuccess();
+                                    alert("Code PIN mis à jour avec succès !");
+                                } else {
+                                    onUpdateError();
+                                }
+                            } catch (e) {
                                 onUpdateError();
                             }
-                        } catch (e) {
-                            onUpdateError();
-                        }
-                    },
-                    "Nouveau code PIN",
+                        },
+                        "Nouveau code PIN",
+                    );
+                } else {
+                    alert("Mot de passe incorrect.");
+                }
+            } catch (err) {
+                alert(
+                    "Erreur de vérification : " +
+                        (err.message || "Serveur injoignable"),
                 );
-            } else {
-                alert("Mot de passe incorrect.");
             }
-        } catch (err) {
-            alert(
-                "Erreur de vérification : " +
-                    (err.message || "Serveur injoignable"),
-            );
-        }
+        });
+    }
+
+    showPasswordModal(onConfirm) {
+        const input = el("input", {
+            type: "password",
+            placeholder: "Mot de passe",
+            className: "modal-input",
+        });
+        const confirmBtn = el(
+            "button",
+            { className: "modal-btn confirm" },
+            "Confirmer",
+        );
+        const cancelBtn = el(
+            "button",
+            { className: "modal-btn cancel" },
+            "Annuler",
+        );
+
+        const modal = el(
+            "div",
+            { className: "modal-overlay" },
+            el(
+                "div",
+                { className: "modal-content" },
+                el("h3", {}, "Sécurité"),
+                el(
+                    "p",
+                    {},
+                    "Veuillez saisir votre mot de passe pour modifier le PIN",
+                ),
+                input,
+                el(
+                    "div",
+                    { className: "modal-actions" },
+                    cancelBtn,
+                    confirmBtn,
+                ),
+            ),
+        );
+
+        confirmBtn.onclick = () => {
+            const val = input.value;
+            if (val) {
+                modal.remove();
+                onConfirm(val);
+            }
+        };
+
+        cancelBtn.onclick = () => modal.remove();
+        document.body.appendChild(modal);
+        input.focus();
     }
 
     render() {

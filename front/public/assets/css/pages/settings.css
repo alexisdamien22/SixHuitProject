@@ -142,3 +142,52 @@ input:checked + .slider:before {
 .mt-24 {
     margin-top: 24px;
 }
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal-content {
+    background: var(--color-bg-card); /* Utilise tes variables existantes */
+    padding: 24px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    margin: 16px 0;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-btn.confirm {
+    background: var(--color-todo);
+    color: white;
+}
+.modal-btn.cancel {
+    background: #ccc;
+}
