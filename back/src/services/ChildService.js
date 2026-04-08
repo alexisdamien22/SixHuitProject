@@ -89,7 +89,6 @@ export class ChildService {
 
         const today = sessionDate;
 
-        // Si l'enfant a déjà validé une séance aujourd'hui, on ne change rien
         if (lastDate === today) {
             return;
         }
@@ -98,7 +97,6 @@ export class ChildService {
         yesterdayObj.setDate(yesterdayObj.getDate() - 1);
         const yesterday = yesterdayObj.toISOString().split("T")[0];
 
-        // --- LOGIQUE DE PROTECTION (FREEZE) ---
         const now = new Date();
         const freezeUntil = child.freeze_until
             ? new Date(child.freeze_until)
@@ -106,15 +104,11 @@ export class ChildService {
         const isFrozen = freezeUntil && freezeUntil >= now;
 
         if (lastDate === yesterday || lastDate === null) {
-            // Cas normal : on incrémente
             currentStreak += 1;
         } else {
-            // Cas de rupture de chaîne : on vérifie si c'était gelé
             if (isFrozen) {
-                // Le gel protège la streak, on repart de l'ancienne valeur + 1 (pour la séance du jour)
                 currentStreak += 1;
             } else {
-                // Pas de gel : retour à 1
                 currentStreak = 1;
             }
         }
@@ -144,7 +138,6 @@ export class ChildService {
         }
         if (settings.freeze !== undefined) {
             updates.push("freeze_until = ?");
-            // Si freeze est true, on met la date à J+7, sinon on vide (null)
             const date = settings.freeze
                 ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
                 : null;

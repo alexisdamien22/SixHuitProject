@@ -45,8 +45,11 @@ CREATE TABLE `childaccount` (
   `time_amount` int DEFAULT NULL,
   `school` varchar(255) DEFAULT NULL,
   `mascot` varchar(50) DEFAULT NULL,
+  `lesson_day` varchar(20) DEFAULT NULL,
+  `is_public` tinyint(1) DEFAULT '1',
+  `allow_friends` tinyint(1) DEFAULT '1',
+  `freeze_until` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lesson_day` VARCHAR(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `adultId` (`adultId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

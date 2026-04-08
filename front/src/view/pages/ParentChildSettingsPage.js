@@ -31,7 +31,6 @@ export class ParentChildSettingsPage {
             );
         }
 
-        // Vérification si la streak est actuellement gelée (date future)
         const isCurrentlyFrozen = this.childData.freeze_until
             ? new Date(this.childData.freeze_until) > new Date()
             : false;
@@ -66,7 +65,6 @@ export class ParentChildSettingsPage {
                 "div",
                 { className: "settings-container" },
 
-                // Section Sociale
                 this.createSection("Permissions Sociales", [
                     this.createToggleItem(
                         "Autoriser les amis",
@@ -86,7 +84,6 @@ export class ParentChildSettingsPage {
                     ),
                 ]),
 
-                // Section Protection de la Série
                 this.createSection("Série & Motivation", [
                     el(
                         "div",
@@ -110,7 +107,6 @@ export class ParentChildSettingsPage {
                     ),
                 ]),
 
-                // Section Danger
                 this.createSection("Zone de danger", [
                     el(
                         "button",
@@ -158,15 +154,11 @@ export class ParentChildSettingsPage {
     async handleToggle(field, value) {
         const childId = this.childData.id;
         try {
-            // Utilisation du endpoint PATCH pour mettre à jour les réglages individuels
             await ApiClient.post(`/child/${childId}/settings`, {
                 [field]: value,
             });
-            // On met à jour l'état local pour refléter le changement
             this.childData[field] = value ? 1 : 0;
-        } catch (err) {
-            alert("Erreur lors de la mise à jour des permissions.");
-        }
+        } catch (err) {}
     }
 
     async handleFreezeStreak(isActive) {
@@ -175,15 +167,10 @@ export class ParentChildSettingsPage {
             await ApiClient.post(`/child/${childId}/settings`, {
                 freeze: isActive,
             });
-            alert(
-                isActive ? "Série gelée pour 7 jours ! ❄️" : "Série dégelée.",
-            );
-            // Rafraîchissement des données pour mettre à jour la date interne
+
             const data = await ApiClient.get(`/child/${childId}`);
             this.childData = data;
-        } catch (err) {
-            alert("Erreur lors du gel de la série.");
-        }
+        } catch (err) {}
     }
 
     handleDeleteProfile() {
@@ -192,7 +179,6 @@ export class ParentChildSettingsPage {
                 `Êtes-vous sûr de vouloir supprimer le profil de ${this.childData.name} ? Cette action est irréversible.`,
             )
         ) {
-            // Logique API delete (À implémenter dans le futur)
             this.app.navigation.goTo("parent-home");
         }
     }

@@ -46,7 +46,6 @@ export class ParentChildDetailsPage {
             el(
                 "div",
                 { className: "stats-container" },
-                // Graphique 1 : Moral
                 el(
                     "div",
                     { className: "dashboard-section" },
@@ -71,7 +70,6 @@ export class ParentChildDetailsPage {
                         this.renderXAxis(filteredSessions),
                     ),
                 ),
-                // Graphique 2 : Objectifs
                 el(
                     "div",
                     { className: "dashboard-section" },
@@ -148,10 +146,10 @@ export class ParentChildDetailsPage {
         return el(
             "div",
             { className: "graph-y-axis" },
-            el("span", {}, "🤩"), // Niveau 3
-            el("span", {}, "😊"), // Niveau 2
-            el("span", {}, "🫥"), // Niveau 1 (AJOUTÉ)
-            el("span", {}, "😞"), // Niveau 0
+            el("span", {}, "🤩"),
+            el("span", {}, "😊"),
+            el("span", {}, "🫥"),
+            el("span", {}, "😞"),
         );
     }
 

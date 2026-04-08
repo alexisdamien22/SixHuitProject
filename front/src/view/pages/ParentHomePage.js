@@ -67,7 +67,6 @@ export class ParentHomePage {
             {
                 className: "parent-child-card clickable-card",
                 onClick: () => {
-                    // Action par défaut : Voir les statistiques
                     localStorage.setItem("viewingChildId", child.id);
                     this.app.navigation.goTo("parentChildDetails");
                 },
@@ -91,13 +90,12 @@ export class ParentHomePage {
                     ),
                 ),
             ),
-            // Bouton spécifique pour les réglages
             el(
                 "button",
                 {
                     className: "card-settings-btn",
                     onClick: (e) => {
-                        e.stopPropagation(); // EMPÊCHE de déclencher le clic de la carte (statistiques)
+                        e.stopPropagation();
                         localStorage.setItem("editingChildId", child.id);
                         this.app.navigation.goTo("parentChildSettings");
                     },
