@@ -160,7 +160,7 @@ body.parent-mode .streak-container {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    column-gap: 10px;
+    column-gap: 30px;
 }
 .header-info .ca-title {
     margin-bottom: 0;
