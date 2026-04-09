@@ -183,17 +183,17 @@ export class HomePage {
 
         let svgWrapper = pathContainer.querySelector(".global-staff-wrapper");
         if (svgWrapper) {
-            svgWrapper.style.display = "none"; // Masque la ligne pour obtenir la vraie hauteur
+            svgWrapper.classList.add("hidden-measure");
         }
 
-        const totalHeight = pathContainer.scrollHeight; // Hauteur exacte sans rallonger la page
+        const totalHeight = pathContainer.scrollHeight;
 
         if (!svgWrapper) {
             svgWrapper = document.createElement("div");
             svgWrapper.className = "global-staff-wrapper";
             pathContainer.appendChild(svgWrapper);
         }
-        svgWrapper.style.display = "block";
+        svgWrapper.classList.remove("hidden-measure");
         svgWrapper.innerHTML = "";
 
         const centerX = pathContainer.offsetWidth / 2;
