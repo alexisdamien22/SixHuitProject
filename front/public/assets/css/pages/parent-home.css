@@ -157,6 +157,13 @@ body.parent-mode .streak-container {
 .header-info {
     flex: 1;
     text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 10px;
+}
+.header-info .ca-title {
+    margin-bottom: 0;
 }
 .header-info .subtitle {
     color: var(--color-text-sub);
