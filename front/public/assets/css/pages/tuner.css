@@ -45,3 +45,19 @@
     margin: 5px 0;
     font-size: 20px;
 }
+
+.tuner-center.good {
+    box-shadow: 0 0 20px 8px rgba(76, 175, 80, 0.7);
+}
+
+.tuner-green-zone {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 80px;
+    height: 120px;
+    transform: translateX(-50%);
+    background: rgba(76, 175, 80, 0.25);
+    border-radius: 0 0 80px 80px;
+    pointer-events: none;
+}

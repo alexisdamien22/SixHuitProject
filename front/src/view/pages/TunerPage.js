@@ -11,14 +11,25 @@ export class TunerPage {
     async render() {
         const container = el("div", { className: "page tuner-page" });
 
+        const greenZone = el("div", { className: "tuner-green-zone" });
         const needle = el("div", { className: "tuner-needle", id: "needle" });
         const center = el("div", { className: "tuner-center" });
 
         const gauge = el(
             "div",
             { className: "tuner-gauge" },
+            greenZone,
             needle,
             center
+        );
+
+        const pitchSelect = el(
+            "select",
+            { id: "concertPitch" },
+            el("option", { value: "A" }, "Concert A"),
+            el("option", { value: "Bb" }, "Bb instrument"),
+            el("option", { value: "Eb" }, "Eb instrument"),
+            el("option", { value: "F" }, "F instrument")
         );
 
         const noteEl = el("div", { className: "tuner-note", id: "note" }, "--");
@@ -40,6 +51,7 @@ export class TunerPage {
         const title = el("h1", {}, "Accordeur");
 
         container.appendChild(title);
+        container.appendChild(pitchSelect);
         container.appendChild(tunerContainer);
 
         return container;
@@ -55,9 +67,17 @@ export class TunerPage {
         const noteEl = document.getElementById("note");
         const centsEl = document.getElementById("cents");
         const needle = document.getElementById("needle");
+        const pitchSelect = document.getElementById("concertPitch");
+        const center = document.querySelector(".tuner-center");
+
+        pitchSelect.addEventListener("change", () => {
+            if (this.tuner) {
+                this.tuner.currentPitch = pitchSelect.value;
+            }
+        });
 
         this.tuner = new Tuner({
-            minClarity: 0,
+            minClarity: 0.5,
             onUpdate: (data) => {
                 if (!data) return;
 
@@ -65,13 +85,25 @@ export class TunerPage {
 
                 freqEl.textContent = `Fréquence : ${freq.toFixed(2)} Hz`;
                 clarityEl.textContent = `Clarté : ${(clarity * 100).toFixed(1)} %`;
-                noteEl.textContent = note;
-                centsEl.textContent = `Écart : ${cents.toFixed(1)} cents`;
+                noteEl.textContent = `${data.noteTransposed}${data.octaveTransposed}`;
 
+                centsEl.textContent = `Écart : ${cents.toFixed(1)} cents`;
                 const angle = Math.max(-50, Math.min(50, cents)) * 0.9;
                 needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+
+                if (Math.abs(cents) < 5) {
+                    needle.style.background = "#4caf50";
+                    center.classList.add("good");
+                } else {
+                    needle.style.background = "red";
+                    center.classList.remove("good");
+                }
+
+
             }
         });
+
+        this.tuner.currentPitch = pitchSelect.value;
 
         await this.tuner.start();
     }
