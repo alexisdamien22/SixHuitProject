@@ -21,6 +21,36 @@
     align-items: center;
     position: relative;
     z-index: 1;
+    left: auto;
+}
+
+.global-staff-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.global-staff-wrapper svg {
+    overflow: visible;
+}
+
+.path-step:nth-child(5n + 1) {
+    transform: translateX(0px);
+}
+.path-step:nth-child(5n + 2) {
+    transform: translateX(45px);
+}
+.path-step:nth-child(5n + 3) {
+    transform: translateX(25px);
+}
+.path-step:nth-child(5n + 4) {
+    transform: translateX(-25px);
+}
+.path-step:nth-child(5n + 5) {
+    transform: translateX(-45px);
 }
 
 .path-button-container {
@@ -182,9 +212,6 @@
     color: var(--color-text-main);
     text-transform: uppercase;
     font-size: 14px;
-    background: var(--color-bg-main);
-    padding: 4px 12px;
-    border-radius: 12px;
 }
 
 .path-step.active-step {

@@ -182,23 +182,26 @@ export class HomePage {
         if (!pathContainer) return;
 
         let svgWrapper = pathContainer.querySelector(".global-staff-wrapper");
+        if (svgWrapper) {
+            svgWrapper.style.display = "none"; // Masque la ligne pour obtenir la vraie hauteur
+        }
+
+        const totalHeight = pathContainer.scrollHeight; // Hauteur exacte sans rallonger la page
+
         if (!svgWrapper) {
             svgWrapper = document.createElement("div");
             svgWrapper.className = "global-staff-wrapper";
-            svgWrapper.style.cssText =
-                "position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;";
             pathContainer.appendChild(svgWrapper);
         }
+        svgWrapper.style.display = "block";
         svgWrapper.innerHTML = "";
 
-        const totalHeight = pathContainer.scrollHeight + 200;
         const centerX = pathContainer.offsetWidth / 2;
 
         const svgNS = "http://www.w3.org/2000/svg";
         const svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("width", "100%");
         svg.setAttribute("height", totalHeight);
-        svg.style.overflow = "visible";
 
         for (let i = 0; i < this.CONFIG.nbLines; i++) {
             const xOffset = (i - 2) * this.CONFIG.lineSpacing;
@@ -234,7 +237,6 @@ export class HomePage {
                 this.CONFIG.amplitude;
 
             step.style.transform = `translateX(${offset}px)`;
-            step.style.left = "auto";
         });
     }
 
