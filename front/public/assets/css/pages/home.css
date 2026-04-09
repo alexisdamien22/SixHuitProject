@@ -12,6 +12,7 @@
     max-height: 80dvh;
     overflow-y: auto;
     z-index: 1;
+    position: relative;
 }
 
 .path-step {
