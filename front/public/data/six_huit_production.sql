@@ -106,6 +106,24 @@ CREATE TABLE `following` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `interactions`
+--
+
+CREATE TABLE `interactions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sender_id` int NOT NULL,
+  `receiver_id` int NOT NULL,
+  `type` enum('remind','congrats') NOT NULL,
+  `is_read` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `sender_id` (`sender_id`),
+  KEY `receiver_id` (`receiver_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `sessions`
 --
 
@@ -168,6 +186,10 @@ ALTER TABLE `childaccount`
 ALTER TABLE `following`
   ADD CONSTRAINT `following_ibfk_1` FOREIGN KEY (`following_child_id`) REFERENCES `childaccount` (`id`),
   ADD CONSTRAINT `following_ibfk_2` FOREIGN KEY (`followed_child_id`) REFERENCES `childaccount` (`id`);
+
+ALTER TABLE `interactions`
+  ADD CONSTRAINT `interactions_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `childaccount` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `interactions_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `childaccount` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `sessions`
   ADD CONSTRAINT `sessions_ibfk_1` FOREIGN KEY (`child_id`) REFERENCES `childaccount` (`id`);
