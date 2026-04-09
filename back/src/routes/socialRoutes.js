@@ -14,4 +14,7 @@ router.post("/:childId/follow", SocialController.follow);
 router.get("/:childId/recommendations", SocialController.getRecommendations);
 router.get("/:childId/friends", SocialController.getFriends);
 
+router.post("/:childId/interact/:targetId", SocialController.interact);
+router.get("/:childId/notifications", SocialController.getNotifications);
+
 export default router;

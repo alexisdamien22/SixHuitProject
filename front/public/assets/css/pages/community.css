@@ -78,3 +78,39 @@
     display: flex;
     align-items: center;
 }
+.user-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.interact-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.btn-remind {
+    background-color: #ff9800; /* Orange pour le rappel */
+    box-shadow: 0 4px 0 #e68900;
+}
+
+.btn-congrats {
+    background-color: #58cc02; /* Vert pour féliciter */
+    box-shadow: 0 4px 0 #46a302;
+}
+
+.interact-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 inherit;
+}

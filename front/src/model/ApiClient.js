@@ -17,44 +17,46 @@ function getHeaders() {
 }
 
 export class ApiClient {
-    static async request(path, method = "GET", data = null) {
-        const options = {
-            method,
+    static async request(path, options = {}) {
+        // Ajout du timestamp pour briser le cache sur toutes les requêtes GET
+        const separator = path.includes("?") ? "&" : "?";
+        const url =
+            options.method === "GET" || !options.method
+                ? `${API_URL}${path}${separator}t=${Date.now()}`
+                : `${API_URL}${path}`;
+
+        const res = await fetch(url, {
+            ...options,
             headers: getHeaders(),
-        };
-
-        if (data) {
-            options.body = JSON.stringify(data);
-        }
-
-        let url = `${API_URL}${path}`;
-        if (method === "GET") {
-            const separator = path.includes("?") ? "&" : "?";
-            url += `${separator}t=${Date.now()}`;
-        }
-
-        const res = await fetch(url, options);
+        });
 
         if (!res.ok) {
-            throw new Error(`API Error: ${res.status}`);
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.error || `API Error: ${res.status}`);
         }
 
         return res.json();
     }
 
     static async get(path) {
-        return this.request(path, "GET");
+        return this.request(path, { method: "GET" });
     }
 
     static async post(path, data) {
-        return this.request(path, "POST", data);
+        return this.request(path, {
+            method: "POST",
+            body: JSON.stringify(data),
+        });
     }
 
     static async patch(path, data) {
-        return this.request(path, "PATCH", data);
+        return this.request(path, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+        });
     }
 
     static async delete(path) {
-        return this.request(path, "DELETE");
+        return this.request(path, { method: "DELETE" });
     }
 }
