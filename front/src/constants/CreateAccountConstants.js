@@ -28,7 +28,15 @@ export const STEP_ILLUS = {
     7: { png: ICONS.flute, lbl: "Flûte traversière" },
 };
 
-export const MASCOTS = ["🦊", "🐱", "🐸", "🐶", "🦋", "🐺", "🦄", "🐼", "🐰"];
+export const MASCOTS = [
+    "/assets/img/mascots/cameleon.png",
+    "/assets/img/mascots/purple.png",
+    "/assets/img/mascots/green-drum.png",
+    "/assets/img/mascots/orange-trumpet.png",
+    "/assets/img/mascots/pink.png",
+    "/assets/img/mascots/blue.png",
+    "/assets/img/mascots/green-singer.png",
+];
 
 export const DAYS = [
     "Lundi",
