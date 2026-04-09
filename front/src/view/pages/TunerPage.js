@@ -20,7 +20,7 @@ export class TunerPage {
             { className: "tuner-gauge" },
             greenZone,
             needle,
-            center
+            center,
         );
 
         const pitchSelect = el(
@@ -29,7 +29,7 @@ export class TunerPage {
             el("option", { value: "A" }, "Concert A"),
             el("option", { value: "Bb" }, "Bb instrument"),
             el("option", { value: "Eb" }, "Eb instrument"),
-            el("option", { value: "F" }, "F instrument")
+            el("option", { value: "F" }, "F instrument"),
         );
 
         const noteEl = el("div", { className: "tuner-note", id: "note" }, "--");
@@ -38,25 +38,30 @@ export class TunerPage {
         const centsEl = el("p", { id: "cents" }, "Écart : -- cents");
         const clarityEl = el("p", { id: "clarity" }, "Clarté : -- %");
 
-        const info = el("div", { className: "tuner-info" }, freqEl, centsEl, clarityEl);
+        const info = el(
+            "div",
+            { className: "tuner-info" },
+            freqEl,
+            centsEl,
+            clarityEl,
+        );
 
         const tunerContainer = el(
             "div",
             { className: "tuner-container" },
             gauge,
             noteEl,
-            info
+            info,
         );
 
         const title = el("h1", {}, "Accordeur");
 
         container.appendChild(title);
-        container.appendChild(pitchSelect);
         container.appendChild(tunerContainer);
+        container.appendChild(pitchSelect);
 
         return container;
     }
-
 
     async onMount() {
         if (this.mounted) return;
@@ -98,9 +103,7 @@ export class TunerPage {
                     needle.style.background = "red";
                     center.classList.remove("good");
                 }
-
-
-            }
+            },
         });
 
         this.tuner.currentPitch = pitchSelect.value;

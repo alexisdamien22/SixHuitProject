@@ -142,7 +142,7 @@ export function initAppEvents(view) {
             btn.classList.add("pressed");
             try {
                 btn.setPointerCapture(e.pointerId);
-            } catch (err) { }
+            } catch (err) {}
         }
     });
 
@@ -154,7 +154,7 @@ export function initAppEvents(view) {
                 if (e?.pointerId) {
                     try {
                         btn.releasePointerCapture(e.pointerId);
-                    } catch (err) { }
+                    } catch (err) {}
                 }
             });
     };
@@ -162,15 +162,4 @@ export function initAppEvents(view) {
     view.appRoot.addEventListener("pointerup", handlePointerRelease);
     view.appRoot.addEventListener("pointercancel", handlePointerRelease);
     view.appRoot.addEventListener("pointerleave", handlePointerRelease);
-
-    const observer = new MutationObserver(() => {
-        if (view.currentPage && typeof view.currentPage.onMount === "function") {
-            requestAnimationFrame(() => {
-                view.currentPage.onMount();
-            });
-        }
-    });
-
-    observer.observe(view.appRoot, { childList: true, subtree: true });
-
 }
