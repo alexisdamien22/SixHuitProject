@@ -80,6 +80,21 @@ body.parent-mode .streak-container {
 
 .parent-child-avatar {
     font-size: 1.5em;
+    width: 60px; 
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-bg-sub);
+}
+
+.parent-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 5px;
 }
 .parent-child-name {
     font-weight: bold;

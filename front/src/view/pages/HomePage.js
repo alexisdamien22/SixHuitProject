@@ -128,7 +128,7 @@ export class HomePage {
                       el("div", { className: "today-halo" }),
                       el("img", {
                           className: "mascot-path",
-                          src: "/assets/img/mascots/cameleon.png",
+                          src: childData.mascot,
                           alt: "Mascotte",
                       }),
                   ]

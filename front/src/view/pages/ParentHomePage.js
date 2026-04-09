@@ -75,9 +75,13 @@ export class ParentHomePage {
                 "div",
                 { className: "parent-child-info" },
                 el(
-                    "span",
+                    "div",
                     { className: "parent-child-avatar" },
-                    child.mascot || "🎵",
+                    el("img", {
+                        src: child.mascot,
+                        alt: "Mascotte",
+                        className: "parent-avatar-img",
+                    })
                 ),
                 el(
                     "div",
