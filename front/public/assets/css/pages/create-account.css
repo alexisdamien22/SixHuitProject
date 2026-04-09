@@ -101,12 +101,19 @@
     border-color: var(--ca-purple);
 }
 
-.ca-instr-grid,
-.ca-mascot-grid {
+.ca-instr-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     width: 100%;
+}
+
+.ca-mascot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 20px;
+    margin-top: 20px;
 }
 
 .ca-instr-card {
@@ -171,6 +178,13 @@
 .ca-mascot-cell.sel {
     background: rgba(123, 47, 190, 0.15);
     border-color: var(--ca-purple);
+}
+
+.mascot-img {
+    width: 75%;
+    height: 75%;
+    object-fit: contain;
+    pointer-events: none;
 }
 
 .ca-days-row {

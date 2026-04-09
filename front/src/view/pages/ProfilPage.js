@@ -89,7 +89,7 @@ export class ProfilPage {
                 "div",
                 { className: "profil-img" },
                 el("img", {
-                    src: "/assets/img/mascots/camelion.png",
+                    src: child.mascot,
                     alt: "Profil Enfant",
                     className: "profil-img-content",
                 }),

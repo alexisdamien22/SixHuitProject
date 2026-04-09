@@ -444,7 +444,11 @@ export class RegisterChildPage {
                                     onClick: () =>
                                         controller.handleMascotSelect(m),
                                 },
-                                m,
+                                el("img", { 
+                                    src: m,
+                                    alt: "Mascotte",
+                                    className: "mascot-img"
+                                }),
                             ),
                         ),
                     ),

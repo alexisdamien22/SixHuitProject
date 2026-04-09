@@ -13,8 +13,12 @@
 }
 
 .profil-img {
-    width: 50vw;
-    height: 50vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35vw;
+    height: 35vw;
+    aspect-ratio: 1;
     border-radius: 50%;
     object-fit: cover;
     border: 5px solid var(--color-border-soft);
@@ -98,7 +102,7 @@
 }
 
 .profil-img-content {
-    width: 90%;
+    width: 75%;
     aspect-ratio: 1;
     object-fit: contain;
 }

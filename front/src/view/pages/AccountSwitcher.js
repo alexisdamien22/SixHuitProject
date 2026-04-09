@@ -30,7 +30,17 @@ export const AccountSwitcher = {
                     { className: "switcher-info" },
                     el("span", { className: "switcher-name" }, acc.name),
                 ),
-                el("div", { className: "switcher-avatar" }, acc.mascot || "🎵"),
+                el(
+                    "div", 
+                    { className: "switcher-avatar" }, 
+                    acc.mascot && acc.mascot.includes('/') 
+                        ? el("img", { 
+                            src: acc.mascot, 
+                            className: "avatar-img", 
+                            alt: "Mascotte" 
+                        })
+                        : acc.mascot
+                ),
             ),
         );
 
