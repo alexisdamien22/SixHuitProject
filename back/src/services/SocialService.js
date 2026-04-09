@@ -1,4 +1,5 @@
 import { ChildAccountModel } from "../models/ChildAccountModel.js";
+import { NotificationService } from "./NotificationService.js";
 
 export class SocialService {
     static async sendInteraction(senderId, receiverId) {
@@ -15,6 +16,33 @@ export class SocialService {
             VALUES (?, ?, ?, 0)
         `;
         await ChildAccountModel.query(sqlInsert, [senderId, receiverId, type]);
+        const senderRows = await ChildAccountModel.query(
+            "SELECT name FROM childaccount WHERE id = ?",
+            [senderId],
+        );
+        const senderName = senderRows[0]?.name || "Un ami";
+
+        let title = "";
+        let body = "";
+
+        if (type === "congrats") {
+            title = "Bravo ! 🎉";
+            body = `${senderName} t'a félicité pour ton travail !`;
+        } else {
+            title = "Petit rappel 🔔";
+            body = `${senderName} te rappelle de faire ta leçon !`;
+        }
+        NotificationService.sendPush(
+            receiverId,
+            title,
+            body,
+            "/community",
+        ).catch((err) =>
+            console.error(
+                "[SocialService] Erreur envoi Push interaction:",
+                err,
+            ),
+        );
 
         return { success: true, type };
     }

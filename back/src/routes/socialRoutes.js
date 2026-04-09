@@ -24,5 +24,9 @@ router.get(
     "/:childId/notifications",
     asyncHandler(SocialController.getNotifications),
 );
+router.post(
+    "/:childId/subscribe-push",
+    asyncHandler(SocialController.subscribePush),
+);
 
 export default router;

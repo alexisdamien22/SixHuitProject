@@ -1,5 +1,6 @@
 import { SocialModel } from "../models/SocialModel.js";
 import { SocialService } from "../services/SocialService.js";
+import { NotificationService } from "../services/NotificationService.js";
 
 export class SocialController {
     static async search(req, res) {
@@ -31,6 +32,24 @@ export class SocialController {
     static async interact(req, res) {
         const { childId, targetId } = req.params;
         const result = await SocialService.sendInteraction(childId, targetId);
+
+        const sender = await SocialModel.query(
+            "SELECT name FROM childaccount WHERE id = ?",
+            [childId],
+        );
+        const senderName = sender[0]?.name || "Un ami";
+
+        const title =
+            result.type === "congrats"
+                ? "Félicitations ! 🎉"
+                : "Petit rappel 🔔";
+        const body =
+            result.type === "congrats"
+                ? `${senderName} t'a félicité pour ton travail !`
+                : `${senderName} te rappelle de faire ta série !`;
+
+        await NotificationService.sendPush(targetId, title, body, "/community");
+
         res.status(200).json(result);
     }
 
@@ -39,5 +58,17 @@ export class SocialController {
         const notifications =
             await SocialService.getPendingNotifications(childId);
         res.status(200).json(notifications);
+    }
+
+    static async subscribePush(req, res) {
+        const { childId } = req.params;
+        const subscription = req.body;
+
+        await SocialModel.query(
+            "INSERT INTO push_subscriptions (child_id, subscription_json) VALUES (?, ?)",
+            [childId, JSON.stringify(subscription)],
+        );
+
+        res.status(201).json({ success: true });
     }
 }
