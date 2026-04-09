@@ -13,11 +13,6 @@ export class RegisterChildPage {
         this.app = app;
     }
 
-    /**
-     * Gère le retour en arrière :
-     * - Si étape > 1 : recule d'une étape.
-     * - Si étape 1 : redirige vers le parent ou le login selon l'état de session.
-     */
     handleBack(currentStep) {
         if (currentStep > 1) {
             this.app.model.setAuthStep(currentStep - 1);

@@ -31,7 +31,6 @@
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Correction visibilité mode sombre : force une bordure plus claire si pas en light-mode */
 body:not(.light-mode) .slider {
     border-color: rgba(255, 255, 255, 0.3);
 }
