@@ -37,6 +37,13 @@
     overflow: visible;
 }
 
+.staff-line-path {
+    fill: none;
+    stroke: var(--color-staff-line);
+    stroke-width: 2px;
+    stroke-linecap: round;
+}
+
 .hidden-measure {
     display: none !important;
 }

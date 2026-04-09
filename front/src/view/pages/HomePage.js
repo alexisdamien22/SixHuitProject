@@ -220,10 +220,7 @@ export class HomePage {
             }
 
             path.setAttribute("d", d);
-            path.setAttribute("fill", "none");
-            path.setAttribute("stroke", "var(--color-staff-line)");
-            path.setAttribute("stroke-width", "2");
-            path.setAttribute("stroke-linecap", "round");
+            path.setAttribute("class", "staff-line-path");
             svg.appendChild(path);
         }
         svgWrapper.appendChild(svg);
