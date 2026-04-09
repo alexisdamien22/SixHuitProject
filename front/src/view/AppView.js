@@ -10,6 +10,7 @@ import { ParentHomePage } from "./pages/ParentHomePage.js";
 import { ParentChildDetailsPage } from "./pages/ParentChildDetailsPage.js";
 import { ParentChildSettingsPage } from "./pages/ParentChildSettingsPage.js";
 import { MetronomePage } from "./pages/MetronomePage.js";
+import { TunerPage } from "./pages/TunerPage.js";
 
 import { LoginPage } from "./pages/LoginPage.js";
 import { RegisterParentPage } from "./pages/RegisterParentPage.js";
@@ -79,6 +80,10 @@ export class AppView {
         this.headerRoot.style.display = hideHeader ? "none" : "";
         this.footerRoot.style.display = hideFooter ? "none" : "";
 
+        if (this.currentPage?.onUnmount) {
+            this.currentPage.onUnmount();
+        }
+
         let page;
         switch (name) {
             case "home":
@@ -120,6 +125,10 @@ export class AppView {
             case "metronome":
                 page = new MetronomePage(this.app);
                 break;
+            case "tuner":
+                page = new TunerPage(this.app);
+                break;
+
 
             default:
                 page = this.createErrorPage(name);
