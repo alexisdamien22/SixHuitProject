@@ -37,6 +37,10 @@
     overflow: visible;
 }
 
+.hidden-measure {
+    display: none !important;
+}
+
 .path-step:nth-child(5n + 1) {
     transform: translateX(0px);
 }

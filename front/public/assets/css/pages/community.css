@@ -101,12 +101,12 @@
 }
 
 .btn-remind {
-    background-color: #ff9800; /* Orange pour le rappel */
+    background-color: #ff9800;
     box-shadow: 0 4px 0 #e68900;
 }
 
 .btn-congrats {
-    background-color: #58cc02; /* Vert pour féliciter */
+    background-color: #58cc02;
     box-shadow: 0 4px 0 #46a302;
 }
 

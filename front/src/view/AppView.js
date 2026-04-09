@@ -80,7 +80,6 @@ export class AppView {
         this.headerRoot.style.display = hideHeader ? "none" : "";
         this.footerRoot.style.display = hideFooter ? "none" : "";
 
-        // Gestion du démontage de la page précédente
         if (this.currentPage?.onUnmount) {
             this.currentPage.onUnmount();
         }
@@ -137,7 +136,6 @@ export class AppView {
         const content = await page.render();
         this.appRoot.appendChild(content);
 
-        // CORRECTION : On déclenche le montage de manière contrôlée, une seule fois.
         if (typeof this.currentPage.onMount === "function") {
             requestAnimationFrame(() => {
                 this.currentPage.onMount();
