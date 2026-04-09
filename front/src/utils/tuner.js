@@ -10,11 +10,23 @@ export class Tuner {
         this.minClarity = minClarity;
         this.onUpdate = onUpdate;
 
+        this.TRANSPOSITIONS = {
+            "A": 0,
+            "Bb": 2,
+            "Eb": -3,
+            "F": -5
+        };
+
         this.audioContext = null;
         this.analyser = null;
         this.dataArray = null;
         this.detector = PitchDetector.forFloat32Array(this.fftSize);
         this.running = false;
+
+        this.smoothFreq = null;
+        this.smoothCents = null;
+
+        this.lastUpdate = 0;
     }
 
     async start() {
@@ -42,7 +54,7 @@ export class Tuner {
         }
     }
 
-    _loop() {
+    _loop(timestamp) {
         if (!this.running) return;
 
         this.analyser.getFloatTimeDomainData(this.dataArray);
@@ -52,23 +64,57 @@ export class Tuner {
             this.audioContext.sampleRate
         );
 
-        if (pitch > 0) {
-            const midi = this._freqToMidi(pitch);
-            const noteName = this._noteName(midi);
-            const targetFreq = this._midiToFreq(midi);
-            const cents = this._centsDiff(pitch, targetFreq);
+        if (timestamp - this.lastUpdate < 100) {
+            requestAnimationFrame((t) => this._loop(t));
+            return;
+        }
+        this.lastUpdate = timestamp;
 
-            this.onUpdate({
-                freq: pitch,
-                clarity,
-                note: noteName,
-                midi,
-                targetFreq,
-                cents
-            });
+        if (pitch <= 0) {
+            requestAnimationFrame((t) => this._loop(t));
+            return;
         }
 
-        requestAnimationFrame(() => this._loop());
+        const midi = this._freqToMidi(pitch);
+        const octave = Math.floor(midi / 12) - 1;
+        const noteName = this._noteName(midi);
+        const targetFreq = this._midiToFreq(midi);
+        const cents = this._centsDiff(pitch, targetFreq);
+        const transpo = this.TRANSPOSITIONS[this.currentPitch] || 0;
+        const midiTransposed = midi + transpo;
+        const octaveTransposed = Math.floor(midiTransposed / 12) - 1;
+        const noteTransposed = this._noteName(midiTransposed);
+
+        const alpha = 0.2;
+        this.smoothFreq = this.smoothFreq == null
+            ? pitch
+            : this.smoothFreq + alpha * (pitch - this.smoothFreq);
+
+        this.smoothCents = this.smoothCents == null
+            ? cents
+            : this.smoothCents + alpha * (cents - this.smoothCents);
+
+        if (clarity < this.minClarity) {
+            requestAnimationFrame((t) => this._loop(t));
+            return;
+        }
+
+        this.onUpdate({
+            freq: this.smoothFreq,
+            clarity,
+            note: noteName,
+            noteTransposed,
+            midi,
+            midiTransposed,
+            octave,
+            octaveTransposed,
+            targetFreq,
+            cents: this.smoothCents
+        });
+
+
+
+        requestAnimationFrame((t) => this._loop(t));
     }
 
 
