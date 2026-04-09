@@ -114,3 +114,9 @@
     transform: translateY(2px);
     box-shadow: 0 2px 0 inherit;
 }
+
+.empty-text {
+    color: var(--color-text-sub);
+    font-style: italic;
+    padding: 15px;
+}

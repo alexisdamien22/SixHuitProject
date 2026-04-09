@@ -29,7 +29,6 @@ export class SocialService {
         const notifications = await ChildAccountModel.query(sql, [childId]);
 
         if (notifications && notifications.length > 0) {
-            // On marque comme lu TOUTES les notifications de cet utilisateur
             await ChildAccountModel.query(
                 "UPDATE interactions SET is_read = 1 WHERE receiver_id = ? AND is_read = 0",
                 [childId],

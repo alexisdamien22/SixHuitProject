@@ -152,7 +152,6 @@ export class CommunityPage {
                                 `${user.name} ajouté(e) !`,
                                 "success",
                             );
-                            // Recharge la page pour actualiser la liste d'amis instantanément
                             this.app.navigation.goTo("community");
                         } catch (err) {
                             FlashMessageManager.show(

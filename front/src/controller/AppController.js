@@ -52,7 +52,6 @@ export class AppController {
 
         if (childId) {
             await this.child.loadChildData();
-            // On vérifie les interactions après avoir chargé les données de l'enfant
             await this.checkInteractions(childId);
         }
 
@@ -66,7 +65,6 @@ export class AppController {
             );
 
             if (Array.isArray(notifications) && notifications.length > 0) {
-                // Délai de 500ms pour s'assurer que le flash-container est prêt dans le DOM
                 setTimeout(() => {
                     notifications.forEach((notif) => {
                         const isRemind = notif.type === "remind";

@@ -18,7 +18,6 @@ function getHeaders() {
 
 export class ApiClient {
     static async request(path, options = {}) {
-        // Ajout du timestamp pour briser le cache sur toutes les requêtes GET
         const separator = path.includes("?") ? "&" : "?";
         const url =
             options.method === "GET" || !options.method
