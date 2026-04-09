@@ -181,98 +181,61 @@ export class HomePage {
         const pathContainer = container.querySelector(".path-container");
         if (!pathContainer) return;
 
-        // Met à jour la ligne automatiquement si l'écran est redimensionné
-        if (!container._hasPathObserver) {
-            const observer = new ResizeObserver(() => {
-                requestAnimationFrame(() => this.drawPathLine(container));
-            });
-            observer.observe(pathContainer);
-            container._hasPathObserver = true;
-
-            // Met à jour la ligne quand la mascotte a fini de charger et change la taille
-            const images = pathContainer.querySelectorAll("img");
-            images.forEach((img) => {
-                if (!img.complete) {
-                    img.addEventListener("load", () =>
-                        this.drawPathLine(container),
-                    );
-                }
-            });
-        }
-
-        // Nettoie l'ancienne ligne globale (si présente)
-        const oldGlobal = pathContainer.querySelector(".path-line-wrapper");
-        if (oldGlobal) oldGlobal.remove();
-
-        const steps = Array.from(pathContainer.querySelectorAll(".path-step"));
-        if (steps.length < 2) return;
-
-        // 1. Pré-calculer les centres de chaque point pour de meilleures performances
-        const centers = steps.map((step) => {
-            const dot = step.querySelector(".path-button-container");
-            if (!dot) return null;
-            const rect = dot.getBoundingClientRect();
-            return {
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2,
-                dot: dot,
-            };
-        });
-
-        // 2. Dessiner une courbe fluide (Catmull-Rom vers Bézier cubique)
-        for (let i = 0; i < centers.length - 1; i++) {
-            const current = centers[i];
-            const next = centers[i + 1];
-            if (!current || !next) continue;
-
-            const existing = current.dot.querySelector(".step-path-svg");
-            if (existing) existing.remove();
-
-            const prev = centers[i - 1] || current;
-            const nextNext = centers[i + 2] || next;
-
-            // Calcul des tangentes pour que la courbe traverse les points naturellement
-            let tx1 = next.x - prev.x;
-            let ty1 = next.y - prev.y;
-            if (i === 0) {
-                tx1 = next.x - current.x;
-                ty1 = next.y - current.y;
-            }
-
-            let tx2 = nextNext.x - current.x;
-            let ty2 = nextNext.y - current.y;
-            if (i === centers.length - 2) {
-                tx2 = next.x - current.x;
-                ty2 = next.y - current.y;
-            }
-
-            const tension = 0.25; // Ajuste la rondeur de la courbe (0.2 à 0.3 = idéal)
-
-            const dx = next.x - current.x;
-            const dy = next.y - current.y;
-
-            const cp1x = tx1 * tension;
-            const cp1y = ty1 * tension;
-
-            const cp2x = dx - tx2 * tension;
-            const cp2y = dy - ty2 * tension;
-
-            const pathD = `M 0 0 C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${dx} ${dy}`;
-
-            const svgWrapper = document.createElement("div");
-            svgWrapper.className = "step-path-svg";
+        let svgWrapper = pathContainer.querySelector(".global-staff-wrapper");
+        if (!svgWrapper) {
+            svgWrapper = document.createElement("div");
+            svgWrapper.className = "global-staff-wrapper";
             svgWrapper.style.cssText =
-                "position: absolute; top: 50%; left: 50%; width: 0; height: 0; overflow: visible; z-index: -1; pointer-events: none;";
-
-            svgWrapper.innerHTML = `
-                <svg style="overflow: visible; position: absolute; top: 0; left: 0; width: 1px; height: 1px;">
-                    <path d="${pathD}" stroke="var(--color-border-soft)" stroke-width="100" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="${pathD}" stroke="var(--color-bg-main)" stroke-width="92" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-            `;
-
-            current.dot.insertBefore(svgWrapper, current.dot.firstChild);
+                "position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;";
+            pathContainer.appendChild(svgWrapper);
         }
+        svgWrapper.innerHTML = "";
+
+        const totalHeight = pathContainer.scrollHeight + 200;
+        const centerX = pathContainer.offsetWidth / 2;
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("width", "100%");
+        svg.setAttribute("height", totalHeight);
+        svg.style.overflow = "visible";
+
+        for (let i = 0; i < this.CONFIG.nbLines; i++) {
+            const xOffset = (i - 2) * this.CONFIG.lineSpacing;
+            const path = document.createElementNS(svgNS, "path");
+
+            let d = `M ${centerX + xOffset + Math.sin(0 * this.CONFIG.frequency + this.CONFIG.phaseOffset) * this.CONFIG.amplitude},0`;
+
+            for (let y = 10; y <= totalHeight; y += 15) {
+                const x =
+                    centerX +
+                    xOffset +
+                    Math.sin(
+                        y * this.CONFIG.frequency + this.CONFIG.phaseOffset,
+                    ) *
+                        this.CONFIG.amplitude;
+                d += ` L ${x},${y}`;
+            }
+
+            path.setAttribute("d", d);
+            path.setAttribute("fill", "none");
+            path.setAttribute("stroke", "var(--color-staff-line)");
+            path.setAttribute("stroke-width", "2");
+            path.setAttribute("stroke-linecap", "round");
+            svg.appendChild(path);
+        }
+        svgWrapper.appendChild(svg);
+
+        const steps = container.querySelectorAll(".path-step");
+        steps.forEach((step) => {
+            const y = step.offsetTop + step.offsetHeight / 2;
+            const offset =
+                Math.sin(y * this.CONFIG.frequency + this.CONFIG.phaseOffset) *
+                this.CONFIG.amplitude;
+
+            step.style.transform = `translateX(${offset}px)`;
+            step.style.left = "auto";
+        });
     }
 
     createPopup(day, status, index, isToday) {
