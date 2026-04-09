@@ -44,7 +44,7 @@ export class AppView {
     }
 
     async renderPage(name, params = {}) {
-        const activeChildId = localStorage.getItem("activeChildId");
+        const activeChildId = this.app.model.session.getChildId();
 
         const isParentMode =
             this.app.model.session.isParent() && !activeChildId;

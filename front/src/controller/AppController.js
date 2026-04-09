@@ -4,6 +4,7 @@ import { ChildController } from "./ChildController.js";
 import { SocialController } from "./SocialController.js";
 import { ApiClient } from "../model/ApiClient.js";
 import { FlashMessageManager } from "../utils/FlashMessageManager.js";
+import { MetronomeController } from "./MetronomeController.js";
 
 export class AppController {
     constructor(appModel, appView) {
@@ -14,6 +15,7 @@ export class AppController {
         this.auth = new AuthController(this);
         this.child = new ChildController(this);
         this.social = new SocialController(this);
+        this.metronome = new MetronomeController(this);
     }
 
     async init() {
@@ -41,9 +43,7 @@ export class AppController {
             return;
         }
 
-        const childId =
-            this.model.session.getChildId() ||
-            localStorage.getItem("activeChildId");
+        const childId = this.model.session.getChildId();
 
         if (this.model.session.isParent() && !childId) {
             this.navigation.goTo("parent-home");

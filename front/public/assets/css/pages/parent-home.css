@@ -453,3 +453,16 @@ svg {
 .danger-action-btn:active {
     background: rgba(255, 82, 82, 0.1);
 }
+
+.bar-fill.quality-0 {
+    height: 33.33%;
+    background-color: #ff5252;
+}
+.bar-fill.quality-1 {
+    height: 66.66%;
+    background-color: #58cc02;
+}
+.bar-fill.quality-2 {
+    height: 100%;
+    background-color: #ffb900;
+}

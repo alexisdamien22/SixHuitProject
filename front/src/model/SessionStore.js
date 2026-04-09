@@ -5,16 +5,22 @@ export class SessionStore {
             adultId: null,
             childId: null,
         };
+        this.viewingChildId = null;
     }
 
     load() {
         const raw = localStorage.getItem("sixhuit-session");
-        if (!raw) return;
+        if (raw) {
+            try {
+                this.data = JSON.parse(raw);
+            } catch (err) {
+                console.error("Erreur de parsing session :", err);
+            }
+        }
 
-        try {
-            this.data = JSON.parse(raw);
-        } catch (err) {
-            console.error("Erreur de parsing session :", err);
+        const activeChild = localStorage.getItem("activeChildId");
+        if (activeChild) {
+            this.data.childId = activeChild;
         }
     }
 
@@ -25,6 +31,7 @@ export class SessionStore {
 
     clear() {
         this.data = { token: null, adultId: null, childId: null };
+        this.viewingChildId = null;
         localStorage.removeItem("sixhuit-session");
     }
 
@@ -60,5 +67,13 @@ export class SessionStore {
     setActiveChild(childId) {
         this.data.childId = childId;
         localStorage.setItem("activeChildId", childId);
+    }
+
+    setViewingChildId(id) {
+        this.viewingChildId = id;
+    }
+
+    getViewingChildId() {
+        return this.viewingChildId;
     }
 }

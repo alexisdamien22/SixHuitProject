@@ -1,5 +1,4 @@
 import { el } from "../../utils/DOMBuilder.js";
-import { ApiClient } from "../../model/ApiClient.js";
 import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
 
 export class ParentChildSettingsPage {
@@ -10,13 +9,12 @@ export class ParentChildSettingsPage {
     }
 
     async render() {
-        const childId = localStorage.getItem("editingChildId");
+        const childId = this.app.model.session.getViewingChildId();
 
         if (!this.childData || this.childData.id != childId) {
             this.isLoading = true;
             try {
-                const data = await ApiClient.get(`/child/${childId}`);
-                this.childData = data;
+                this.childData = await this.app.child.getChildById(childId);
             } catch (err) {
                 this.childData = { name: "Erreur" };
             } finally {
@@ -188,7 +186,7 @@ export class ParentChildSettingsPage {
 
     async executeDeletion(modal) {
         try {
-            await ApiClient.delete(`/child/${this.childData.id}`);
+            await this.app.child.deleteChild(this.childData.id);
             modal.remove();
             FlashMessageManager.show("Profil supprimé.", "success");
             this.app.navigation.goTo("parent-home");
@@ -199,7 +197,7 @@ export class ParentChildSettingsPage {
 
     async handleToggle(field, value) {
         try {
-            await ApiClient.patch(`/child/${this.childData.id}/settings`, {
+            await this.app.child.updateSettings(this.childData.id, {
                 [field]: value,
             });
             this.childData[field] = value ? 1 : 0;
@@ -211,10 +209,10 @@ export class ParentChildSettingsPage {
 
     async handleFreezeStreak(isActive) {
         try {
-            await ApiClient.patch(`/child/${this.childData.id}/settings`, {
+            await this.app.child.updateSettings(this.childData.id, {
                 freeze: isActive,
             });
-            const data = await ApiClient.get(`/child/${this.childData.id}`);
+            const data = await this.app.child.getChildById(this.childData.id);
             this.childData = data;
             FlashMessageManager.show(
                 isActive ? "Série gelée ❄️" : "Gel désactivé",

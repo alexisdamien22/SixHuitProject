@@ -20,6 +20,16 @@ export class ChildController {
         }
     }
 
+    async getChildById(childId) {
+        try {
+            const data = await ApiClient.get(`/child/${childId}`);
+            if (data && data.error) throw new Error(data.error);
+            return data;
+        } catch (err) {
+            throw err;
+        }
+    }
+
     async updateSession(sessionData) {
         try {
             const childId =
@@ -28,7 +38,6 @@ export class ChildController {
             if (!childId) throw new Error("No active child ID");
 
             await ApiClient.post(`/child/${childId}/session`, sessionData);
-
             await this.loadChildData();
         } catch (err) {
             console.error("Error updating session:", err);
@@ -45,6 +54,24 @@ export class ChildController {
             await this.loadChildData();
         } catch (err) {
             console.error("Error updating streak:", err);
+        }
+    }
+
+    async updateSettings(childId, settings) {
+        try {
+            await ApiClient.patch(`/child/${childId}/settings`, settings);
+            return { success: true };
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async deleteChild(childId) {
+        try {
+            await ApiClient.delete(`/child/${childId}`);
+            return { success: true };
+        } catch (err) {
+            throw err;
         }
     }
 }
