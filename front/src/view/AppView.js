@@ -80,6 +80,7 @@ export class AppView {
         this.headerRoot.style.display = hideHeader ? "none" : "";
         this.footerRoot.style.display = hideFooter ? "none" : "";
 
+        // Gestion du démontage de la page précédente
         if (this.currentPage?.onUnmount) {
             this.currentPage.onUnmount();
         }
@@ -128,8 +129,6 @@ export class AppView {
             case "tuner":
                 page = new TunerPage(this.app);
                 break;
-
-
             default:
                 page = this.createErrorPage(name);
         }
@@ -137,6 +136,13 @@ export class AppView {
         this.currentPage = page;
         const content = await page.render();
         this.appRoot.appendChild(content);
+
+        // CORRECTION : On déclenche le montage de manière contrôlée, une seule fois.
+        if (typeof this.currentPage.onMount === "function") {
+            requestAnimationFrame(() => {
+                this.currentPage.onMount();
+            });
+        }
 
         const pageToIconMap = {
             home: 0,
@@ -249,6 +255,7 @@ export class AppView {
             document.body.style.overflow = "";
         }
     }
+
     createErrorPage(name) {
         return {
             render() {

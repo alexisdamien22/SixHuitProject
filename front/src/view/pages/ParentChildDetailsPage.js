@@ -9,6 +9,7 @@ export class ParentChildDetailsPage {
 
     async render() {
         const childId = this.app.model.session.getViewingChildId();
+
         if (!this.childData || this.childData.id != childId) {
             this.isLoading = true;
             try {
@@ -113,6 +114,11 @@ export class ParentChildDetailsPage {
     }
 
     renderHeader() {
+        const rawInstrument = this.childData.instrument || "";
+        const instrumentLabel = rawInstrument
+            ? rawInstrument.charAt(0).toUpperCase() + rawInstrument.slice(1)
+            : "Instrument non défini";
+
         return el(
             "div",
             { className: "details-header" },
@@ -128,11 +134,7 @@ export class ParentChildDetailsPage {
                 "div",
                 { className: "header-info" },
                 el("h2", { className: "ca-title" }, this.childData.name),
-                el(
-                    "p",
-                    { className: "subtitle" },
-                    this.childData.instrument || "Instrument non défini",
-                ),
+                el("p", { className: "subtitle" }, instrumentLabel),
             ),
             el(
                 "div",

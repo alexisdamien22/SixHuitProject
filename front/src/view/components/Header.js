@@ -56,6 +56,21 @@ export class Header {
             streak = Number(streak) || 0;
         }
 
+        const isParentMode =
+            this.app.model.session.isParent() &&
+            !this.app.model.session.getChildId();
+        const profileContent = isParentMode
+            ? el("img", {
+                  src: "/assets/img/icons/family.png",
+                  alt: "Profile",
+                  className: "header-profile-img",
+              })
+            : el(
+                  "div",
+                  { className: "header-mascot-icon" },
+                  childData.mascot || "🎵",
+              );
+
         return el(
             "header",
             { className: "main-header" },
@@ -67,11 +82,7 @@ export class Header {
                     {
                         className: "profile-icon header-profile-btn",
                     },
-                    el("img", {
-                        src: "/assets/img/icons/family.png",
-                        alt: "Profile",
-                        className: "header-profile-img",
-                    }),
+                    profileContent,
                 ),
                 el(
                     "div",
