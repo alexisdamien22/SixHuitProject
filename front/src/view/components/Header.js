@@ -9,6 +9,7 @@ export class Header {
     update(data) {
         const streakText = document.querySelector(".streak-text");
         const streakIcon = document.querySelector(".streak-icon");
+        const streakContainer = document.querySelector(".streak");
 
         let safeStreak = 0;
         if (data.streak !== undefined) {
@@ -20,6 +21,21 @@ export class Header {
 
         if (streakText) {
             streakText.textContent = String(safeStreak);
+
+            const isFrozen =
+                data.freeze_until && new Date(data.freeze_until) > new Date();
+            let snowEmoji = streakContainer.querySelector(".freeze-indicator");
+
+            if (isFrozen) {
+                if (!snowEmoji) {
+                    snowEmoji = document.createElement("span");
+                    snowEmoji.className = "freeze-indicator";
+                    snowEmoji.textContent = " ❄️";
+                    streakText.after(snowEmoji);
+                }
+            } else if (snowEmoji) {
+                snowEmoji.remove();
+            }
         }
 
         if (streakIcon) {
@@ -29,6 +45,9 @@ export class Header {
 
     render() {
         const childData = this.app.model.getChildData() || {};
+        const isFrozen =
+            childData.freeze_until &&
+            new Date(childData.freeze_until) > new Date();
 
         let streak = childData.streak || 0;
         if (typeof streak === "object" && streak !== null) {
@@ -63,6 +82,9 @@ export class Header {
                         alt: "Streak",
                     }),
                     el("p", { className: "streak-text" }, String(streak)),
+                    isFrozen
+                        ? el("span", { className: "freeze-indicator" }, " ❄️")
+                        : null,
                 ),
             ),
             el("div", { className: "parametre", dataset: { rotation: "0" } }),

@@ -2,6 +2,7 @@ import { el } from "../../utils/DOMBuilder.js";
 import { AccountSwitcher } from "./AccountSwitcher.js";
 import { ApiClient } from "../../model/ApiClient.js";
 import { AppViewTheme } from "../AppViewTheme.js";
+import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
 
 export class SettingsPage {
     constructor(app) {
@@ -26,16 +27,32 @@ export class SettingsPage {
                                 );
                                 if (updateRes.success) {
                                     onUpdateSuccess();
+                                    FlashMessageManager.show(
+                                        "Code PIN modifié avec succès !",
+                                        "success",
+                                    );
                                 } else {
                                     onUpdateError();
+                                    FlashMessageManager.show(
+                                        "Erreur lors de la modification du code PIN.",
+                                        "error",
+                                    );
                                 }
                             } catch (e) {
                                 onUpdateError();
+                                FlashMessageManager.show(
+                                    "Erreur inattendue.",
+                                    "error",
+                                );
                             }
                         },
                         "Nouveau code PIN",
                     );
                 } else {
+                    FlashMessageManager.show(
+                        "Mot de passe incorrect.",
+                        "error",
+                    );
                 }
             } catch (err) {}
         });

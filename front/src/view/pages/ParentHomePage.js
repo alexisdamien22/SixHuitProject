@@ -11,83 +11,39 @@ export class ParentHomePage {
             typeof this.app.model.fetchChildrenAccounts === "function"
         ) {
             await this.app.model.fetchChildrenAccounts();
-        } else {
-            console.warn(
-                "[ParentHomePage] ATTENTION: fetchChildrenAccounts n'existe pas dans le modèle !",
-            );
         }
-
-        const parentData = this.app.model.getParentData() || {};
-        const welcomeName = parentData.name ? `, ${parentData.name}` : "";
 
         const children = this.app.model?.childrenAccounts || [];
 
         return el(
             "div",
-            {
-                className: "parent-screen page",
-            },
-            el("h1", {}, "Espace Parent"),
+            { className: "parent-screen page" },
+            el("h1", { className: "ca-title" }, "Espace Parent"),
             el(
                 "p",
                 { className: "parent-welcome-text" },
-                `Bienvenue dans ton tableau de bord${welcomeName} !`,
+                "Gère tes enfants et leurs progrès.",
             ),
 
             el(
                 "div",
+                { className: "parent-children-list" },
+                children.length > 0
+                    ? children.map((child) => this.renderChildCard(child))
+                    : el(
+                          "p",
+                          { className: "parent-no-child" },
+                          "Aucun enfant associé.",
+                      ),
+            ),
+
+            el(
+                "button",
                 {
-                    className: "ca-form-block parent-info-block",
+                    className: "ca-btn-next parent-add-btn",
+                    onClick: () => this.app.navigation.goTo("registerChild"),
                 },
-                el("p", { className: "ca-question" }, "Gère les profils enfants ici."),
-                children.length === 0
-                    ? el(
-                        "p",
-                        { className: "parent-info-desc" },
-                        "Crée un profil pour que ton enfant puisse commencer ses sessions de musique.",
-                    )
-                    : "",
-
-                el(
-                    "div",
-                    { className: "parent-children-list" },
-                    children.length > 0
-                        ? children.map((child) =>
-                            el(
-                                "div",
-                                { className: "parent-child-card" },
-                                el(
-                                    "div",
-                                    { className: "parent-child-info" },
-                                    el(
-                                        "span",
-                                        { className: "parent-child-avatar" },
-                                        child.mascot || "🎵",
-                                    ),
-                                    el("span", { className: "parent-child-name" }, child.name),
-                                ),
-                                el(
-                                    "button",
-                                    { className: "parent-child-edit-btn" },
-                                    "Modifier",
-                                ),
-                            ),
-                        )
-                        : el(
-                            "p",
-                            { className: "parent-no-child" },
-                            "Aucun enfant associé pour le moment.",
-                        ),
-                ),
-
-                el(
-                    "button",
-                    {
-                        className: "ca-btn-next parent-add-btn",
-                        onClick: () => this.app.navigation.goTo("registerChild"),
-                    },
-                    "+ Ajouter un profil enfant",
-                ),
+                "+ Ajouter un profil enfant",
             ),
 
             el(
@@ -101,6 +57,50 @@ export class ParentHomePage {
                     },
                 },
                 "Se déconnecter",
+            ),
+        );
+    }
+
+    renderChildCard(child) {
+        return el(
+            "div",
+            {
+                className: "parent-child-card clickable-card",
+                onClick: () => {
+                    localStorage.setItem("viewingChildId", child.id);
+                    this.app.navigation.goTo("parentChildDetails");
+                },
+            },
+            el(
+                "div",
+                { className: "parent-child-info" },
+                el(
+                    "span",
+                    { className: "parent-child-avatar" },
+                    child.mascot || "🎵",
+                ),
+                el(
+                    "div",
+                    { className: "name-stack" },
+                    el("span", { className: "parent-child-name" }, child.name),
+                    el(
+                        "span",
+                        { className: "parent-child-sub" },
+                        "Voir les progrès ›",
+                    ),
+                ),
+            ),
+            el(
+                "button",
+                {
+                    className: "card-settings-btn",
+                    onClick: (e) => {
+                        e.stopPropagation();
+                        localStorage.setItem("editingChildId", child.id);
+                        this.app.navigation.goTo("parentChildSettings");
+                    },
+                },
+                "⚙️",
             ),
         );
     }

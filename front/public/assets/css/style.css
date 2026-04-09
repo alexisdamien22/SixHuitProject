@@ -8,6 +8,7 @@
 @import url("./layout/menus.css");
 @import url("./layout/switcher.css");
 @import url("./layout/modal.css");
+@import url("./layout/flash.css");
 
 /* Import des composants réutilisables */
 @import url("./components/buttons.css");
@@ -23,3 +24,4 @@
 @import url("./pages/community.css");
 @import url("./pages/music.css");
 @import url("./pages/reset-password.css");
+@import url("./pages/metronome.css");

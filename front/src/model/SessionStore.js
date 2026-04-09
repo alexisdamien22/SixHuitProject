@@ -13,7 +13,6 @@ export class SessionStore {
 
         try {
             this.data = JSON.parse(raw);
-            console.log("Session chargée :", this.data);
         } catch (err) {
             console.error("Erreur de parsing session :", err);
         }
@@ -22,7 +21,6 @@ export class SessionStore {
     saveSession({ token, adultId, childId }) {
         this.data = { token, adultId, childId };
         localStorage.setItem("sixhuit-session", JSON.stringify(this.data));
-        console.log("Session sauvegardée :", this.data);
     }
 
     clear() {

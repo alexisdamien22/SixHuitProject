@@ -16,5 +16,13 @@ router.post(
     asyncHandler(ChildController.updateWeeklyPlan),
 );
 router.post("/:childId/streak", asyncHandler(ChildController.updateStreak));
-
+router.patch(
+    "/:childId/settings",
+    asyncHandler(ChildController.updateSettings),
+);
+router.delete(
+    "/:childId",
+    checkChildOwnership,
+    asyncHandler(ChildController.deleteChild),
+);
 export default router;

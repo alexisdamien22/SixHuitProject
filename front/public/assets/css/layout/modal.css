@@ -1,70 +1,161 @@
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-  z-index: 100000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
 }
 
 .session-modal {
-  background: var(--color-bg-popup);
-  width: 90%;
-  max-width: 450px;
-  border-radius: 24px;
-  padding: 30px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  border: 2px solid var(--color-border-soft);
-  position: relative;
-  z-index: 100001;
+    background: var(--color-bg-popup);
+    width: 90%;
+    max-width: 450px;
+    border-radius: 24px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--color-border-soft);
+    position: relative;
+    z-index: 100001;
 }
 
 .emoji-group {
-  display: flex;
-  justify-content: space-around;
-  margin: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-items: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+@media (max-width: 380px) {
+    .emoji-group {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 240px) {
+    .emoji-group {
+        grid-template-columns: 1fr;
+    }
 }
 
 .emoji-btn {
-  font-size: 40px;
-  background: none;
-  border: 4px solid transparent;
-  border-radius: 15px;
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    border-color 0.2s;
-  padding: 5px;
+    font-size: clamp(30px, 8vw, 40px);
+    background: none;
+    border: 4px solid transparent;
+    border-radius: 15px;
+    cursor: pointer;
+    transition:
+        transform 0.2s,
+        border-color 0.2s;
+    padding: 5px;
 }
 
 .emoji-btn.selected {
-  border-color: var(--ca-purple);
-  transform: scale(1.1);
+    border-color: var(--ca-purple);
+    transform: scale(1.1);
 }
 
 .quality-select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  background: var(--ca-input-bg);
-  color: var(--color-text-main);
-  border: 2px solid var(--color-border-soft);
-  margin-bottom: 20px;
-  font-family: inherit;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--ca-input-bg);
+    color: var(--color-text-main);
+    border: 2px solid var(--color-border-soft);
+    margin-bottom: 20px;
+    font-family: inherit;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000000;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.custom-modal {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.custom-modal h3 {
+    margin-top: 0;
+    color: #ff4b4b;
+    font-size: 22px;
+}
+
+.custom-modal p {
+    color: #4b4b4b;
+    margin: 20px 0 30px;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-btn-confirm {
+    background: #ff4b4b;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.modal-btn-cancel {
+    background: #f0f0f0;
+    color: #4b4b4b;
+    border: none;
+    padding: 15px;
+    border-radius: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+@keyframes modal-pop {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }

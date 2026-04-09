@@ -1,4 +1,6 @@
 import { el } from "../../utils/DOMBuilder.js";
+import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
+import { ApiClient } from "../../model/ApiClient.js";
 
 export class CommunityPage {
     constructor(app) {
@@ -6,6 +8,7 @@ export class CommunityPage {
         this.recommendations = [];
         this.friends = [];
         this.searchTimer = null;
+        this.container = null;
     }
 
     async render() {
@@ -22,8 +25,6 @@ export class CommunityPage {
                 : [];
         } catch (err) {
             console.error("Error fetching social data:", err);
-            this.recommendations = [];
-            this.friends = [];
         }
 
         const recommendationsContent =
@@ -44,26 +45,20 @@ export class CommunityPage {
                       el(
                           "p",
                           { className: "empty-text" },
-                          "Tu n'as pas encore d'amis. Va dans l'onglet Ajouter !",
+                          "Tu n'as pas encore d'amis.",
                       ),
                   ];
 
         const tabFeed = el(
             "div",
-            {
-                className: "tab-content active",
-                id: "tab-feed",
-            },
+            { className: "tab-content active", id: "tab-feed" },
             el("h3", { className: "section-title" }, "Mes amis"),
             el("div", { className: "social-list" }, ...friendsContent),
         );
 
         const tabAdd = el(
             "div",
-            {
-                className: "tab-content",
-                id: "tab-add",
-            },
+            { className: "tab-content", id: "tab-add" },
             el(
                 "div",
                 { className: "search-bar-container" },
@@ -85,34 +80,30 @@ export class CommunityPage {
             el("div", { className: "social-list" }, recommendationsContent),
         );
 
-        const tabFeedBtn = el(
-            "button",
-            {
-                className: "tab-btn active",
-                onClick: (e) => this.switchTab("feed", e.target),
-            },
-            "Mes Amis",
-        );
-        const tabAddBtn = el(
-            "button",
-            {
-                className: "tab-btn",
-                onClick: (e) => this.switchTab("add", e.target),
-            },
-            "Ajouter",
-        );
-        const tabsContainer = el(
-            "div",
-            { className: "tabs-container" },
-            tabFeedBtn,
-            tabAddBtn,
-        );
-
         this.container = el(
             "div",
             { className: "community-page" },
             el("h2", { className: "ca-title" }, "Communauté"),
-            tabsContainer,
+            el(
+                "div",
+                { className: "tabs-container" },
+                el(
+                    "button",
+                    {
+                        className: "tab-btn active",
+                        onClick: (e) => this.switchTab("feed", e.target),
+                    },
+                    "Mes Amis",
+                ),
+                el(
+                    "button",
+                    {
+                        className: "tab-btn",
+                        onClick: (e) => this.switchTab("add", e.target),
+                    },
+                    "Ajouter",
+                ),
+            ),
             tabFeed,
             tabAdd,
         );
@@ -121,25 +112,19 @@ export class CommunityPage {
     }
 
     switchTab(tabId, btnTarget) {
-        const tabFeed = this.container.querySelector("#tab-feed");
-        const tabAdd = this.container.querySelector("#tab-add");
-
-        if (tabId === "feed") {
-            tabFeed.classList.add("active");
-            tabAdd.classList.remove("active");
-        } else {
-            tabFeed.classList.remove("active");
-            tabAdd.classList.add("active");
-        }
-
-        const btns = this.container.querySelectorAll(".tab-btn");
-        btns.forEach((b) => b.classList.remove("active"));
+        this.container
+            .querySelector("#tab-feed")
+            .classList.toggle("active", tabId === "feed");
+        this.container
+            .querySelector("#tab-add")
+            .classList.toggle("active", tabId === "add");
+        this.container
+            .querySelectorAll(".tab-btn")
+            .forEach((b) => b.classList.remove("active"));
         btnTarget.classList.add("active");
     }
 
     renderUserCard(user, isRec = false) {
-        const isFriend = user.is_friend > 0;
-
         return el(
             "div",
             { className: "user-card" },
@@ -159,11 +144,21 @@ export class CommunityPage {
             el(
                 "button",
                 {
-                    className: "start-btn add-friend-btn",
+                    className: "start-btn",
                     onClick: async (e) => {
-                        await this.app.social.follow(user.id);
-                        e.target.textContent = "Suivi";
-                        e.target.disabled = true;
+                        try {
+                            await this.app.social.follow(user.id);
+                            FlashMessageManager.show(
+                                `${user.name} ajouté(e) !`,
+                                "success",
+                            );
+                            this.app.navigation.goTo("community");
+                        } catch (err) {
+                            FlashMessageManager.show(
+                                "Erreur lors de l'ajout.",
+                                "error",
+                            );
+                        }
                     },
                 },
                 "+",
@@ -172,7 +167,7 @@ export class CommunityPage {
     }
 
     renderFriendCard(friend) {
-        const streak = friend.streak || 0;
+        const hasWorkedToday = friend.hasWorkedToday;
         return el(
             "div",
             { className: "user-card" },
@@ -185,23 +180,48 @@ export class CommunityPage {
             ),
             el(
                 "div",
-                {
-                    className: "user-streak",
-                },
-                `🔥 ${streak}`,
+                { className: "user-actions" },
+                el(
+                    "div",
+                    { className: "user-streak" },
+                    `🔥 ${friend.streak || 0}`,
+                ),
+                el(
+                    "button",
+                    {
+                        className: `interact-btn ${hasWorkedToday ? "btn-congrats" : "btn-remind"}`,
+                        onClick: async (e) => {
+                            try {
+                                const res = await ApiClient.post(
+                                    `/social/${localStorage.getItem("activeChildId")}/interact/${friend.id}`,
+                                );
+                                FlashMessageManager.show(
+                                    res.type === "congrats"
+                                        ? "Félicitations envoyées ! 🎉"
+                                        : "Rappel envoyé ! 🔔",
+                                    "info",
+                                );
+                                e.target.disabled = true;
+                            } catch (err) {
+                                FlashMessageManager.show(
+                                    "Erreur envoi",
+                                    "error",
+                                );
+                            }
+                        },
+                    },
+                    hasWorkedToday ? "🎉" : "🔔",
+                ),
             ),
         );
     }
 
     async handleSearch(query) {
         const resultsContainer = document.getElementById("search-results");
-        if (!resultsContainer) return;
-
-        if (query.length < 2) {
-            resultsContainer.replaceChildren();
+        if (!resultsContainer || query.length < 2) {
+            if (resultsContainer) resultsContainer.replaceChildren();
             return;
         }
-
         const users = await this.app.social.search(query);
         if (Array.isArray(users)) {
             resultsContainer.replaceChildren(

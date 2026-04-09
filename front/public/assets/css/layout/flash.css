@@ -1,0 +1,83 @@
+#flash-container {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2147483647 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 90vw;
+    pointer-events: none;
+}
+
+.flash-message {
+    pointer-events: auto;
+    width: 100%;
+    max-width: 400px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    color: white;
+    font-family: "Coiny", cursive, sans-serif;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: flash-bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+        forwards;
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.flash-success {
+    background-color: #58cc02;
+}
+.flash-error {
+    background-color: #ff4b4b;
+}
+.flash-info {
+    background-color: #1cb0f6;
+}
+
+.flash-close {
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 15px;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.flash-close:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.flash-hiding {
+    opacity: 0 !important;
+    transform: scale(0.8) translateY(-20px) !important;
+    pointer-events: none;
+}
+
+@keyframes flash-bounce-in {
+    from {
+        transform: scale(0.5) translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}

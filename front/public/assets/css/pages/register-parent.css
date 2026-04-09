@@ -38,6 +38,10 @@
     max-width: 200px;
     margin: 0 auto;
 }
+.ca-pin-keypad div:nth-child(10) {
+    visibility: hidden;
+    pointer-events: none;
+}
 
 .pin-key {
     padding: 15px;

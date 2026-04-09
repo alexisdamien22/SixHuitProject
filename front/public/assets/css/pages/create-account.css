@@ -21,11 +21,12 @@
 
 .ca-content {
     flex: 1;
-    padding: 10px 25px;
+    padding: 5dvh 10dvw;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     overflow: hidden;
+    padding-top: 60px;
 }
 
 .ca-title {
@@ -66,7 +67,7 @@
 }
 
 .ca-form-block {
-    margin-bottom: 15px;
+    margin-bottom: 5dvh;
 }
 
 .ca-question {
@@ -288,4 +289,14 @@
 
 .flex-1 {
     flex: 1;
+}
+.ca-back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+
+    background: var(--color-bg-popup);
+    border: 2px solid var(--color-border-soft);
+    color: var(--color-text-main);
 }

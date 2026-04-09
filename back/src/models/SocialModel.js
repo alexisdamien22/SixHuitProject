@@ -3,11 +3,13 @@ import { BaseModel } from "./BaseModel.js";
 export class SocialModel extends BaseModel {
     static searchChildren(query, currentChildId) {
         return this.query(
-            `SELECT c.id, c.name, c.mascot, c.instrument,
-                    (SELECT COUNT(*) FROM following f WHERE f.following_child_id = ? AND f.followed_child_id = c.id) as is_friend
-             FROM childaccount c 
-             WHERE c.name LIKE ? AND c.id != ? LIMIT 10`,
-            [currentChildId, `%${query}%`, currentChildId],
+            `SELECT c.id, c.name, c.mascot, c.instrument
+         FROM childaccount c 
+         WHERE c.name LIKE ? 
+         AND c.id != ? 
+         AND c.is_public = 1 
+         LIMIT 10`,
+            [`%${query}%`, currentChildId],
         );
     }
 

@@ -2,6 +2,8 @@ import { NavigationController } from "./NavigationController.js";
 import { AuthController } from "./AuthController.js";
 import { ChildController } from "./ChildController.js";
 import { SocialController } from "./SocialController.js";
+import { ApiClient } from "../model/ApiClient.js";
+import { FlashMessageManager } from "../utils/FlashMessageManager.js";
 
 export class AppController {
     constructor(appModel, appView) {
@@ -39,12 +41,43 @@ export class AppController {
             return;
         }
 
-        if (this.model.session.isParent()) {
+        const childId =
+            this.model.session.getChildId() ||
+            localStorage.getItem("activeChildId");
+
+        if (this.model.session.isParent() && !childId) {
             this.navigation.goTo("parent-home");
             return;
         }
 
-        await this.child.loadChildData();
+        if (childId) {
+            await this.child.loadChildData();
+            await this.checkInteractions(childId);
+        }
+
         this.navigation.goTo("home");
+    }
+
+    async checkInteractions(childId) {
+        try {
+            const notifications = await ApiClient.get(
+                `/social/${childId}/notifications`,
+            );
+
+            if (Array.isArray(notifications) && notifications.length > 0) {
+                setTimeout(() => {
+                    notifications.forEach((notif) => {
+                        const isRemind = notif.type === "remind";
+                        const message = isRemind
+                            ? `🔔 ${notif.senderName} te rappelle de faire ta série !`
+                            : `🎉 ${notif.senderName} t'a félicité pour ton travail !`;
+
+                        FlashMessageManager.show(message, "info", isRemind);
+                    });
+                }, 500);
+            }
+        } catch (err) {
+            console.error("Error checking social interactions:", err);
+        }
     }
 }

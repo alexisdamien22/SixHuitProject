@@ -1,6 +1,7 @@
 import { el } from "../../utils/DOMBuilder.js";
 import { ICONS } from "../../constants/CreateAccountConstants.js";
 import { FormHelpers } from "../../utils/FormHelpers.js";
+import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
 
 export class LoginPage {
     constructor(app) {
@@ -161,9 +162,17 @@ export class LoginPage {
                                 try {
                                     await this.app.auth.forgotPassword(email);
                                     overlay.remove();
+                                    FlashMessageManager.show(
+                                        "Email de réinitialisation envoyé !",
+                                        "success",
+                                    );
                                 } catch (err) {
                                     e.target.textContent = "Envoyer";
                                     e.target.disabled = false;
+                                    FlashMessageManager.show(
+                                        "Erreur lors de l'envoi de l'email.",
+                                        "error",
+                                    );
                                 }
                             },
                         },

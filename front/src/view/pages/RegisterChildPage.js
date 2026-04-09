@@ -13,6 +13,20 @@ export class RegisterChildPage {
         this.app = app;
     }
 
+    handleBack(currentStep) {
+        if (currentStep > 1) {
+            this.app.model.setAuthStep(currentStep - 1);
+            this.app.auth.triggerRender();
+        } else {
+            const isLoggedIn = this.app.model.session.isLoggedIn();
+            if (isLoggedIn) {
+                this.app.navigation.goTo("parent-home");
+            } else {
+                this.app.navigation.goTo("login");
+            }
+        }
+    }
+
     refreshBtn() {
         const state = this.app.model.getAuthState();
         const isValid = FormHelpers.isChildStepValid(
@@ -74,11 +88,12 @@ export class RegisterChildPage {
         this.refreshBtn();
     }
 
-    render() {
+    async render() {
         const state = this.app.model.getAuthState();
         const controller = this.app.auth;
+        const currentStep = state.step || 1;
 
-        if (state.step === 8) {
+        if (currentStep === 8) {
             return el(
                 "div",
                 { className: "ca-screen ca-success flex-col" },
@@ -111,20 +126,29 @@ export class RegisterChildPage {
             );
         }
 
-        const illus = STEP_ILLUS[state.step] || { png: "", lbl: "" };
+        const illus = STEP_ILLUS[currentStep] || { png: "", lbl: "" };
 
         const isValid = FormHelpers.isChildStepValid(
-            state.step,
+            currentStep,
             state.childRegisterData,
         );
 
-        let btnLabel = state.step === TOTAL_STEPS ? "Terminer" : "Suivant";
+        let btnLabel = currentStep === TOTAL_STEPS ? "Terminer" : "Suivant";
         if (state.isLoading)
             btnLabel = el("span", { className: "ca-spinner" }, "Chargement...");
 
         return el(
             "div",
             { className: "ca-screen" },
+
+            el(
+                "button",
+                {
+                    className: "back-circle-btn ca-back-btn",
+                    onClick: () => this.handleBack(currentStep),
+                },
+                "‹",
+            ),
             el(
                 "div",
                 { className: "ca-content" },
@@ -132,7 +156,7 @@ export class RegisterChildPage {
                 el(
                     "p",
                     { className: "ca-step-label" },
-                    `Étape ${state.step}/${TOTAL_STEPS}`,
+                    `Étape ${currentStep}/${TOTAL_STEPS}`,
                 ),
 
                 el(

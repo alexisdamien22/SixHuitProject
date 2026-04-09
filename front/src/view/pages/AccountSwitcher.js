@@ -1,5 +1,5 @@
 import { el } from "../../utils/DOMBuilder.js";
-
+import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
 export const AccountSwitcher = {
     create(view, accounts = []) {
         let container = document.getElementById("account-switcher-container");
@@ -135,6 +135,10 @@ export const AccountSwitcher = {
                                 ".verify-pin-container",
                             );
                             container.classList.add("error-shake");
+                            FlashMessageManager.show(
+                                "Code pin incorect",
+                                "error",
+                            );
                             setTimeout(() => {
                                 container.classList.remove("error-shake");
                                 enteredPin = "";
