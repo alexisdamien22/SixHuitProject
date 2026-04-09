@@ -4,228 +4,80 @@ import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
 export class CommunityPage {
     constructor(app) {
         this.app = app;
-        this.recommendations = [];
         this.friends = [];
-        this.searchTimer = null;
-        this.container = null;
+        this.recommendations = [];
     }
 
     async render() {
         try {
-            const [recResponse, friendsResponse] = await Promise.all([
-                this.app.social.getRecommendations(),
-                this.app.social.getFriends(),
-            ]);
-            this.recommendations = Array.isArray(recResponse)
-                ? recResponse
-                : [];
-            this.friends = Array.isArray(friendsResponse)
-                ? friendsResponse
-                : [];
+            this.recommendations =
+                (await this.app.social.getRecommendations()) || [];
+            this.friends = (await this.app.social.getFriends()) || [];
         } catch (err) {
-            console.error("Error fetching social data:", err);
+            console.error(err);
         }
 
-        const recommendationsContent =
-            this.recommendations.length > 0
-                ? this.recommendations.map((rec) =>
-                      this.renderUserCard(rec, true),
-                  )
-                : el(
-                      "p",
-                      { className: "empty-text" },
-                      "Pas encore de suggestions",
-                  );
-
-        const friendsContent =
+        const friendItems =
             this.friends.length > 0
-                ? this.friends.map((f) => this.renderFriendCard(f))
-                : [
-                      el(
-                          "p",
-                          { className: "empty-text" },
-                          "Tu n'as pas encore d'amis.",
-                      ),
-                  ];
+                ? this.friends.map((f) => this.renderUserCard(f, false))
+                : [el("p", { className: "empty-text" }, "No friends yet")];
 
-        const tabFeed = el(
-            "div",
-            { className: "tab-content active", id: "tab-feed" },
-            el("h3", { className: "section-title" }, "Mes amis"),
-            el("div", { className: "social-list" }, ...friendsContent),
-        );
+        const recItems =
+            this.recommendations.length > 0
+                ? this.recommendations.map((r) => this.renderUserCard(r, true))
+                : [el("p", { className: "empty-text" }, "No suggestions")];
 
-        const tabAdd = el(
-            "div",
-            { className: "tab-content", id: "tab-add" },
-            el(
-                "div",
-                { className: "search-bar-container" },
-                el("input", {
-                    type: "text",
-                    placeholder: "Chercher un ami...",
-                    className: "ca-input",
-                    onInput: (e) => {
-                        clearTimeout(this.searchTimer);
-                        this.searchTimer = setTimeout(
-                            () => this.handleSearch(e.target.value),
-                            300,
-                        );
-                    },
-                }),
-            ),
-            el("div", { id: "search-results", className: "social-list" }),
-            el("h3", { className: "section-title" }, "Suggestions d'amis"),
-            el("div", { className: "social-list" }, recommendationsContent),
-        );
-
-        this.container = el(
-            "div",
-            { className: "community-page" },
-            el("h2", { className: "ca-title" }, "Communauté"),
-            el(
-                "div",
-                { className: "tabs-container" },
-                el(
-                    "button",
-                    {
-                        className: "tab-btn active",
-                        onClick: (e) => this.switchTab("feed", e.target),
-                    },
-                    "Mes Amis",
-                ),
-                el(
-                    "button",
-                    {
-                        className: "tab-btn",
-                        onClick: (e) => this.switchTab("add", e.target),
-                    },
-                    "Ajouter",
-                ),
-            ),
-            tabFeed,
-            tabAdd,
-        );
-
-        return this.container;
-    }
-
-    switchTab(tabId, btnTarget) {
-        this.container
-            .querySelector("#tab-feed")
-            .classList.toggle("active", tabId === "feed");
-        this.container
-            .querySelector("#tab-add")
-            .classList.toggle("active", tabId === "add");
-        this.container
-            .querySelectorAll(".tab-btn")
-            .forEach((b) => b.classList.remove("active"));
-        btnTarget.classList.add("active");
-    }
-
-    renderUserCard(user, isRec = false) {
         return el(
             "div",
-            { className: "user-card" },
-            el("div", { className: "user-avatar" }, user.mascot || "🎵"),
+            { className: "page community-page" },
+            el("h2", { className: "ca-title" }, "Community"),
             el(
                 "div",
-                { className: "user-info" },
-                el("div", { className: "user-name" }, user.name),
+                { className: "community-tabs" },
                 el(
-                    "div",
-                    { className: "user-detail" },
-                    isRec
-                        ? `${user.common_friends} amis en commun`
-                        : user.instrument,
+                    "button",
+                    { className: "community-tab-btn active" },
+                    "Friends",
                 ),
+                el("button", { className: "community-tab-btn" }, "Add"),
             ),
+            el("div", { className: "community-list" }, ...friendItems),
             el(
-                "button",
+                "h3",
                 {
-                    className: "start-btn add-friend-btn",
-                    onClick: async (e) => {
-                        try {
-                            await this.app.social.follow(user.id);
-                            FlashMessageManager.show(
-                                `${user.name} ajouté(e) !`,
-                                "success",
-                            );
-                            this.app.navigation.goTo("community");
-                        } catch (err) {
-                            FlashMessageManager.show(
-                                "Erreur lors de l'ajout.",
-                                "error",
-                            );
-                        }
-                    },
+                    className: "ca-title",
+                    style: "margin-top: 30px; font-size: 18px;",
                 },
-                "+",
+                "Suggestions",
             ),
+            el("div", { className: "community-list" }, ...recItems),
         );
     }
 
-    renderFriendCard(friend) {
-        const hasWorkedToday = friend.hasWorkedToday;
+    renderUserCard(user, isRec) {
         return el(
             "div",
-            { className: "user-card" },
-            el("div", { className: "user-avatar" }, friend.mascot || "🎵"),
+            { className: "community-user-card" },
             el(
                 "div",
                 { className: "user-info" },
-                el("div", { className: "user-name" }, friend.name),
-                el("div", { className: "user-detail" }, friend.instrument),
-            ),
-            el(
-                "div",
-                { className: "user-actions" },
+                el("span", { style: "font-weight: bold" }, user.name),
                 el(
                     "div",
-                    { className: "user-streak" },
-                    `🔥 ${friend.streak || 0}`,
-                ),
-                el(
-                    "button",
-                    {
-                        className: `interact-btn ${hasWorkedToday ? "btn-congrats" : "btn-remind"}`,
-                        onClick: async (e) => {
-                            try {
-                                const res = await this.app.social.interact(
-                                    friend.id,
-                                );
-                                FlashMessageManager.show(
-                                    res.type === "congrats"
-                                        ? "Félicitations envoyées ! 🎉"
-                                        : "Rappel envoyé ! 🔔",
-                                    "info",
-                                );
-                                e.target.disabled = true;
-                            } catch (err) {
-                                FlashMessageManager.show(
-                                    "Erreur envoi",
-                                    "error",
-                                );
-                            }
-                        },
-                    },
-                    hasWorkedToday ? "🎉" : "🔔",
+                    { style: "font-size: 12px; color: var(--color-text-sub)" },
+                    user.instrument,
                 ),
             ),
+            isRec
+                ? el(
+                      "button",
+                      {
+                          className: "start-btn",
+                          onClick: () => this.app.social.follow(user.id),
+                      },
+                      "+",
+                  )
+                : el("span", {}, `🔥 ${user.streak || 0}`),
         );
-    }
-
-    async handleSearch(query) {
-        const resultsContainer = document.getElementById("search-results");
-        if (!resultsContainer || query.length < 2) {
-            if (resultsContainer) resultsContainer.replaceChildren();
-            return;
-        }
-        const users = await this.app.social.search(query);
-        if (Array.isArray(users)) {
-            resultsContainer.replaceChildren(
-                ...users.map((u) => this.renderUserCard(u)),
-            );
-        }
     }
 }

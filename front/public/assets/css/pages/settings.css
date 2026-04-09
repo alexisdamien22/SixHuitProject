@@ -19,7 +19,7 @@
     display: none;
 }
 
-.slider {
+.toggle-slider {
     bottom: 0;
     cursor: pointer;
     left: 0;
@@ -32,11 +32,11 @@
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-body:not(.light-mode) .slider {
+body:not(.light-mode) .toggle-slider {
     border-color: rgba(255, 255, 255, 0.3);
 }
 
-.slider:before {
+.toggle-slider:before {
     background-color: #fff;
     bottom: 4px;
     content: "";
@@ -49,12 +49,12 @@ body:not(.light-mode) .slider {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-input:checked + .slider {
+input:checked + .toggle-slider {
     background-color: #58cc02;
     border-color: #46a302;
 }
 
-input:checked + .slider:before {
+input:checked + .toggle-slider:before {
     transform: translateX(26px);
 }
 
@@ -149,57 +149,4 @@ input:checked + .slider:before {
 
 .mt-24 {
     margin-top: 24px;
-}
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-}
-
-.modal-content {
-    background: var(--color-bg-popup);
-    padding: 24px;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 350px;
-    text-align: center;
-}
-
-.modal-input {
-    width: 100%;
-    padding: 12px;
-    margin: 16px 0;
-    border-radius: 8px;
-    border: 1px solid var(--color-border-soft);
-    background: var(--ca-input-bg);
-    color: var(--color-text-main);
-}
-
-.modal-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.modal-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.modal-btn.confirm {
-    background: var(--color-todo);
-    color: white;
-}
-
-.modal-btn.cancel {
-    background: #ccc;
-    color: #333;
 }

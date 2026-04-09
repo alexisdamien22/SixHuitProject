@@ -2,7 +2,8 @@
     background-color: var(--color-todo);
     color: white;
     border: none;
-    padding: 8px 30px 8px 15px;
+    padding: 8px 20px;
+    text-align: center;
     border-radius: 10px;
     font-weight: bold;
     cursor: pointer;

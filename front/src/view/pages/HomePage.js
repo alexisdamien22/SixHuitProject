@@ -4,7 +4,6 @@ import { SessionModal } from "../components/SessionModal.js";
 export class HomePage {
     constructor(app) {
         this.app = app;
-        this.hasHighlighted = false;
     }
 
     formatWeeklyPlan(rawPlan, lessonDay = "Lundi", history = []) {
@@ -17,7 +16,6 @@ export class HomePage {
             saturday: "Samedi",
             sunday: "Dimanche",
         };
-
         const frenchDays = [
             "Lundi",
             "Mardi",
@@ -35,7 +33,6 @@ export class HomePage {
             ...frenchDays.slice(startIndex),
             ...frenchDays.slice(0, startIndex),
         ];
-
         const fullPlan = {};
         orderedDays.forEach((day) => (fullPlan[day] = "nothing"));
 
@@ -48,7 +45,6 @@ export class HomePage {
             "Vendredi",
             "Samedi",
         ];
-
         const now = new Date();
         const currentDayName = jsDays[now.getDay()];
 
@@ -74,30 +70,23 @@ export class HomePage {
 
         const todayIndexInOrdered = orderedDays.indexOf(currentDayName);
 
-        if (!rawPlan || !Array.isArray(rawPlan)) return fullPlan;
+        if (rawPlan && Array.isArray(rawPlan)) {
+            rawPlan.forEach((entry) => {
+                const day = dayMap[entry.day_of_week];
+                if (day) {
+                    const dayIndex = orderedDays.indexOf(day);
+                    const isPast = dayIndex < todayIndexInOrdered;
 
-        rawPlan.forEach((entry) => {
-            const day = dayMap[entry.day_of_week];
-            if (day) {
-                const dayIndex = orderedDays.indexOf(day);
-                const isPast = dayIndex < todayIndexInOrdered;
-
-                if (doneDaysThisCycle.has(day) || entry.status === 1) {
-                    fullPlan[day] = "done";
-                } else if (entry.practice === 1) {
-                    if (day === currentDayName) {
-                        fullPlan[day] = "todo";
-                    } else if (isPast) {
-                        fullPlan[day] = "missed";
-                    } else {
-                        fullPlan[day] = "todo-future";
+                    if (doneDaysThisCycle.has(day) || entry.status === 1) {
+                        fullPlan[day] = "done";
+                    } else if (entry.practice === 1) {
+                        if (day === currentDayName) fullPlan[day] = "todo";
+                        else if (isPast) fullPlan[day] = "missed";
+                        else fullPlan[day] = "todo-future";
                     }
-                } else {
-                    fullPlan[day] = "nothing";
                 }
-            }
-        });
-
+            });
+        }
         return fullPlan;
     }
 
@@ -106,7 +95,7 @@ export class HomePage {
         const weeklyPlan = this.formatWeeklyPlan(
             childData.weeklyPlan || [],
             childData.lesson_day,
-            childData.history || childData.sessions || [],
+            childData.sessions || [],
         );
 
         const jsDays = [
@@ -122,7 +111,6 @@ export class HomePage {
 
         const steps = Object.entries(weeklyPlan).map(([day, status], i) => {
             const isToday = day === currentDayName;
-
             const extraElements = isToday
                 ? [
                       el("div", { className: "today-halo" }),
@@ -134,54 +122,38 @@ export class HomePage {
                   ]
                 : [];
 
-            const popup = this.createPopup(day, status, i, isToday);
-
-            const pathButtonContainer = el(
-                "div",
-                { className: "path-button-container" },
-                ...extraElements,
-                el("div", { className: "path-dot-shadow" }),
-                el("div", { className: "path-dot" }),
-                popup,
-            );
-
             return el(
                 "div",
-                {
-                    className: `path-step ${status} ${!isToday && (status === "todo" || status === "todo-future") ? "is-locked" : ""}`,
-                    dataset: { day: day },
-                },
-                pathButtonContainer,
+                { className: `path-step ${status}` },
+                el(
+                    "div",
+                    { className: "path-button-container" },
+                    ...extraElements,
+                    el("div", { className: "path-dot-shadow" }),
+                    el("div", { className: "path-dot" }),
+                    this.createPopup(day, status, i, isToday),
+                ),
                 el("span", { className: "path-label" }, day),
             );
         });
 
         const container = el(
             "div",
-            { className: "home-page" },
+            { className: "page home-page" },
             el("div", { className: "path-container" }, steps),
         );
 
         requestAnimationFrame(() => this.scrollToMascot());
-
         return container;
     }
 
     createPopup(day, status, index, isToday) {
-        const title = `Leçon ${index + 1}`;
         let desc = "";
         let button = null;
 
-        if (status === "done") {
-            desc = "Bravo ! Tu as validé cette séance.";
-        } else if (status === "missed") {
-            desc = "Séance manquée !";
-            button = el(
-                "button",
-                { className: "start-btn disabled", disabled: true },
-                "MANQUÉ",
-            );
-        } else if (isToday && status === "todo") {
+        if (status === "done") desc = "Bravo ! Séance validée.";
+        else if (status === "missed") desc = "Séance manquée !";
+        else if (isToday && status === "todo") {
             desc = "Valider la leçon ?";
             button = el(
                 "button",
@@ -194,54 +166,31 @@ export class HomePage {
                 },
                 "VALIDER",
             );
-        } else if (status === "nothing") {
-            desc = "C'est un jour de repos !";
-        } else {
-            desc = "Patience... cette leçon n'est pas encore disponible.";
-            button = el(
-                "button",
-                { className: "start-btn disabled", disabled: true },
-                "🔒 BLOQUÉ",
-            );
-        }
+        } else if (status === "nothing") desc = "Repos aujourd'hui !";
+        else desc = "Patience... bientôt disponible.";
 
         return el(
             "div",
             { className: "duo-popup" },
             el("div", { className: "popup-arrow" }),
-            el("h3", {}, title),
+            el("h3", {}, `Leçon ${index + 1}`),
             el("p", {}, desc),
             button,
         );
     }
 
     async handleStart(day) {
-        const sessionModal = new SessionModal(
-            this.app,
-            day,
-            async (finalSessionData) => {
-                try {
-                    await this.app.child.updateSession(finalSessionData);
-                    const modalElement =
-                        document.querySelector(".modal-overlay");
-                    if (modalElement) modalElement.remove();
-                    await this.app.child.loadChildData();
-                    this.app.navigation.goTo("home");
-                } catch (error) {
-                    console.error("Erreur lors de l'enregistrement :", error);
-                }
-            },
-        );
-        document.body.appendChild(sessionModal.render());
+        const modal = new SessionModal(this.app, day, async (data) => {
+            await this.app.child.updateSession(data);
+            document.querySelector(".modal-overlay")?.remove();
+            this.app.navigation.goTo("home");
+        });
+        document.body.appendChild(modal.render());
     }
 
     scrollToMascot() {
-        const mascot = document.querySelector(".mascot-path");
-        if (mascot) {
-            mascot.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-            });
-        }
+        document
+            .querySelector(".mascot-path")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 }

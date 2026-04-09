@@ -83,53 +83,6 @@ export const AppViewNavigation = {
             ),
         );
         document.body.appendChild(bottomMenu);
-
         bottomMenu.offsetHeight;
-    },
-
-    createTopMenu(view, childAccounts = []) {
-        let menuContainer = document.getElementById("top-menu-container");
-        let sheet;
-
-        if (!menuContainer) {
-            menuContainer = el(
-                "div",
-                { id: "top-menu-container", className: "top-menu-container" },
-                el("div", {
-                    className: "top-menu-overlay",
-                    onClick: () => view.toggleTopMenu(false),
-                }),
-            );
-            sheet = el("div", { className: "top-menu-sheet" });
-            menuContainer.appendChild(sheet);
-            document.body.insertBefore(menuContainer, document.body.firstChild);
-
-            menuContainer.offsetHeight;
-        } else {
-            sheet = menuContainer.querySelector(".top-menu-sheet");
-            sheet.textContent = "";
-        }
-
-        const items = childAccounts.map((account) => {
-            return el(
-                "div",
-                {
-                    className: "swap-account-item",
-                    dataset: { id: String(account.id) },
-                    onClick: () => {
-                        view.toggleTopMenu(false);
-                    },
-                },
-                el(
-                    "div",
-                    { className: "swap-info" },
-                    el("div", { className: "swap-avatar" }),
-                    el("span", { className: "swap-pseudo" }, account.name),
-                ),
-                el("div", { className: "swap-icon-btn" }, "⇄"),
-            );
-        });
-
-        items.forEach((item) => sheet.appendChild(item));
     },
 };

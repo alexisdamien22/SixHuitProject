@@ -19,7 +19,6 @@ export class ProfilPage {
 
     renderChildProfile() {
         const child = this.app.model.getChildData() || {};
-        const mascot = child.mascot || "👤";
         const name = child.name || "Profil";
         const rawInstrument = child.instrument || "";
         const instrument = rawInstrument
@@ -44,7 +43,6 @@ export class ProfilPage {
                                 "fr-FR",
                             )
                           : "Date inconnue";
-                      const dayName = session.practice_day || "Séance";
 
                       return el(
                           "div",
@@ -101,17 +99,21 @@ export class ProfilPage {
                 { className: "stats-row" },
                 el(
                     "div",
-                    { className: "card" },
+                    { className: "profile-stats-card" },
                     el("h3", {}, "Série actuelle"),
                     el(
                         "div",
                         { className: "streak streak-centered" },
-                        el("span", { className: "streak-text" }, `🔥 ${streak}`),
+                        el(
+                            "span",
+                            { className: "streak-text" },
+                            `🔥 ${streak}`,
+                        ),
                     ),
                 ),
                 el(
                     "div",
-                    { className: "card" },
+                    { className: "profile-stats-card" },
                     el("h3", {}, "Instrument"),
                     el("p", { className: "instrument-text" }, instrument),
                 ),
@@ -152,7 +154,7 @@ export class ProfilPage {
                 { className: "stats-row" },
                 el(
                     "div",
-                    { className: "card full-width" },
+                    { className: "profile-stats-card full-width" },
                     el("h3", {}, "Type de compte"),
                     el("p", { className: "instrument-text" }, "Administrateur"),
                     email ? el("p", { className: "parent-email" }, email) : "",

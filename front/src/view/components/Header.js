@@ -64,9 +64,7 @@ export class Header {
                 { className: "header-left-group" },
                 el(
                     "button",
-                    {
-                        className: "profile-icon header-profile-btn",
-                    },
+                    { className: "profile-icon header-profile-btn" },
                     el("img", {
                         src: "/assets/img/icons/family.png",
                         alt: "Profile",

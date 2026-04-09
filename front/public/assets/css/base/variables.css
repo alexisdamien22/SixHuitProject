@@ -41,6 +41,8 @@
     --color-pin-dot-filled: #ffffff;
     --color-keypad-bg: rgba(255, 255, 255, 0.1);
     --color-keypad-text: #ffffff;
+    --sw-slider-bg: rgba(255, 255, 255, 0.05);
+    --sw-slider-checked: #58cc02;
 }
 
 body.light-mode {

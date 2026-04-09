@@ -199,7 +199,7 @@ export class SettingsPage {
                     checked: isChecked,
                     onChange: onChange,
                 }),
-                el("div", { className: "slider" }),
+                el("div", { className: "toggle-slider" }),
             ),
         );
     }

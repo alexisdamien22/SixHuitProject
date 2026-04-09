@@ -12,7 +12,7 @@
     overflow-y: auto;
 }
 
-.user-card {
+.community-user-card {
     display: flex;
     align-items: center;
     gap: 15px;
@@ -25,7 +25,7 @@
     justify-content: space-between;
 }
 
-.tabs-container {
+.community-tabs {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
@@ -34,7 +34,7 @@
     justify-content: center;
 }
 
-.tab-btn {
+.community-tab-btn {
     flex: 1;
     padding: 10px 15px;
     border-radius: 20px;
@@ -46,77 +46,16 @@
     transition: all 0.2s ease;
 }
 
-.tab-btn.active {
+.community-tab-btn.active {
     background-color: var(--ca-purple);
     color: #fff;
     border-color: var(--ca-purple);
 }
 
-.tab-content {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-}
-
-.tab-content.active {
-    display: flex;
-}
-
-.social-list {
+.community-list {
     display: flex;
     flex-direction: column;
     width: 100%;
     align-items: center;
     gap: 10px;
-}
-
-.user-streak {
-    font-weight: bold;
-    color: #ff9800;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-}
-.user-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-}
-
-.interact-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition:
-        transform 0.2s,
-        box-shadow 0.2s;
-}
-
-.btn-remind {
-    background-color: #ff9800; /* Orange pour le rappel */
-    box-shadow: 0 4px 0 #e68900;
-}
-
-.btn-congrats {
-    background-color: #58cc02; /* Vert pour féliciter */
-    box-shadow: 0 4px 0 #46a302;
-}
-
-.interact-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 inherit;
-}
-
-.empty-text {
-    color: var(--color-text-sub);
-    font-style: italic;
-    padding: 15px;
 }
