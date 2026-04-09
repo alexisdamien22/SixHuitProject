@@ -302,7 +302,6 @@
     color: var(--color-text-main);
 }
 
-/* --- MENU DÉROULANT PERSONNALISÉ --- */
 .ca-dropdown-wrapper {
     position: relative;
     width: 100%;
