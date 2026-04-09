@@ -1,7 +1,6 @@
 {
-  "dependencies": {
-    "node-cron": "^4.2.1",
-    "nodemailer": "^8.0.5",
-    "web-push": "^3.6.7"
-  }
+    "dependencies": {
+        "nodemailer": "^8.0.5",
+        "pitchy": "^4.1.0"
+    }
 }

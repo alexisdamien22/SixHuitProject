@@ -12,6 +12,7 @@
     max-height: 80dvh;
     overflow-y: auto;
     z-index: 1;
+    position: relative;
 }
 
 .path-step {
@@ -20,6 +21,31 @@
     align-items: center;
     position: relative;
     z-index: 1;
+    left: auto;
+}
+
+.global-staff-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.global-staff-wrapper svg {
+    overflow: visible;
+}
+
+.staff-line-path {
+    fill: none;
+    stroke: var(--color-staff-line);
+    stroke-width: 2px;
+    stroke-linecap: round;
+}
+
+.hidden-measure {
+    display: none !important;
 }
 
 .path-step:nth-child(5n + 1) {

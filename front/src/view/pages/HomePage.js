@@ -5,6 +5,13 @@ export class HomePage {
     constructor(app) {
         this.app = app;
         this.hasHighlighted = false;
+        this.CONFIG = {
+            frequency: 0.01,
+            phaseOffset: -1.4,
+            amplitude: 45,
+            nbLines: 5,
+            lineSpacing: 12,
+        };
     }
 
     formatWeeklyPlan(rawPlan, lessonDay = "Lundi", history = []) {
@@ -27,7 +34,6 @@ export class HomePage {
             "Samedi",
             "Dimanche",
         ];
-
         let startIndex = frenchDays.indexOf(lessonDay);
         if (startIndex === -1) startIndex = 0;
 
@@ -48,7 +54,6 @@ export class HomePage {
             "Vendredi",
             "Samedi",
         ];
-
         const now = new Date();
         const currentDayName = jsDays[now.getDay()];
 
@@ -73,7 +78,6 @@ export class HomePage {
         });
 
         const todayIndexInOrdered = orderedDays.indexOf(currentDayName);
-
         if (!rawPlan || !Array.isArray(rawPlan)) return fullPlan;
 
         rawPlan.forEach((entry) => {
@@ -122,7 +126,6 @@ export class HomePage {
 
         const steps = Object.entries(weeklyPlan).map(([day, status], i) => {
             const isToday = day === currentDayName;
-
             const extraElements = isToday
                 ? [
                       el("div", { className: "today-halo" }),
@@ -134,24 +137,20 @@ export class HomePage {
                   ]
                 : [];
 
-            const popup = this.createPopup(day, status, i, isToday);
-
-            const pathButtonContainer = el(
-                "div",
-                { className: "path-button-container" },
-                ...extraElements,
-                el("div", { className: "path-dot-shadow" }),
-                el("div", { className: "path-dot" }),
-                popup,
-            );
-
             return el(
                 "div",
                 {
                     className: `path-step ${status} ${!isToday && (status === "todo" || status === "todo-future") ? "is-locked" : ""}`,
                     dataset: { day: day },
                 },
-                pathButtonContainer,
+                el(
+                    "div",
+                    { className: "path-button-container" },
+                    ...extraElements,
+                    el("div", { className: "path-dot-shadow" }),
+                    el("div", { className: "path-dot" }),
+                    this.createPopup(day, status, i, isToday),
+                ),
                 el("span", { className: "path-label" }, day),
             );
         });
@@ -162,9 +161,79 @@ export class HomePage {
             el("div", { className: "path-container" }, steps),
         );
 
-        requestAnimationFrame(() => this.scrollToMascot());
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                this.drawPathLine(container);
+                this.scrollToMascot();
+            }, 50);
+        });
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                this.drawPathLine(container);
+                this.scrollToMascot();
+            }, 50);
+        });
 
         return container;
+    }
+
+    drawPathLine(container) {
+        const pathContainer = container.querySelector(".path-container");
+        if (!pathContainer) return;
+
+        let oldWrapper = pathContainer.querySelector(".global-staff-wrapper");
+        if (oldWrapper) {
+            oldWrapper.classList.add("hidden-measure");
+        }
+
+        const totalHeight = pathContainer.scrollHeight;
+
+        if (oldWrapper) {
+            oldWrapper.remove();
+        }
+
+        const svgWrapper = el("div", { className: "global-staff-wrapper" });
+        pathContainer.appendChild(svgWrapper);
+
+        const centerX = pathContainer.offsetWidth / 2;
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("width", "100%");
+        svg.setAttribute("height", totalHeight);
+
+        for (let i = 0; i < this.CONFIG.nbLines; i++) {
+            const xOffset = (i - 2) * this.CONFIG.lineSpacing;
+            const path = document.createElementNS(svgNS, "path");
+
+            let d = `M ${centerX + xOffset + Math.sin(0 * this.CONFIG.frequency + this.CONFIG.phaseOffset) * this.CONFIG.amplitude},0`;
+
+            for (let y = 10; y <= totalHeight; y += 15) {
+                const x =
+                    centerX +
+                    xOffset +
+                    Math.sin(
+                        y * this.CONFIG.frequency + this.CONFIG.phaseOffset,
+                    ) *
+                        this.CONFIG.amplitude;
+                d += ` L ${x},${y}`;
+            }
+
+            path.setAttribute("d", d);
+            path.setAttribute("class", "staff-line-path");
+            svg.appendChild(path);
+        }
+        svgWrapper.appendChild(svg);
+
+        const steps = container.querySelectorAll(".path-step");
+        steps.forEach((step) => {
+            const y = step.offsetTop + step.offsetHeight / 2;
+            const offset =
+                Math.sin(y * this.CONFIG.frequency + this.CONFIG.phaseOffset) *
+                this.CONFIG.amplitude;
+
+            step.style.transform = `translateX(${offset}px)`;
+        });
     }
 
     createPopup(day, status, index, isToday) {
@@ -222,9 +291,7 @@ export class HomePage {
             async (finalSessionData) => {
                 try {
                     await this.app.child.updateSession(finalSessionData);
-                    const modalElement =
-                        document.querySelector(".modal-overlay");
-                    if (modalElement) modalElement.remove();
+                    document.querySelector(".modal-overlay")?.remove();
                     await this.app.child.loadChildData();
                     this.app.navigation.goTo("home");
                 } catch (error) {
@@ -236,12 +303,8 @@ export class HomePage {
     }
 
     scrollToMascot() {
-        const mascot = document.querySelector(".mascot-path");
-        if (mascot) {
-            mascot.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-            });
-        }
+        document
+            .querySelector(".mascot-path")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 }
