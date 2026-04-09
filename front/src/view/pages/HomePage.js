@@ -181,20 +181,19 @@ export class HomePage {
         const pathContainer = container.querySelector(".path-container");
         if (!pathContainer) return;
 
-        let svgWrapper = pathContainer.querySelector(".global-staff-wrapper");
-        if (svgWrapper) {
-            svgWrapper.classList.add("hidden-measure");
+        let oldWrapper = pathContainer.querySelector(".global-staff-wrapper");
+        if (oldWrapper) {
+            oldWrapper.classList.add("hidden-measure");
         }
 
         const totalHeight = pathContainer.scrollHeight;
 
-        if (!svgWrapper) {
-            svgWrapper = document.createElement("div");
-            svgWrapper.className = "global-staff-wrapper";
-            pathContainer.appendChild(svgWrapper);
+        if (oldWrapper) {
+            oldWrapper.remove();
         }
-        svgWrapper.classList.remove("hidden-measure");
-        svgWrapper.innerHTML = "";
+
+        const svgWrapper = el("div", { className: "global-staff-wrapper" });
+        pathContainer.appendChild(svgWrapper);
 
         const centerX = pathContainer.offsetWidth / 2;
 
