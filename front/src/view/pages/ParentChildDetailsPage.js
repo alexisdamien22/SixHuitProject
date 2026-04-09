@@ -137,7 +137,14 @@ export class ParentChildDetailsPage {
             el(
                 "div",
                 { className: "header-mascot" },
-                this.childData.mascot || "🦊",
+                el("img", {
+                    src: this.childData.mascot,
+                    alt: "Mascotte",
+                    className: "header-mascot-img",
+                    onError: (e) => {
+                        e.target.style.display = 'none';
+                    }
+                })
             ),
         );
     }
