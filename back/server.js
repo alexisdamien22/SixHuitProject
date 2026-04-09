@@ -4,9 +4,12 @@ import cors from "cors";
 import authRoutes from "./src/routes/authRoutes.js";
 import childRoutes from "./src/routes/childRoutes.js";
 import socialRoutes from "./src/routes/socialRoutes.js";
+import { NotificationService } from "./src/services/NotificationService.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+NotificationService.init();
 
 app.use(
     cors({

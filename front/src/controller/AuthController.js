@@ -138,7 +138,6 @@ export class AuthController {
         }
     }
 
-
     async submitParentRegistration() {
         const state = this.app.model.getAuthState();
         if (state.isLoading) return;
@@ -163,6 +162,9 @@ export class AuthController {
             });
 
             this.app.model.setLoading(false);
+
+            this.app.model.resetAuthData();
+
             this.app.navigation.goTo("parent-home");
         } catch (err) {
             this.app.model.setLoading(false);

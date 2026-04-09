@@ -1,0 +1,63 @@
+.tuner-container {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.tuner-gauge {
+    position: relative;
+    width: 240px;
+    height: 120px;
+    margin: 0 auto;
+    border-bottom: 4px solid #ccc;
+    border-radius: 0 0 240px 240px;
+}
+
+.tuner-needle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    height: 110px;
+    background: red;
+    transform-origin: bottom center;
+    transform: translateX(-50%) rotate(0deg);
+    transition: transform 0.08s linear;
+}
+
+.tuner-center {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background: #4caf50;
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+
+.tuner-note {
+    font-size: 64px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.tuner-info p {
+    margin: 5px 0;
+    font-size: 20px;
+}
+
+.tuner-center.good {
+    box-shadow: 0 0 20px 8px rgba(76, 175, 80, 0.7);
+}
+
+.tuner-green-zone {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 80px;
+    height: 120px;
+    transform: translateX(-50%);
+    background: rgba(76, 175, 80, 0.25);
+    border-radius: 0 0 80px 80px;
+    pointer-events: none;
+}

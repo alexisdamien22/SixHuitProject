@@ -172,6 +172,13 @@ body.parent-mode .streak-container {
 .header-info {
     flex: 1;
     text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 30px;
+}
+.header-info .ca-title {
+    margin-bottom: 0;
 }
 .header-info .subtitle {
     color: var(--color-text-sub);
@@ -486,8 +493,8 @@ svg {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 20px 10dvh 20px;
+    padding: 20px 20px 12dvh 20px;
     margin-top: 10dvh;
-    overflow-y: scroll;
-    height: 100%;
+    overflow-y: auto;
+    max-height: 90dvh;
 }

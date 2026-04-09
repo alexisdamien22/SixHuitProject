@@ -5,6 +5,7 @@ import { SocialController } from "./SocialController.js";
 import { ApiClient } from "../model/ApiClient.js";
 import { FlashMessageManager } from "../utils/FlashMessageManager.js";
 import { MetronomeController } from "./MetronomeController.js";
+import { NotificationController } from "./NotificationController.js";
 
 export class AppController {
     constructor(appModel, appView) {
@@ -53,6 +54,10 @@ export class AppController {
         if (childId) {
             await this.child.loadChildData();
             await this.checkInteractions(childId);
+
+            setTimeout(() => {
+                NotificationController.subscribeUser(childId);
+            }, 2000);
         }
 
         this.navigation.goTo("home");

@@ -133,6 +133,7 @@ CREATE TABLE `sessions` (
   `session_date` date NOT NULL,
   `happiness` tinyint NOT NULL CHECK (happiness BETWEEN 0 AND 3),
   `quality` tinyint NOT NULL CHECK (quality BETWEEN 0 AND 2),
+  `practice_day` varchar(20) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `child_id` (`child_id`)
@@ -170,6 +171,21 @@ CREATE TABLE `weekly_plan` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `push_subscriptions`
+--
+
+CREATE TABLE `push_subscriptions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `child_id` int NOT NULL,
+  `subscription_json` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `child_id` (`child_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Constraints for Foreign Keys
 --
 
@@ -199,6 +215,9 @@ ALTER TABLE `streaks`
 
 ALTER TABLE `weekly_plan`
   ADD CONSTRAINT `weekly_plan_ibfk_1` FOREIGN KEY (`child_id`) REFERENCES `childaccount` (`id`);
+
+ALTER TABLE `push_subscriptions`
+  ADD CONSTRAINT `push_subscriptions_ibfk_1` FOREIGN KEY (`child_id`) REFERENCES `childaccount` (`id`) ON DELETE CASCADE;
 
 COMMIT;
 
