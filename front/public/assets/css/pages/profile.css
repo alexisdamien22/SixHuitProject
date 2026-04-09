@@ -73,7 +73,7 @@
     max-height: 60dvh;
 
     border-radius: 10px;
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     text-align: center;
 
     overflow-y: auto;
@@ -84,9 +84,16 @@
     flex-shrink: 0;
 }
 
-.history-section h3 {
+.history-section-title {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-bg-popup);
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 10px;
     color: var(--color-text-popup-title);
-    margin: 15px 0;
+    margin: 0 0 15px 0;
     font-size: 16px;
 }
 

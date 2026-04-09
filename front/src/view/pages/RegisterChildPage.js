@@ -298,39 +298,132 @@ export class RegisterChildPage {
                         },
                         "Quel jour as-tu cours ? (Optionnel)",
                     ),
-                    el(
-                        "select",
-                        {
-                            className: "ca-input",
-                            onchange: (e) =>
-                                controller.handleInput(
-                                    "register-child",
-                                    "lesson_day",
-                                    e.target.value,
-                                ),
-                        },
-                        el("option", { value: "" }, "Je n'ai pas de cours"),
-                        ...[
-                            "Lundi",
-                            "Mardi",
-                            "Mercredi",
-                            "Jeudi",
-                            "Vendredi",
-                            "Samedi",
-                            "Dimanche",
-                        ].map((d) =>
+                    (() => {
+                        const options = [
+                            { value: "", label: "Je n'ai pas de cours" },
+                            { value: "Lundi", label: "Lundi" },
+                            { value: "Mardi", label: "Mardi" },
+                            { value: "Mercredi", label: "Mercredi" },
+                            { value: "Jeudi", label: "Jeudi" },
+                            { value: "Vendredi", label: "Vendredi" },
+                            { value: "Samedi", label: "Samedi" },
+                            { value: "Dimanche", label: "Dimanche" },
+                        ];
+
+                        const currentValue =
+                            state.childRegisterData.lesson_day || "";
+                        const currentLabel =
+                            options.find((o) => o.value === currentValue)
+                                ?.label || "Je n'ai pas de cours";
+
+                        const triggerLabel = el(
+                            "span",
+                            { className: "ca-dropdown-label" },
+                            currentLabel,
+                        );
+                        const triggerArrow = el(
+                            "span",
+                            { className: "ca-dropdown-arrow" },
+                            "▼",
+                        );
+
+                        let activeCloseHandler = null;
+                        let dropdownList;
+
+                        const closeDropdown = () => {
+                            if (dropdownList)
+                                dropdownList.classList.remove("show");
+                            triggerArrow.classList.remove("open");
+                            if (activeCloseHandler) {
+                                document.removeEventListener(
+                                    "click",
+                                    activeCloseHandler,
+                                );
+                                activeCloseHandler = null;
+                            }
+                        };
+
+                        const items = options.map((opt) =>
                             el(
-                                "option",
+                                "div",
                                 {
-                                    value: d,
-                                    selected:
-                                        state.childRegisterData.lesson_day ===
-                                        d,
+                                    className: `ca-dropdown-item ${opt.value === currentValue ? "sel" : ""}`,
+                                    onClick: (e) => {
+                                        e.stopPropagation();
+                                        controller.handleInput(
+                                            "register-child",
+                                            "lesson_day",
+                                            opt.value,
+                                        );
+                                        triggerLabel.textContent = opt.label;
+
+                                        Array.from(
+                                            dropdownList.children,
+                                        ).forEach((child) =>
+                                            child.classList.remove("sel"),
+                                        );
+                                        e.currentTarget.classList.add("sel");
+
+                                        closeDropdown();
+                                    },
                                 },
-                                d,
+                                opt.label,
                             ),
-                        ),
-                    ),
+                        );
+
+                        dropdownList = el(
+                            "div",
+                            { className: "ca-dropdown-list" },
+                            ...items,
+                        );
+
+                        const trigger = el(
+                            "div",
+                            {
+                                className: "ca-input ca-dropdown-trigger",
+                                onClick: (e) => {
+                                    e.stopPropagation();
+                                    if (
+                                        document.activeElement &&
+                                        document.activeElement.blur
+                                    ) {
+                                        document.activeElement.blur();
+                                    }
+                                    const isOpening =
+                                        !dropdownList.classList.contains(
+                                            "show",
+                                        );
+
+                                    if (isOpening) {
+                                        dropdownList.classList.add("show");
+                                        triggerArrow.classList.add("open");
+
+                                        activeCloseHandler = () =>
+                                            closeDropdown();
+                                        setTimeout(
+                                            () =>
+                                                document.addEventListener(
+                                                    "click",
+                                                    activeCloseHandler,
+                                                ),
+                                            0,
+                                        );
+                                    } else {
+                                        closeDropdown();
+                                    }
+                                },
+                            },
+                            triggerLabel,
+                            triggerArrow,
+                        );
+
+                        return el(
+                            "div",
+                            { className: "ca-dropdown-wrapper" },
+                            trigger,
+                            dropdownList,
+                        );
+                    })(),
                 ];
             case 6:
                 return [

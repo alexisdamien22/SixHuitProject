@@ -106,7 +106,11 @@ export class ProfilPage {
                     el(
                         "div",
                         { className: "streak streak-centered" },
-                        el("span", { className: "streak-text" }, `🔥 ${streak}`),
+                        el(
+                            "span",
+                            { className: "streak-text" },
+                            `🔥 ${streak}`,
+                        ),
                     ),
                 ),
                 el(
@@ -120,7 +124,11 @@ export class ProfilPage {
             el(
                 "div",
                 { className: "history-section" },
-                el("h3", {}, "Historique des séances"),
+                el(
+                    "h3",
+                    { className: "history-section-title" },
+                    "Historique des séances",
+                ),
                 ...historyItems,
             ),
         );
