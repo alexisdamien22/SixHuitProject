@@ -13,8 +13,9 @@ export const AccountSwitcher = {
                     dataset: { id: String(acc.id) },
                     onClick: async (e) => {
                         e.preventDefault();
-                        localStorage.setItem("activeChildId", acc.id);
+                        view.app.model.session.setActiveChild(acc.id);
                         view.toggleAccountSwitcher(false);
+
                         if (
                             view.app.child &&
                             typeof view.app.child.loadChildData === "function"

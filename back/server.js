@@ -40,10 +40,13 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-    console.error("[Server] Fatal error:", err);
-    res.status(500).json({ error: "Server or database unreachable" });
+    const status = err.status || 500;
+    const message = err.message || "Erreur interne du serveur";
+    if (status === 500) console.error("[Server] Fatal error:", err);
+
+    res.status(status).json({ error: message });
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 API active on port ${PORT}`);
+    console.log(`API active on port ${PORT}`);
 });

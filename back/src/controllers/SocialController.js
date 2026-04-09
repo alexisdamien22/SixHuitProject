@@ -3,69 +3,41 @@ import { SocialService } from "../services/SocialService.js";
 
 export class SocialController {
     static async search(req, res) {
-        try {
-            const childId = req.params.childId;
-            const { q } = req.query;
-            const results = await SocialModel.searchChildren(q, childId);
-            res.status(200).json(results);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
+        const childId = req.params.childId;
+        const { q } = req.query;
+        const results = await SocialModel.searchChildren(q, childId);
+        res.status(200).json(results);
     }
 
     static async follow(req, res) {
-        try {
-            const followerId = req.params.childId;
-            const { followedId } = req.body;
-            await SocialModel.addFriend(followerId, followedId);
-            res.status(201).json({ success: true });
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
+        const followerId = req.params.childId;
+        const { followedId } = req.body;
+        await SocialModel.addFriend(followerId, followedId);
+        res.status(201).json({ success: true });
     }
 
     static async getRecommendations(req, res) {
-        try {
-            const childId = req.params.childId;
-            const recommendations =
-                await SocialModel.getRecommendations(childId);
-            res.status(200).json(recommendations);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
+        const childId = req.params.childId;
+        const recommendations = await SocialModel.getRecommendations(childId);
+        res.status(200).json(recommendations);
     }
 
     static async getFriends(req, res) {
-        try {
-            const childId = req.params.childId;
-            const friends = await SocialModel.getFriends(childId);
-            res.status(200).json(friends);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
+        const childId = req.params.childId;
+        const friends = await SocialModel.getFriends(childId);
+        res.status(200).json(friends);
     }
 
     static async interact(req, res) {
-        try {
-            const { childId, targetId } = req.params;
-            const result = await SocialService.sendInteraction(
-                childId,
-                targetId,
-            );
-            res.status(200).json(result);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
+        const { childId, targetId } = req.params;
+        const result = await SocialService.sendInteraction(childId, targetId);
+        res.status(200).json(result);
     }
 
     static async getNotifications(req, res) {
-        try {
-            const { childId } = req.params;
-            const notifications =
-                await SocialService.getPendingNotifications(childId);
-            res.status(200).json(notifications);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
+        const { childId } = req.params;
+        const notifications =
+            await SocialService.getPendingNotifications(childId);
+        res.status(200).json(notifications);
     }
 }

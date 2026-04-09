@@ -67,7 +67,7 @@ export class ParentHomePage {
             {
                 className: "parent-child-card clickable-card",
                 onClick: () => {
-                    localStorage.setItem("viewingChildId", child.id);
+                    this.app.model.session.setViewingChildId(child.id);
                     this.app.navigation.goTo("parentChildDetails");
                 },
             },
@@ -96,7 +96,7 @@ export class ParentHomePage {
                     className: "card-settings-btn",
                     onClick: (e) => {
                         e.stopPropagation();
-                        localStorage.setItem("editingChildId", child.id);
+                        this.app.model.session.setViewingChildId(child.id);
                         this.app.navigation.goTo("parentChildSettings");
                     },
                 },

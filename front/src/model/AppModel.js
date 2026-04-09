@@ -6,7 +6,33 @@ export class AppModel {
         this.session = new SessionStore();
         this.childData = null;
         this.childrenAccounts = [];
+
+        this.metronomeState = { bpm: 120, isPlaying: false };
+
         this.resetAuthData();
+    }
+
+    getMetronomeState() {
+        return this.metronomeState;
+    }
+    getMetronomeBpm() {
+        return this.metronomeState.bpm;
+    }
+
+    setMetronomeBpm(bpm) {
+        const val = parseInt(bpm);
+        if (!isNaN(val) && val >= 40 && val <= 220) {
+            this.metronomeState.bpm = val;
+        }
+    }
+
+    toggleMetronome() {
+        this.metronomeState.isPlaying = !this.metronomeState.isPlaying;
+        return this.metronomeState.isPlaying;
+    }
+
+    stopMetronome() {
+        this.metronomeState.isPlaying = false;
     }
 
     resetAuthData() {
@@ -15,11 +41,7 @@ export class AppModel {
             isLoginMode: true,
             isLoading: false,
             loginData: { email: "", password: "" },
-            registerData: {
-                email: "",
-                password: "",
-                pin: "",
-            },
+            registerData: { email: "", password: "", pin: "" },
             childRegisterData: {
                 name: "",
                 age: "",
@@ -37,31 +59,25 @@ export class AppModel {
     async loadSession() {
         this.session.load();
     }
-
     getParentData() {
         return this.session.parentData || null;
     }
-
     setChildData(data) {
         this.childData = data;
     }
-
     getChildData() {
         return this.childData;
     }
-
     getAuthState() {
         return this.authState;
     }
 
     updateAuthData(mode, field, value) {
-        if (mode === "login") {
-            this.authState.loginData[field] = value;
-        } else if (mode === "register-adult") {
+        if (mode === "login") this.authState.loginData[field] = value;
+        else if (mode === "register-adult")
             this.authState.registerData[field] = value;
-        } else if (mode === "register-child") {
+        else if (mode === "register-child")
             this.authState.childRegisterData[field] = value;
-        }
     }
 
     toggleLoginMode() {
@@ -72,15 +88,12 @@ export class AppModel {
     setAuthStep(step) {
         this.authState.step = step;
     }
-
     setResetToken(token) {
         this.authState.resetToken = token;
     }
-
     getResetToken() {
         return this.authState.resetToken;
     }
-
     setLoading(isLoading) {
         this.authState.isLoading = isLoading;
     }
@@ -95,14 +108,9 @@ export class AppModel {
     async fetchChildrenAccounts() {
         try {
             if (!this.session.getToken()) return;
-
             const result = await ApiClient.get(`/auth/children`);
-
-            if (result && result.success) {
-                this.childrenAccounts = result.children;
-            } else {
-                this.childrenAccounts = [];
-            }
+            this.childrenAccounts =
+                result && result.success ? result.children : [];
         } catch (error) {
             console.error("[AppModel] Error fetch :", error);
             this.childrenAccounts = [];

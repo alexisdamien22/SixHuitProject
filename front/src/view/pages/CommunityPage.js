@@ -1,6 +1,5 @@
 import { el } from "../../utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
-import { ApiClient } from "../../model/ApiClient.js";
 
 export class CommunityPage {
     constructor(app) {
@@ -144,7 +143,7 @@ export class CommunityPage {
             el(
                 "button",
                 {
-                    className: "start-btn",
+                    className: "start-btn add-friend-btn",
                     onClick: async (e) => {
                         try {
                             await this.app.social.follow(user.id);
@@ -192,8 +191,8 @@ export class CommunityPage {
                         className: `interact-btn ${hasWorkedToday ? "btn-congrats" : "btn-remind"}`,
                         onClick: async (e) => {
                             try {
-                                const res = await ApiClient.post(
-                                    `/social/${localStorage.getItem("activeChildId")}/interact/${friend.id}`,
+                                const res = await this.app.social.interact(
+                                    friend.id,
                                 );
                                 FlashMessageManager.show(
                                     res.type === "congrats"

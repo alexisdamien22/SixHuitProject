@@ -1,5 +1,4 @@
 import { el } from "../../utils/DOMBuilder.js";
-import { ApiClient } from "../../model/ApiClient.js";
 
 export class ParentChildDetailsPage {
     constructor(app) {
@@ -9,12 +8,13 @@ export class ParentChildDetailsPage {
     }
 
     async render() {
-        const childId = localStorage.getItem("viewingChildId");
+        const childId = this.app.model.session.getViewingChildId();
         if (!this.childData || this.childData.id != childId) {
             this.isLoading = true;
             try {
-                const data = await ApiClient.get(`/child/${childId}`);
-                this.childData = data || { name: "Profil introuvable" };
+                this.childData = (await this.app.child.getChildById(
+                    childId,
+                )) || { name: "Profil introuvable" };
             } catch (err) {
                 this.childData = { name: "Erreur" };
             } finally {
@@ -211,13 +211,22 @@ export class ParentChildDetailsPage {
                 cpX = (p0.x + p1.x) / 2;
             d += ` C ${cpX} ${p0.y}, ${cpX} ${p1.y}, ${p1.x} ${p1.y}`;
         }
+
         const svg = document.createElementNS(
             "http://www.w3.org/2000/svg",
             "svg",
         );
         svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
         svg.setAttribute("preserveAspectRatio", "none");
-        svg.innerHTML = `<path d="${d}" class="path-curve" />`;
+
+        const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path",
+        );
+        path.setAttribute("d", d);
+        path.setAttribute("class", "path-curve");
+
+        svg.appendChild(path);
         return svg;
     }
 
@@ -228,7 +237,7 @@ export class ParentChildDetailsPage {
                 { className: "graph-empty" },
                 "Données insuffisantes",
             );
-        const colors = ["#ff5252", "#58cc02", "#ffb900"];
+
         return el(
             "div",
             { className: "bar-chart" },
@@ -236,10 +245,7 @@ export class ParentChildDetailsPage {
                 el(
                     "div",
                     { className: "bar-container" },
-                    el("div", {
-                        className: "bar-fill",
-                        style: `height: ${((s.quality + 1) / 3) * 100}%; background: ${colors[s.quality]}`,
-                    }),
+                    el("div", { className: `bar-fill quality-${s.quality}` }),
                 ),
             ),
         );

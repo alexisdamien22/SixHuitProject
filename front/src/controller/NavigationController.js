@@ -4,7 +4,9 @@ export class NavigationController {
     }
 
     goTo(pageName, params = {}) {
-        console.log("Navigation →", pageName, params);
+        if (this.app.metronome) {
+            this.app.metronome.stop();
+        }
 
         this.app.view.renderPage(pageName, params);
     }

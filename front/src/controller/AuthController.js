@@ -138,6 +138,7 @@ export class AuthController {
         }
     }
 
+
     async submitParentRegistration() {
         const state = this.app.model.getAuthState();
         if (state.isLoading) return;

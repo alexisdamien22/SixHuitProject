@@ -6,24 +6,29 @@ export class SocialController {
     }
 
     async getRecommendations() {
-        const childId = localStorage.getItem("activeChildId");
+        const childId = this.app.model.session.getChildId();
         return ApiClient.get(`/social/${childId}/recommendations`);
     }
 
     async search(query) {
-        const childId = localStorage.getItem("activeChildId");
+        const childId = this.app.model.session.getChildId();
         return ApiClient.get(
             `/social/${childId}/search?q=${encodeURIComponent(query)}`,
         );
     }
 
     async follow(followedId) {
-        const childId = localStorage.getItem("activeChildId");
+        const childId = this.app.model.session.getChildId();
         return ApiClient.post(`/social/${childId}/follow`, { followedId });
     }
 
     async getFriends() {
-        const childId = localStorage.getItem("activeChildId");
+        const childId = this.app.model.session.getChildId();
         return ApiClient.get(`/social/${childId}/friends`);
+    }
+
+    async interact(targetId) {
+        const childId = this.app.model.session.getChildId();
+        return ApiClient.post(`/social/${childId}/interact/${targetId}`);
     }
 }

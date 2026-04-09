@@ -3,16 +3,11 @@ import { el } from "../../utils/DOMBuilder.js";
 export class MetronomePage {
     constructor(app) {
         this.app = app;
-        this.audioContext = null;
-        this.isPlaying = false;
-        this.bpm = 120;
-        this.nextNoteTime = 0.0;
-        this.timerID = null;
-        this.lookahead = 25.0;
-        this.scheduleAheadTime = 0.1;
     }
 
     async render() {
+        const state = this.app.model.getMetronomeState();
+
         return el(
             "div",
             { className: "page metronome-page" },
@@ -23,7 +18,7 @@ export class MetronomePage {
                     "button",
                     {
                         className: "back-circle-btn",
-                        onClick: () => this.handleExit(),
+                        onClick: () => this.app.navigation.goTo("home"),
                     },
                     "‹",
                 ),
@@ -36,7 +31,7 @@ export class MetronomePage {
                 el(
                     "div",
                     { className: "bpm-display" },
-                    el("span", { id: "bpm-value" }, this.bpm),
+                    el("span", { id: "bpm-value" }, state.bpm),
                     el("span", { className: "bpm-label" }, "BPM"),
                 ),
 
@@ -49,10 +44,11 @@ export class MetronomePage {
                 el("input", {
                     type: "range",
                     className: "bpm-slider",
+                    id: "bpm-slider-input",
                     min: 40,
                     max: 220,
-                    value: this.bpm,
-                    onInput: (e) => this.updateBpm(e.target.value),
+                    value: state.bpm,
+                    onInput: (e) => this.app.metronome.setBpm(e.target.value),
                 }),
 
                 el(
@@ -62,7 +58,10 @@ export class MetronomePage {
                         "button",
                         {
                             className: "tempo-btn",
-                            onClick: () => this.updateBpm(this.bpm - 1),
+                            onClick: () =>
+                                this.app.metronome.setBpm(
+                                    this.app.model.getMetronomeBpm() - 1,
+                                ),
                         },
                         "-",
                     ),
@@ -71,15 +70,18 @@ export class MetronomePage {
                         {
                             className: "play-btn",
                             id: "metronome-play",
-                            onClick: () => this.toggleMetronome(),
+                            onClick: () => this.app.metronome.toggle(),
                         },
-                        "▶",
+                        state.isPlaying ? "■" : "▶",
                     ),
                     el(
                         "button",
                         {
                             className: "tempo-btn",
-                            onClick: () => this.updateBpm(this.bpm + 1),
+                            onClick: () =>
+                                this.app.metronome.setBpm(
+                                    this.app.model.getMetronomeBpm() + 1,
+                                ),
                         },
                         "+",
                     ),
@@ -88,71 +90,23 @@ export class MetronomePage {
         );
     }
 
-    updateBpm(value) {
-        this.bpm = parseInt(value);
+    updateBpmDisplay(bpm) {
         const display = document.getElementById("bpm-value");
-        if (display) display.textContent = this.bpm;
+        const slider = document.getElementById("bpm-slider-input");
+        if (display) display.textContent = bpm;
+        if (slider && slider.value !== String(bpm)) slider.value = bpm;
     }
 
-    toggleMetronome() {
-        if (!this.audioContext) {
-            this.audioContext = new (
-                window.AudioContext || window.webkitAudioContext
-            )();
-        }
-
-        this.isPlaying = !this.isPlaying;
+    updatePlayButton(isPlaying) {
         const btn = document.getElementById("metronome-play");
+        if (btn) btn.textContent = isPlaying ? "■" : "▶";
+    }
 
-        if (this.isPlaying) {
-            btn.textContent = "■";
-            this.nextNoteTime = this.audioContext.currentTime;
-            this.scheduler();
-        } else {
-            btn.textContent = "▶";
-            clearTimeout(this.timerID);
+    flashDot() {
+        const dot = document.getElementById("beat-dot");
+        if (dot) {
+            dot.classList.add("active");
+            setTimeout(() => dot.classList.remove("active"), 100);
         }
-    }
-
-    scheduler() {
-        while (
-            this.nextNoteTime <
-            this.audioContext.currentTime + this.scheduleAheadTime
-        ) {
-            this.scheduleNote(this.nextNoteTime);
-            this.nextNoteTime += 60.0 / this.bpm;
-        }
-        this.timerID = setTimeout(() => this.scheduler(), this.lookahead);
-    }
-
-    scheduleNote(time) {
-        const osc = this.audioContext.createOscillator();
-        const envelope = this.audioContext.createGain();
-
-        osc.frequency.value = 880;
-        envelope.gain.value = 1;
-        envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
-
-        osc.connect(envelope);
-        envelope.connect(this.audioContext.destination);
-
-        osc.start(time);
-        osc.stop(time + 0.1);
-
-        window.setTimeout(
-            () => {
-                const dot = document.getElementById("beat-dot");
-                if (dot) {
-                    dot.classList.add("active");
-                    setTimeout(() => dot.classList.remove("active"), 100);
-                }
-            },
-            (time - this.audioContext.currentTime) * 1000,
-        );
-    }
-
-    handleExit() {
-        if (this.isPlaying) this.toggleMetronome();
-        this.app.navigation.goTo("home");
     }
 }
