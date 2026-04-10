@@ -11,7 +11,7 @@ export class AdultAccountModel extends BaseModel {
 
     static create({ email, password, teacher, pin }) {
         return this.query(
-            "INSERT INTO adultaccount (email, password_hash, teacher, pin) VALUES (?, ?, ?, ?)",
+            "INSERT INTO adultaccount (email, password_hash, teacher, pin) VALUES (?, ?, ?, ?) RETURNING id",
             [
                 email,
                 password,
@@ -34,7 +34,6 @@ export class AdultAccountModel extends BaseModel {
     }
 
     static saveResetToken(email, token) {
-        // Syntaxe Postgres pour ajouter 1 heure
         return this.query(
             "UPDATE adultaccount SET reset_token = ?, reset_token_expires = NOW() + INTERVAL '1 hour' WHERE email = ?",
             [token, email],

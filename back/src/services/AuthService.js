@@ -12,8 +12,7 @@ export class AuthService {
         const { email, password, teacher, pin } = data;
         const existing = await AdultAccountModel.findByEmail(email);
 
-        // CORRECTION: existing est maintenant un objet ou undefined
-        if (existing) {
+        if (existing) { // Correction: existing est un objet ou undefined
             const err = new Error("User already exists");
             err.status = 409;
             throw err;
@@ -21,23 +20,17 @@ export class AuthService {
 
         const hashed = await bcrypt.hash(password, 10);
         let hashedPin = null;
-        if (pin) {
-            hashedPin = await bcrypt.hash(String(pin), 10);
-        }
+        if (pin) hashedPin = await bcrypt.hash(String(pin), 10);
 
         const result = await AdultAccountModel.create({
             email,
             password: hashed,
-            teacher: teacher ? true : false, // Postgres utilise des booléens
+            teacher: !!teacher,
             pin: hashedPin,
         });
 
-        // CORRECTION: Postgres ne renvoie pas 'insertId', on récupère l'id du résultat
-        const adultId = result[0].id;
-
-        const token = jwt.sign({ id: adultId }, process.env.JWT_SECRET, {
-            expiresIn: "7d",
-        });
+        const adultId = result[0].id; // ✅ Correction ici
+        const token = jwt.sign({ id: adultId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         return { message: "Account created successfully", token, adultId };
     }
@@ -153,22 +146,16 @@ export class AuthService {
             lesson_day: data.lesson_day,
         });
 
-        // CORRECTION: On récupère l'id de la première ligne insérée
-        const childId = result[0].id;
+        const childId = result[0].id; // ✅ Correction ici
 
         const mapDays = {
-            Lundi: "monday",
-            Mardi: "tuesday",
-            Mercredi: "wednesday",
-            Jeudi: "thursday",
-            Vendredi: "friday",
-            Samedi: "saturday",
-            Dimanche: "sunday",
+            Lundi: "monday", Mardi: "tuesday", Mercredi: "wednesday",
+            Jeudi: "thursday", Vendredi: "friday", Samedi: "saturday", Dimanche: "sunday"
         };
 
         for (const day of Object.keys(mapDays)) {
             const english = mapDays[day];
-            const status = data.days.includes(day) ? true : false;
+            const status = data.days.includes(day);
             await WeeklyPlanModel.setDay(childId, english, status);
         }
 
@@ -179,15 +166,12 @@ export class AuthService {
     static async login({ email, password }) {
         const user = await AdultAccountModel.findByEmail(email);
 
-        // CORRECTION: user est l'objet ou undefined
-        if (!user) throw { status: 404, message: "User not found" };
+        if (!user) throw { status: 404, message: "User not found" }; // ✅ Plus de .length
 
         const valid = await bcrypt.compare(password, user.password_hash);
         if (!valid) throw { status: 401, message: "Incorrect password" };
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-            expiresIn: "7d",
-        });
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         return { message: "Login success", token, adultId: user.id };
     }
