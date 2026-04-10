@@ -50,6 +50,7 @@ CREATE TABLE `childaccount` (
   `allow_friends` tinyint(1) DEFAULT '1',
   `freeze_until` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `show_decorations` BOOLEAN DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `adultId` (`adultId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -204,7 +205,7 @@ ALTER TABLE `following`
   ADD CONSTRAINT `following_ibfk_2` FOREIGN KEY (`followed_child_id`) REFERENCES `childaccount` (`id`);
 
 ALTER TABLE `interactions`
-  ADD CONSTRAINT `interactions_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `childaccount` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_sender_child` FOREIGN KEY (`sender_id`) REFERENCES `childaccount` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `interactions_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `childaccount` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `sessions`

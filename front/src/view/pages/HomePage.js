@@ -112,6 +112,7 @@ export class HomePage {
             childData.lesson_day,
             childData.history || childData.sessions || [],
         );
+        const showDecorations = childData.show_decorations !== 0;
 
         const jsDays = [
             "Dimanche",
@@ -163,13 +164,7 @@ export class HomePage {
 
         requestAnimationFrame(() => {
             setTimeout(() => {
-                this.drawPathLine(container);
-                this.scrollToMascot();
-            }, 50);
-        });
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                this.drawPathLine(container);
+                this.drawPathLine(container, showDecorations);
                 this.scrollToMascot();
             }, 50);
         });
@@ -177,7 +172,7 @@ export class HomePage {
         return container;
     }
 
-    drawPathLine(container) {
+    drawPathLine(container, showDecorations = true) {
         const pathContainer = container.querySelector(".path-container");
         if (!pathContainer) return;
 
@@ -202,28 +197,33 @@ export class HomePage {
         svg.setAttribute("width", "100%");
         svg.setAttribute("height", totalHeight);
 
-        for (let i = 0; i < this.CONFIG.nbLines; i++) {
-            const xOffset = (i - 2) * this.CONFIG.lineSpacing;
-            const path = document.createElementNS(svgNS, "path");
+        if (showDecorations) {
+            for (let i = 0; i < this.CONFIG.nbLines; i++) {
+                const xOffset = (i - 2) * this.CONFIG.lineSpacing;
+                const path = document.createElementNS(svgNS, "path");
 
-            let d = `M ${centerX + xOffset + Math.sin(0 * this.CONFIG.frequency + this.CONFIG.phaseOffset) * this.CONFIG.amplitude},0`;
+                const startY = -200;
+                const endY = totalHeight + 200;
 
-            for (let y = 10; y <= totalHeight; y += 15) {
-                const x =
-                    centerX +
-                    xOffset +
-                    Math.sin(
-                        y * this.CONFIG.frequency + this.CONFIG.phaseOffset,
-                    ) *
-                        this.CONFIG.amplitude;
-                d += ` L ${x},${y}`;
+                let d = `M ${centerX + xOffset + Math.sin(startY * this.CONFIG.frequency + this.CONFIG.phaseOffset) * this.CONFIG.amplitude},${startY}`;
+
+                for (let y = startY + 15; y <= endY; y += 15) {
+                    const x =
+                        centerX +
+                        xOffset +
+                        Math.sin(
+                            y * this.CONFIG.frequency + this.CONFIG.phaseOffset,
+                        ) *
+                            this.CONFIG.amplitude;
+                    d += ` L ${x},${y}`;
+                }
+
+                path.setAttribute("d", d);
+                path.setAttribute("class", "staff-line-path");
+                svg.appendChild(path);
             }
-
-            path.setAttribute("d", d);
-            path.setAttribute("class", "staff-line-path");
-            svg.appendChild(path);
+            svgWrapper.appendChild(svg);
         }
-        svgWrapper.appendChild(svg);
 
         const steps = container.querySelectorAll(".path-step");
         steps.forEach((step) => {

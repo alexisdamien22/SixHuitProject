@@ -2,9 +2,10 @@ import { BaseModel } from "./BaseModel.js";
 
 export class AdultAccountModel extends BaseModel {
     static findByEmail(email) {
-        return this.query("SELECT * FROM adultaccount WHERE email = ?", [
-            email,
-        ]);
+        return this.query(
+            "SELECT id, email, teacher, pin FROM adultaccount WHERE email = ?",
+            [email],
+        );
     }
 
     static create({ email, password, teacher, pin }) {
