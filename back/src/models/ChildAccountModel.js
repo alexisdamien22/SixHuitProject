@@ -4,8 +4,8 @@ export class ChildAccountModel extends BaseModel {
     static create(data) {
         return this.query(
             `INSERT INTO childaccount 
-       (adultId, name, age, instrument, time_amount, school, mascot, lesson_day)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            (adultId, name, age, instrument, time_amount, school, mascot, lesson_day)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 data.adultId,
                 data.name,
@@ -19,8 +19,9 @@ export class ChildAccountModel extends BaseModel {
         );
     }
 
-    static findById(id) {
-        return this.query("SELECT * FROM childaccount WHERE id = ?", [id]);
+    static async findById(id) {
+        const rows = await this.query("SELECT * FROM childaccount WHERE id = ?", [id]);
+        return rows[0];
     }
 
     static findByAdultId(adultId) {

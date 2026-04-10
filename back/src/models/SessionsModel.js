@@ -17,9 +17,10 @@ export class SessionsModel extends BaseModel {
 
     static async hasSessionToday(childId) {
         const rows = await this.query(
-            "SELECT COUNT(*) as count FROM sessions WHERE child_id = ? AND DATE(session_date) = CURDATE()",
+            "SELECT COUNT(*) as count FROM sessions WHERE child_id = ? AND DATE(session_date) = CURRENT_DATE",
             [childId],
         );
-        return rows[0].count > 0;
+        // En Postgres, count peut revenir sous forme de string, on convertit en Number
+        return Number(rows[0].count) > 0;
     }
 }

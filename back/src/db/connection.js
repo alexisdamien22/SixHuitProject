@@ -1,16 +1,24 @@
-import mysql from "mysql2/promise";
+import postgres from 'postgres'
+import dotenv from 'dotenv'
 
-export const db = mysql.createPool({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "six_huit_production",
-    port: process.env.DB_PORT || "",
-    connectionLimit: 10,
+dotenv.config()
+
+const connectionString = process.env.DATABASE_URL
+
+if (!connectionString) {
+    console.error("❌ Erreur : DATABASE_URL est vide. Vérifie ton fichier .env");
+}
+
+const sql = postgres(connectionString, {
+    ssl: 'require', // Supabase refuse les connexions non sécurisées
+    connect_timeout: 10
+})
+
+// Petit test de connexion automatique
+sql`SELECT 1`.then(() => {
+    console.log("✅ Connecté à Supabase avec succès !");
+}).catch(err => {
+    console.error("❌ Erreur de connexion Supabase :", err.message);
 });
 
-db.getConnection()
-    .then(() => console.log("✅ Connexion à la base de données réussie"))
-    .catch((err) =>
-        console.error("❌ ÉCHEC de connexion à la base de données:", err.message),
-    );
+export default sql
