@@ -39,7 +39,7 @@ export class Header {
         }
 
         if (streakIcon) {
-            streakIcon.src = AppFireChange.FireTextur(safeStreak);
+            streakIcon.src = AppFireChange.FireTexture(safeStreak);
         }
     }
 
@@ -89,7 +89,7 @@ export class Header {
                     { className: "streak" },
                     el("img", {
                         className: "streak-icon",
-                        src: AppFireChange.FireTextur(streak),
+                        src: AppFireChange.FireTexture(streak),
                         alt: "Streak",
                     }),
                     el("p", { className: "streak-text" }, String(streak)),
