@@ -1,3 +1,7 @@
+.home-page {
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+}
 .path-container {
     display: flex;
     flex-direction: column;

@@ -132,6 +132,13 @@ export class SettingsPage {
                             await this.app.child.updateSettings(childData.id, {
                                 show_decorations: isChecked,
                             });
+                            if (
+                                this.app.child &&
+                                typeof this.app.child.loadChildData ===
+                                    "function"
+                            ) {
+                                await this.app.child.loadChildData();
+                            }
                             FlashMessageManager.show(
                                 "Réglages mis à jour.",
                                 "success",
@@ -161,23 +168,11 @@ export class SettingsPage {
                     this.createActionItem("Modifier mon code PIN", () =>
                         this.handleChangePin(),
                     ),
-                    this.createToggleItem(
-                        "Rappels par email",
-                        "email-notif",
-                        true,
-                        () => {},
-                    ),
                 ]),
             ];
         } else {
             specificSections = [
                 this.createSection("Expérience Musicale", [
-                    this.createToggleItem(
-                        "Effets sonores",
-                        "sound-effects",
-                        true,
-                        () => {},
-                    ),
                     this.createActionItem("Changer ma mascotte", () => {}),
                 ]),
             ];

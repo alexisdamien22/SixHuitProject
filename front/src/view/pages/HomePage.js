@@ -61,7 +61,9 @@ export class HomePage {
 
         const container = el(
             "div",
-            { className: "home-page" },
+            {
+                className: "home-page",
+            },
             el("div", { className: "path-container" }, steps),
         );
 
@@ -69,6 +71,7 @@ export class HomePage {
             setTimeout(() => {
                 this.drawPathLine(container, showDecorations);
                 this.scrollToMascot();
+                container.style.opacity = "1";
             }, 50);
         });
 
@@ -196,6 +199,14 @@ export class HomePage {
                 try {
                     await this.app.child.updateSession(finalSessionData);
                     document.querySelector(".modal-overlay")?.remove();
+
+                    const successSound = new Audio(
+                        "/assets/sounds/success.wav",
+                    );
+                    successSound
+                        .play()
+                        .catch((err) => console.log("Audio non lu :", err));
+
                     await this.app.child.loadChildData();
                     this.app.navigation.goTo("home");
                 } catch (error) {
