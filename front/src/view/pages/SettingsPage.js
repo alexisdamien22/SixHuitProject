@@ -1,6 +1,5 @@
 import { el } from "../../utils/DOMBuilder.js";
 import { AccountSwitcher } from "./AccountSwitcher.js";
-import { ApiClient } from "../../model/ApiClient.js";
 import { AppViewTheme } from "../AppViewTheme.js";
 import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
 
@@ -11,50 +10,34 @@ export class SettingsPage {
 
     async handleChangePin() {
         this.showPasswordModal(async (password) => {
-            try {
-                const verifyRes = await ApiClient.post(
-                    "/auth/verify-password",
-                    { password },
-                );
+            const isPasswordValid =
+                await this.app.auth.verifyPassword(password);
 
-                if (verifyRes.success) {
-                    AccountSwitcher.showPinPopup(
-                        async (newPin, onUpdateSuccess, onUpdateError) => {
-                            try {
-                                const updateRes = await ApiClient.post(
-                                    "/auth/update-pin",
-                                    { newPin },
-                                );
-                                if (updateRes.success) {
-                                    onUpdateSuccess();
-                                    FlashMessageManager.show(
-                                        "Code PIN modifié avec succès !",
-                                        "success",
-                                    );
-                                } else {
-                                    onUpdateError();
-                                    FlashMessageManager.show(
-                                        "Erreur lors de la modification du code PIN.",
-                                        "error",
-                                    );
-                                }
-                            } catch (e) {
-                                onUpdateError();
-                                FlashMessageManager.show(
-                                    "Erreur inattendue.",
-                                    "error",
-                                );
-                            }
-                        },
-                        "Nouveau code PIN",
-                    );
-                } else {
-                    FlashMessageManager.show(
-                        "Mot de passe incorrect.",
-                        "error",
-                    );
-                }
-            } catch (err) {}
+            if (isPasswordValid) {
+                AccountSwitcher.showPinPopup(
+                    async (newPin, onUpdateSuccess, onUpdateError) => {
+                        const isPinUpdated =
+                            await this.app.auth.updatePin(newPin);
+
+                        if (isPinUpdated) {
+                            onUpdateSuccess();
+                            FlashMessageManager.show(
+                                "Code PIN modifié avec succès !",
+                                "success",
+                            );
+                        } else {
+                            onUpdateError();
+                            FlashMessageManager.show(
+                                "Erreur lors de la modification du code PIN.",
+                                "error",
+                            );
+                        }
+                    },
+                    "Nouveau code PIN",
+                );
+            } else {
+                FlashMessageManager.show("Mot de passe incorrect.", "error");
+            }
         });
     }
 
@@ -111,7 +94,10 @@ export class SettingsPage {
     }
 
     async render() {
-        const isParentMode = !localStorage.getItem("activeChildId");
+        const isParentMode =
+            this.app.model.session.isParent() &&
+            !this.app.model.session.getChildId();
+
         const isLightMode = document.body.classList.contains("light-mode");
 
         let childData = {};
@@ -155,7 +141,7 @@ export class SettingsPage {
                                 "Erreur de mise à jour.",
                                 "error",
                             );
-                            e.target.checked = !isChecked; // Annuler visuellement
+                            e.target.checked = !isChecked;
                         }
                     },
                 ),

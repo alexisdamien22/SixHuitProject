@@ -18,10 +18,20 @@
     left: 50%;
     width: 4px;
     height: 110px;
-    background: red;
     transform-origin: bottom center;
-    transform: translateX(-50%) rotate(0deg);
-    transition: transform 0.08s linear;
+    background-color: var(--needle-color, red);
+    transform: translateX(-50%) rotate(var(--needle-angle, 0deg));
+    transition:
+        transform 0.08s linear,
+        background-color 0.2s ease;
+}
+
+.tuner-needle.tuned {
+    --needle-color: #4caf50;
+}
+
+.tuner-needle.untuned {
+    --needle-color: red;
 }
 
 .tuner-center {

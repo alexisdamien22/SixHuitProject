@@ -54,4 +54,11 @@ export class AdultAccountModel extends BaseModel {
             [hashedPassword, id],
         );
     }
+
+    static getPasswordHash(id) {
+        return this.query(
+            "SELECT password_hash FROM adultaccount WHERE id = ?",
+            [id],
+        );
+    }
 }

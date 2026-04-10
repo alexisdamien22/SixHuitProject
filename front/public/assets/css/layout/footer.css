@@ -22,7 +22,22 @@
     z-index: 1;
     pointer-events: none;
     opacity: 0;
-    transition: all 0.3s ease;
+    display: none;
+    width: var(--slider-width, 0);
+    left: var(--slider-left, 0);
+    transition: none;
+}
+
+.footer-slider.animated {
+    transition:
+        left 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+        width 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+        opacity 0.3s ease;
+}
+
+.footer-slider.show {
+    opacity: 1;
+    display: block;
 }
 
 .icon-footer {

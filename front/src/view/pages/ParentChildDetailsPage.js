@@ -144,9 +144,9 @@ export class ParentChildDetailsPage {
                     alt: "Mascotte",
                     className: "header-mascot-img",
                     onError: (e) => {
-                        e.target.style.display = 'none';
-                    }
-                })
+                        e.target.classList.add("d-none");
+                    },
+                }),
             ),
         );
     }

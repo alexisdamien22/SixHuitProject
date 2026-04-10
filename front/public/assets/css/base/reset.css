@@ -18,8 +18,8 @@ body {
     background-color: var(--color-bg-main);
     color: var(--color-text-main);
     transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+        background-color 0.3s ease,
+        color 0.3s ease;
 }
 
 #app {
@@ -59,4 +59,11 @@ label {
 
 button {
     font-family: inherit;
+}
+
+.d-none {
+    display: none !important;
+}
+.no-scroll {
+    overflow: hidden !important;
 }

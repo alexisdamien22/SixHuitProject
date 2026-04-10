@@ -253,3 +253,7 @@
     height: 10px;
     top: 20px;
 }
+
+.path-step.dynamic-pos {
+    transform: translateX(var(--step-offset, 0px)) !important;
+}

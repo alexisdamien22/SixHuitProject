@@ -14,4 +14,12 @@ export class SessionsModel extends BaseModel {
             [childId],
         );
     }
+
+    static async hasSessionToday(childId) {
+        const rows = await this.query(
+            "SELECT COUNT(*) as count FROM sessions WHERE child_id = ? AND DATE(session_date) = CURDATE()",
+            [childId],
+        );
+        return rows[0].count > 0;
+    }
 }
