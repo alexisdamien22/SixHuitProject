@@ -187,12 +187,6 @@ export class SettingsPage {
         } else {
             specificSections = [
                 this.createSection("Expérience Musicale", [
-                    this.createToggleItem(
-                        "Effets sonores",
-                        "sound-effects",
-                        true,
-                        () => {},
-                    ),
                     this.createActionItem("Changer ma mascotte", () => {}),
                 ]),
             ];

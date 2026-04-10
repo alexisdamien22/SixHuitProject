@@ -295,6 +295,14 @@ export class HomePage {
                 try {
                     await this.app.child.updateSession(finalSessionData);
                     document.querySelector(".modal-overlay")?.remove();
+
+                    const successSound = new Audio(
+                        "/assets/sounds/success.wav",
+                    );
+                    successSound
+                        .play()
+                        .catch((err) => console.log("Audio non lu :", err));
+
                     await this.app.child.loadChildData();
                     this.app.navigation.goTo("home");
                 } catch (error) {
