@@ -48,4 +48,11 @@ export class SocialModel extends BaseModel {
         `;
         return this.query(sql, [childId]);
     }
+
+    static async recordInteraction(senderId, receiverId, type) {
+        return this.query(
+            "INSERT INTO interactions (sender_id, receiver_id, type, is_read) VALUES (?, ?, ?, 0)",
+            [senderId, receiverId, type],
+        );
+    }
 }

@@ -51,17 +51,6 @@ export class AppView {
             this.app.model.session.isParent() && !activeChildId;
         document.body.classList.toggle("parent-mode", isParentMode);
 
-        if (name === "parent-home" && activeChildId) {
-            if (
-                this.app.child &&
-                typeof this.app.child.loadChildData === "function"
-            ) {
-                await this.app.child.loadChildData();
-            }
-            this.app.navigation.goTo("home");
-            return;
-        }
-
         this.appRoot.replaceChildren();
 
         const hideHeader = [
@@ -77,8 +66,8 @@ export class AppView {
             "registerChild",
         ].includes(name);
 
-        this.headerRoot.style.display = hideHeader ? "none" : "";
-        this.footerRoot.style.display = hideFooter ? "none" : "";
+        this.headerRoot.classList.toggle("d-none", hideHeader);
+        this.footerRoot.classList.toggle("d-none", hideFooter);
 
         if (this.currentPage?.onUnmount) {
             this.currentPage.onUnmount();
@@ -247,10 +236,10 @@ export class AppView {
             void switcher.offsetWidth;
 
             switcher.classList.add("show");
-            document.body.style.overflow = "hidden";
+            document.body.classList.add("no-scroll");
         } else if (switcher) {
             switcher.classList.remove("show");
-            document.body.style.overflow = "";
+            document.body.classList.remove("no-scroll");
         }
     }
 

@@ -94,13 +94,16 @@ export class TunerPage {
 
                 centsEl.textContent = `Écart : ${cents.toFixed(1)} cents`;
                 const angle = Math.max(-50, Math.min(50, cents)) * 0.9;
-                needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+
+                needle.style.setProperty("--needle-angle", `${angle}deg`);
 
                 if (Math.abs(cents) < 5) {
-                    needle.style.background = "#4caf50";
+                    needle.classList.add("tuned");
+                    needle.classList.remove("untuned");
                     center.classList.add("good");
                 } else {
-                    needle.style.background = "red";
+                    needle.classList.add("untuned");
+                    needle.classList.remove("tuned");
                     center.classList.remove("good");
                 }
             },

@@ -31,24 +31,8 @@ export class SocialController {
 
     static async interact(req, res) {
         const { childId, targetId } = req.params;
+
         const result = await SocialService.sendInteraction(childId, targetId);
-
-        const sender = await SocialModel.query(
-            "SELECT name FROM childaccount WHERE id = ?",
-            [childId],
-        );
-        const senderName = sender[0]?.name || "Un ami";
-
-        const title =
-            result.type === "congrats"
-                ? "Félicitations ! 🎉"
-                : "Petit rappel 🔔";
-        const body =
-            result.type === "congrats"
-                ? `${senderName} t'a félicité pour ton travail !`
-                : `${senderName} te rappelle de faire ta série !`;
-
-        await NotificationService.sendPush(targetId, title, body, "/community");
 
         res.status(200).json(result);
     }

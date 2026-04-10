@@ -17,16 +17,20 @@ export const AppViewNavigation = {
         const activeIcon = icons[index];
 
         requestAnimationFrame(() => {
-            slider.style.transition = animated
-                ? "left 0.3s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease"
-                : "none";
-
-            slider.style.width = `${activeIcon.offsetWidth}px`;
-            slider.style.left = `${activeIcon.offsetLeft}px`;
+            slider.classList.toggle("animated", animated);
+            slider.style.setProperty(
+                "--slider-width",
+                `${activeIcon.offsetWidth}px`,
+            );
+            slider.style.setProperty(
+                "--slider-left",
+                `${activeIcon.offsetLeft}px`,
+            );
 
             if (activeIcon.offsetWidth > 0) {
-                slider.style.opacity = "1";
-                slider.style.display = "block";
+                slider.classList.add("show");
+            } else {
+                slider.classList.remove("show");
             }
         });
     },

@@ -1,25 +1,16 @@
 import { ChildAccountModel } from "../models/ChildAccountModel.js";
 import { NotificationService } from "./NotificationService.js";
+import { SessionsModel } from "../models/SessionsModel.js";
+import { SocialModel } from "../models/SocialModel.js";
 
 export class SocialService {
     static async sendInteraction(senderId, receiverId) {
-        const sqlCheck = `
-            SELECT COUNT(*) as count 
-            FROM sessions 
-            WHERE child_id = ? AND DATE(session_date) = CURDATE()
-        `;
-        const rows = await ChildAccountModel.query(sqlCheck, [receiverId]);
-        const type = rows[0].count > 0 ? "congrats" : "remind";
+        const hasSession = await SessionsModel.hasSessionToday(receiverId);
+        const type = hasSession ? "congrats" : "remind";
 
-        const sqlInsert = `
-            INSERT INTO interactions (sender_id, receiver_id, type, is_read) 
-            VALUES (?, ?, ?, 0)
-        `;
-        await ChildAccountModel.query(sqlInsert, [senderId, receiverId, type]);
-        const senderRows = await ChildAccountModel.query(
-            "SELECT name FROM childaccount WHERE id = ?",
-            [senderId],
-        );
+        await SocialModel.recordInteraction(senderId, receiverId, type);
+
+        const senderRows = await ChildAccountModel.findById(senderId);
         const senderName = senderRows[0]?.name || "Un ami";
 
         let title = "";
@@ -32,6 +23,7 @@ export class SocialService {
             title = "Petit rappel 🔔";
             body = `${senderName} te rappelle de faire ta leçon !`;
         }
+
         NotificationService.sendPush(
             receiverId,
             title,

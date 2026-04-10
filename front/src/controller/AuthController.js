@@ -258,9 +258,29 @@ export class AuthController {
         }
     }
 
+    async verifyPassword(password) {
+        try {
+            const res = await ApiClient.post("/auth/verify-password", {
+                password,
+            });
+            return res.success;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    async updatePin(newPin) {
+        try {
+            const res = await ApiClient.post("/auth/update-pin", { newPin });
+            return res.success;
+        } catch (err) {
+            return false;
+        }
+    }
+
     logout() {
         this.app.model.session.clear();
-        localStorage.removeItem("activeChildId");
+        this.app.model.session.clearActiveChild();
         this.app.model.resetAuthData();
         this.app.navigation.goTo("login");
     }

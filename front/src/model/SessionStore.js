@@ -1,3 +1,5 @@
+import { ApiClient } from "./ApiClient.js";
+
 export class SessionStore {
     constructor() {
         this.data = {
@@ -13,6 +15,9 @@ export class SessionStore {
         if (raw) {
             try {
                 this.data = JSON.parse(raw);
+                if (this.data.token) {
+                    ApiClient.setToken(this.data.token);
+                }
             } catch (err) {
                 console.error("Erreur de parsing session :", err);
             }
@@ -27,12 +32,14 @@ export class SessionStore {
     saveSession({ token, adultId, childId }) {
         this.data = { token, adultId, childId };
         localStorage.setItem("sixhuit-session", JSON.stringify(this.data));
+        ApiClient.setToken(token);
     }
 
     clear() {
         this.data = { token: null, adultId: null, childId: null };
         this.viewingChildId = null;
         localStorage.removeItem("sixhuit-session");
+        ApiClient.setToken(null);
     }
 
     clearActiveChild() {

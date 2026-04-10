@@ -179,15 +179,12 @@ export class AuthService {
         return { message: "Login success", token, adultId: account.id };
     }
     static async verifyPassword(adultId, password) {
-        const user = await AdultAccountModel.findById(adultId);
-        if (!user || user.length === 0)
+        const rows = await AdultAccountModel.getPasswordHash(adultId);
+
+        if (!rows || rows.length === 0)
             throw { status: 404, message: "User not found" };
 
-        const fullUser = await AdultAccountModel.query(
-            "SELECT password_hash FROM adultaccount WHERE id = ?",
-            [adultId],
-        );
-        const valid = await bcrypt.compare(password, fullUser[0].password_hash);
+        const valid = await bcrypt.compare(password, rows[0].password_hash);
 
         if (!valid) throw { status: 401, message: "Incorrect password" };
         return { success: true };
