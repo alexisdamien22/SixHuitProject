@@ -33,7 +33,14 @@ export class SessionModal {
 
         return el(
             "div",
-            { className: "modal-overlay" },
+            {
+                className: "modal-overlay",
+                onClick: (e) => {
+                    if (e.target.classList.contains("modal-overlay")) {
+                        e.target.remove();
+                    }
+                },
+            },
             el(
                 "div",
                 { className: "session-modal" },
@@ -56,28 +63,43 @@ export class SessionModal {
                 ),
 
                 el(
-                    "button",
-                    {
-                        className: "ca-btn-next",
-                        onClick: (e) => {
-                            e.preventDefault();
-                            if (this.happiness === null) {
-                                return;
-                            }
+                    "div",
+                    { className: "modal-actions" },
+                    el(
+                        "button",
+                        {
+                            className: "ca-btn-next",
+                            onClick: (e) => {
+                                e.preventDefault();
+                                if (this.happiness === null) {
+                                    return;
+                                }
 
-                            const dataToSend = {
-                                happiness: this.happiness,
-                                quality: this.quality,
-                                session_date: new Date()
-                                    .toISOString()
-                                    .slice(0, 10),
-                                practice_day: this.day,
-                            };
+                                const dataToSend = {
+                                    happiness: this.happiness,
+                                    quality: this.quality,
+                                    session_date: new Date()
+                                        .toISOString()
+                                        .slice(0, 10),
+                                    practice_day: this.day,
+                                };
 
-                            this.onComplete(dataToSend);
+                                this.onComplete(dataToSend);
+                            },
                         },
-                    },
-                    "FINIR LA SÉANCE",
+                        "FINIR LA SÉANCE",
+                    ),
+                    el(
+                        "button",
+                        {
+                            className: "modal-btn-cancel",
+                            onClick: (e) => {
+                                e.preventDefault();
+                                e.target.closest(".modal-overlay").remove();
+                            },
+                        },
+                        "Annuler",
+                    ),
                 ),
             ),
         );

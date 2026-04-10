@@ -110,11 +110,20 @@ export class SettingsPage {
         input.focus();
     }
 
-    render() {
+    async render() {
         const isParentMode = !localStorage.getItem("activeChildId");
         const isLightMode = document.body.classList.contains("light-mode");
 
-        const appearanceSection = this.createSection("Apparence", [
+        let childData = {};
+        if (
+            !isParentMode &&
+            this.app.model &&
+            typeof this.app.model.getChildData === "function"
+        ) {
+            childData = (await this.app.model.getChildData()) || {};
+        }
+
+        const appearanceItems = [
             this.createToggleItem(
                 "Thème Clair",
                 "theme-checkbox",
@@ -123,7 +132,40 @@ export class SettingsPage {
                     AppViewTheme.toggle(e.target.checked);
                 },
             ),
-        ]);
+        ];
+
+        if (!isParentMode) {
+            appearanceItems.push(
+                this.createToggleItem(
+                    "Afficher la partition en fond",
+                    "show-decorations",
+                    childData.show_decorations !== 0,
+                    async (e) => {
+                        const isChecked = e.target.checked;
+                        try {
+                            await this.app.child.updateSettings(childData.id, {
+                                show_decorations: isChecked,
+                            });
+                            FlashMessageManager.show(
+                                "Réglages mis à jour.",
+                                "success",
+                            );
+                        } catch (err) {
+                            FlashMessageManager.show(
+                                "Erreur de mise à jour.",
+                                "error",
+                            );
+                            e.target.checked = !isChecked; // Annuler visuellement
+                        }
+                    },
+                ),
+            );
+        }
+
+        const appearanceSection = this.createSection(
+            "Apparence",
+            appearanceItems,
+        );
 
         let specificSections = [];
 

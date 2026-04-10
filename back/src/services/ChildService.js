@@ -152,6 +152,10 @@ export class ChildService {
                 : null;
             params.push(date);
         }
+        if (settings.show_decorations !== undefined) {
+            updates.push("show_decorations = ?");
+            params.push(settings.show_decorations ? 1 : 0);
+        }
         if (updates.length === 0) return { success: true };
         sql += updates.join(", ") + " WHERE id = ?";
         params.push(childId);
