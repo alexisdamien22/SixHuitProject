@@ -92,6 +92,7 @@
     outline: none;
     margin-bottom: 10px;
     transition: border-color 0.2s;
+    border: solid;
 }
 
 .ca-input::placeholder {
