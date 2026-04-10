@@ -25,6 +25,24 @@
     justify-content: space-between;
 }
 
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--color-border-soft, #ddd);
+}
+
+.user-avatar-img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
 .tabs-container {
     display: flex;
     gap: 10px;
@@ -101,12 +119,12 @@
 }
 
 .btn-remind {
-    background-color: #ff9800; /* Orange pour le rappel */
+    background-color: #ff9800;
     box-shadow: 0 4px 0 #e68900;
 }
 
 .btn-congrats {
-    background-color: #58cc02; /* Vert pour féliciter */
+    background-color: #58cc02;
     box-shadow: 0 4px 0 #46a302;
 }
 
