@@ -64,7 +64,7 @@ export class SessionModal {
 
                 el(
                     "div",
-                    { className: "modal-actions", style: "margin-top: 20px;" },
+                    { className: "modal-actions" },
                     el(
                         "button",
                         {
