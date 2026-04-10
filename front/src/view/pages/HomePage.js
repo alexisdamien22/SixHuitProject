@@ -158,7 +158,9 @@ export class HomePage {
 
         const container = el(
             "div",
-            { className: "home-page" },
+            {
+                className: "home-page",
+            },
             el("div", { className: "path-container" }, steps),
         );
 
@@ -166,6 +168,7 @@ export class HomePage {
             setTimeout(() => {
                 this.drawPathLine(container, showDecorations);
                 this.scrollToMascot();
+                container.style.opacity = "1";
             }, 50);
         });
 

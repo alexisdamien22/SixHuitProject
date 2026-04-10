@@ -182,12 +182,6 @@ export class SettingsPage {
                     this.createActionItem("Modifier mon code PIN", () =>
                         this.handleChangePin(),
                     ),
-                    this.createToggleItem(
-                        "Rappels par email",
-                        "email-notif",
-                        true,
-                        () => {},
-                    ),
                 ]),
             ];
         } else {
