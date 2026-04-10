@@ -1,5 +1,5 @@
 export const AppFireChange = {
-    FireTextur(number) {
+    FireTexture(number) {
         const streakNumber =
             typeof number === "number" && !isNaN(number) ? Math.max(0, number) : 0;
         const level = Math.min(Math.floor(streakNumber / 7) + 1, 12);
