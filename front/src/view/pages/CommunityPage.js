@@ -127,7 +127,15 @@ export class CommunityPage {
         return el(
             "div",
             { className: "user-card" },
-            el("div", { className: "user-avatar" }, user.mascot || "🎵"),
+            el(
+                "div", 
+                { className: "user-avatar" }, 
+                el("img", {
+                    src: user.mascot,
+                    alt: `Mascotte de ${user.name}`,
+                    className: "user-avatar-img",
+                })
+            ),
             el(
                 "div",
                 { className: "user-info" },
@@ -170,7 +178,15 @@ export class CommunityPage {
         return el(
             "div",
             { className: "user-card" },
-            el("div", { className: "user-avatar" }, friend.mascot || "🎵"),
+            el(
+                "div", 
+                { className: "user-avatar" }, 
+                el("img", {
+                    src: friend.mascot,
+                    alt: `Mascotte de ${friend.name}`,
+                    className: "user-avatar-img",
+                })
+            ),
             el(
                 "div",
                 { className: "user-info" },
