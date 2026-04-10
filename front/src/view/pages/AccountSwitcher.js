@@ -1,5 +1,6 @@
 import { el } from "../../utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../utils/FlashMessageManager.js";
+
 export const AccountSwitcher = {
     create(view, accounts = []) {
         let container = document.getElementById("account-switcher-container");
@@ -31,15 +32,15 @@ export const AccountSwitcher = {
                     el("span", { className: "switcher-name" }, acc.name),
                 ),
                 el(
-                    "div", 
-                    { className: "switcher-avatar" }, 
-                    acc.mascot && acc.mascot.includes('/') 
-                        ? el("img", { 
-                            src: acc.mascot, 
-                            className: "avatar-img", 
-                            alt: "Mascotte" 
-                        })
-                        : acc.mascot
+                    "div",
+                    { className: "switcher-avatar" },
+                    acc.mascot && acc.mascot.includes("/")
+                        ? el("img", {
+                              src: acc.mascot,
+                              className: "avatar-img",
+                              alt: "Mascotte",
+                          })
+                        : acc.mascot,
                 ),
             ),
         );
@@ -102,6 +103,15 @@ export const AccountSwitcher = {
                     },
                     el(
                         "div",
+                        { className: "switcher-avatar" },
+                        el("img", {
+                            src: "/assets/img/icons/family.png",
+                            className: "avatar-img",
+                            alt: "Espace Parent",
+                        }),
+                    ),
+                    el(
+                        "div",
                         { className: "switcher-info" },
                         el(
                             "span",
@@ -147,7 +157,7 @@ export const AccountSwitcher = {
                             );
                             container.classList.add("error-shake");
                             FlashMessageManager.show(
-                                "Code pin incorect",
+                                "Code pin incorrect",
                                 "error",
                             );
                             setTimeout(() => {
@@ -184,6 +194,7 @@ export const AccountSwitcher = {
             "0",
             "⌫",
         ];
+
         const keypad = el(
             "div",
             { className: "verify-pin-keypad" },

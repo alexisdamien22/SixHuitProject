@@ -11,6 +11,7 @@ export class AppController {
     constructor(appModel, appView) {
         this.model = appModel;
         this.view = appView;
+        this.isCheckingInteractions = false;
 
         this.navigation = new NavigationController(this);
         this.auth = new AuthController(this);
@@ -53,7 +54,10 @@ export class AppController {
 
         if (childId) {
             await this.child.loadChildData();
-            await this.checkInteractions(childId);
+
+            if (!this.isCheckingInteractions) {
+                await this.checkInteractions(childId);
+            }
 
             setTimeout(() => {
                 NotificationController.subscribeUser(childId);
@@ -64,25 +68,32 @@ export class AppController {
     }
 
     async checkInteractions(childId) {
+        if (this.isCheckingInteractions) return;
+        this.isCheckingInteractions = true;
+
         try {
             const notifications = await ApiClient.get(
                 `/social/${childId}/notifications`,
             );
 
             if (Array.isArray(notifications) && notifications.length > 0) {
-                setTimeout(() => {
-                    notifications.forEach((notif) => {
+                notifications.forEach((notif, index) => {
+                    setTimeout(() => {
                         const isRemind = notif.type === "remind";
                         const message = isRemind
                             ? `🔔 ${notif.senderName} te rappelle de faire ta série !`
                             : `🎉 ${notif.senderName} t'a félicité pour ton travail !`;
 
-                        FlashMessageManager.show(message, "info", isRemind);
-                    });
-                }, 500);
+                        FlashMessageManager.show(message, "info", false);
+                    }, index * 500);
+                });
             }
         } catch (err) {
             console.error("Error checking social interactions:", err);
+        } finally {
+            setTimeout(() => {
+                this.isCheckingInteractions = false;
+            }, 5000);
         }
     }
 }

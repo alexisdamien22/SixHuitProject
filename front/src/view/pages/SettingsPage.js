@@ -123,7 +123,7 @@ export class SettingsPage {
         if (!isParentMode) {
             appearanceItems.push(
                 this.createToggleItem(
-                    "Afficher la partition en fond",
+                    "Afficher la portée en fond",
                     "show-decorations",
                     childData.show_decorations !== 0,
                     async (e) => {

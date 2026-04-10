@@ -6,6 +6,7 @@ export class TunerPage {
         this.app = app;
         this.tuner = null;
         this.mounted = false;
+        this.currentPitchValue = "A";
     }
 
     async render() {
@@ -23,13 +24,102 @@ export class TunerPage {
             center,
         );
 
-        const pitchSelect = el(
-            "select",
-            { id: "concertPitch" },
-            el("option", { value: "A" }, "Concert A"),
-            el("option", { value: "Bb" }, "Bb instrument"),
-            el("option", { value: "Eb" }, "Eb instrument"),
-            el("option", { value: "F" }, "F instrument"),
+        const options = [
+            { value: "A", label: "Concert A" },
+            { value: "Bb", label: "Instrument en Sib" },
+            { value: "Eb", label: "Instrument en Mib" },
+            { value: "F", label: "Instrument en Fa" },
+        ];
+
+        const currentLabelText =
+            options.find((o) => o.value === this.currentPitchValue)?.label ||
+            "Concert A";
+
+        const triggerLabel = el(
+            "span",
+            { className: "ca-dropdown-label" },
+            currentLabelText,
+        );
+        const triggerArrow = el(
+            "span",
+            { className: "ca-dropdown-arrow" },
+            "▼",
+        );
+
+        let activeCloseHandler = null;
+        let dropdownList;
+
+        const closeDropdown = () => {
+            if (dropdownList) dropdownList.classList.remove("show");
+            triggerArrow.classList.remove("open");
+            if (activeCloseHandler) {
+                document.removeEventListener("click", activeCloseHandler);
+                activeCloseHandler = null;
+            }
+        };
+
+        const items = options.map((opt) =>
+            el(
+                "div",
+                {
+                    className: `ca-dropdown-item ${opt.value === this.currentPitchValue ? "sel" : ""}`,
+                    onClick: (e) => {
+                        e.stopPropagation();
+                        this.currentPitchValue = opt.value;
+
+                        if (this.tuner) {
+                            this.tuner.currentPitch = opt.value;
+                        }
+
+                        triggerLabel.textContent = opt.label;
+
+                        Array.from(dropdownList.children).forEach((child) =>
+                            child.classList.remove("sel"),
+                        );
+                        e.currentTarget.classList.add("sel");
+
+                        closeDropdown();
+                    },
+                },
+                opt.label,
+            ),
+        );
+
+        dropdownList = el("div", { className: "ca-dropdown-list" }, ...items);
+
+        const trigger = el(
+            "div",
+            {
+                className: "ca-input ca-dropdown-trigger",
+                onClick: (e) => {
+                    e.stopPropagation();
+                    const isOpening = !dropdownList.classList.contains("show");
+                    if (isOpening) {
+                        dropdownList.classList.add("show");
+                        triggerArrow.classList.add("open");
+                        activeCloseHandler = () => closeDropdown();
+                        setTimeout(
+                            () =>
+                                document.addEventListener(
+                                    "click",
+                                    activeCloseHandler,
+                                ),
+                            0,
+                        );
+                    } else {
+                        closeDropdown();
+                    }
+                },
+            },
+            triggerLabel,
+            triggerArrow,
+        );
+
+        const pitchSelectWrapper = el(
+            "div",
+            { className: "ca-dropdown-wrapper tuner-dropdown" },
+            trigger,
+            dropdownList,
         );
 
         const noteEl = el("div", { className: "tuner-note", id: "note" }, "--");
@@ -58,7 +148,7 @@ export class TunerPage {
 
         container.appendChild(title);
         container.appendChild(tunerContainer);
-        container.appendChild(pitchSelect);
+        container.appendChild(pitchSelectWrapper);
 
         return container;
     }
@@ -72,14 +162,7 @@ export class TunerPage {
         const noteEl = document.getElementById("note");
         const centsEl = document.getElementById("cents");
         const needle = document.getElementById("needle");
-        const pitchSelect = document.getElementById("concertPitch");
         const center = document.querySelector(".tuner-center");
-
-        pitchSelect.addEventListener("change", () => {
-            if (this.tuner) {
-                this.tuner.currentPitch = pitchSelect.value;
-            }
-        });
 
         this.tuner = new Tuner({
             minClarity: 0.5,
@@ -109,7 +192,7 @@ export class TunerPage {
             },
         });
 
-        this.tuner.currentPitch = pitchSelect.value;
+        this.tuner.currentPitch = this.currentPitchValue;
 
         await this.tuner.start();
     }

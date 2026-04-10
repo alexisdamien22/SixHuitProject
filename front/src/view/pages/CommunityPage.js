@@ -127,7 +127,15 @@ export class CommunityPage {
         return el(
             "div",
             { className: "user-card" },
-            el("div", { className: "user-avatar" }, user.mascot || "🎵"),
+            el(
+                "div",
+                { className: "user-avatar" },
+                el("img", {
+                    src: user.mascot,
+                    alt: `Mascotte de ${user.name}`,
+                    className: "user-avatar-img",
+                }),
+            ),
             el(
                 "div",
                 { className: "user-info" },
@@ -170,7 +178,15 @@ export class CommunityPage {
         return el(
             "div",
             { className: "user-card" },
-            el("div", { className: "user-avatar" }, friend.mascot || "🎵"),
+            el(
+                "div",
+                { className: "user-avatar" },
+                el("img", {
+                    src: friend.mascot,
+                    alt: `Mascotte de ${friend.name}`,
+                    className: "user-avatar-img",
+                }),
+            ),
             el(
                 "div",
                 { className: "user-info" },
@@ -190,6 +206,13 @@ export class CommunityPage {
                     {
                         className: `interact-btn ${hasWorkedToday ? "btn-congrats" : "btn-remind"}`,
                         onClick: async (e) => {
+                            const button = e.currentTarget;
+                            if (button.disabled) return;
+
+                            button.disabled = true;
+                            button.style.opacity = "0.5";
+                            button.style.cursor = "not-allowed";
+
                             try {
                                 const res = await this.app.social.interact(
                                     friend.id,
@@ -200,8 +223,9 @@ export class CommunityPage {
                                         : "Rappel envoyé ! 🔔",
                                     "info",
                                 );
-                                e.target.disabled = true;
                             } catch (err) {
+                                button.disabled = false;
+                                button.style.opacity = "1";
                                 FlashMessageManager.show(
                                     "Erreur envoi",
                                     "error",
