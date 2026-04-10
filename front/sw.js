@@ -83,3 +83,39 @@ self.addEventListener("fetch", (event) => {
         }),
     );
 });
+
+self.addEventListener("push", (event) => {
+    let data = { title: "Six-Huit", body: "Il est temps de pratiquer !" };
+
+    if (event.data) {
+        try {
+            data = event.data.json();
+        } catch (e) {
+            data.body = event.data.text();
+        }
+    }
+
+    const options = {
+        body: data.body,
+        icon: "/assets/img/icons/app-icon-86.png",
+        badge: "/assets/img/icons/app-icon-86.png",
+        vibrate: [100, 50, 100],
+        data: {
+            url: data.url || "/",
+        },
+    };
+
+    event.waitUntil(self.registration.showNotification(data.title, options));
+});
+
+self.addEventListener("notificationclick", (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: "window" }).then((clientList) => {
+            if (clientList.length > 0) {
+                return clientList[0].focus();
+            }
+            return clients.openWindow(event.notification.data.url);
+        }),
+    );
+});

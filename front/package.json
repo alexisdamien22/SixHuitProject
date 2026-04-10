@@ -12,6 +12,6 @@
         "vite": "^8.0.1"
     },
     "dependencies": {
-        "nodemailer": "^8.0.5"
+        "pitchy": "^4.1.0"
     }
 }

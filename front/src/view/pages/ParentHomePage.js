@@ -41,7 +41,10 @@ export class ParentHomePage {
                 "button",
                 {
                     className: "ca-btn-next parent-add-btn",
-                    onClick: () => this.app.navigation.goTo("registerChild"),
+                    onClick: () => {
+                        this.app.model.resetAuthData();
+                        this.app.navigation.goTo("registerChild");
+                    },
                 },
                 "+ Ajouter un profil enfant",
             ),

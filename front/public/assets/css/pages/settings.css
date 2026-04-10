@@ -12,6 +12,7 @@
     height: 34px;
     position: relative;
     width: 60px;
+    flex-shrink: 0;
 }
 
 .theme-switch input {

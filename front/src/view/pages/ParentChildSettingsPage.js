@@ -36,7 +36,7 @@ export class ParentChildSettingsPage {
 
         return el(
             "div",
-            { className: "page parent-settings-page" },
+            { className: "page settings-page" },
             el(
                 "div",
                 { className: "details-header" },
