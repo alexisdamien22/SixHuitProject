@@ -59,17 +59,25 @@ export class Header {
         const isParentMode =
             this.app.model.session.isParent() &&
             !this.app.model.session.getChildId();
+
+        // ✅ Gère correctement l'icône parent ET les images de la mascotte enfant
         const profileContent = isParentMode
             ? el("img", {
                   src: "/assets/img/icons/family.png",
                   alt: "Profile",
                   className: "header-profile-img",
               })
-            : el(
-                  "div",
-                  { className: "header-mascot-icon" },
-                  childData.mascot || "🎵",
-              );
+            : childData.mascot && childData.mascot.includes("/")
+              ? el("img", {
+                    src: childData.mascot,
+                    alt: "Mascotte",
+                    className: "header-profile-img",
+                })
+              : el(
+                    "div",
+                    { className: "header-mascot-icon" },
+                    childData.mascot || "🎵",
+                );
 
         return el(
             "header",
