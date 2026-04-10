@@ -3,7 +3,7 @@ import { BaseModel } from "./BaseModel.js";
 export class AdultAccountModel extends BaseModel {
     static findByEmail(email) {
         return this.query(
-            "SELECT id, email, teacher, pin FROM adultaccount WHERE email = ?",
+            "SELECT id, email, password_hash, teacher, pin FROM adultaccount WHERE email = ?",
             [email],
         );
     }
