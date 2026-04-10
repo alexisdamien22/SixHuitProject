@@ -40,19 +40,20 @@ export class SocialService {
     }
 
     static async getPendingNotifications(childId) {
-        const sql = `
+        const sqlSelect = `
             SELECT i.id, i.type, c.name as senderName 
             FROM interactions i
             JOIN childaccount c ON i.sender_id = c.id
             WHERE i.receiver_id = ? AND i.is_read = 0
         `;
-        const notifications = await ChildAccountModel.query(sql, [childId]);
+        const notifications = await ChildAccountModel.query(sqlSelect, [
+            childId,
+        ]);
 
-        if (notifications && notifications.length > 0) {
-            await ChildAccountModel.query(
-                "UPDATE interactions SET is_read = 1 WHERE receiver_id = ? AND is_read = 0",
-                [childId],
-            );
+        if (notifications.length > 0) {
+            const sqlUpdate =
+                "UPDATE interactions SET is_read = 1 WHERE receiver_id = ? AND is_read = 0";
+            await ChildAccountModel.query(sqlUpdate, [childId]);
         }
 
         return notifications;

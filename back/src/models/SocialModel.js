@@ -4,20 +4,23 @@ export class SocialModel extends BaseModel {
     static searchChildren(query, currentChildId) {
         return this.query(
             `SELECT c.id, c.name, c.mascot, c.instrument
-         FROM childaccount c 
-         WHERE c.name LIKE ? 
-         AND c.id != ? 
-         AND c.is_public = 1 
-         LIMIT 10`,
+          FROM childaccount c 
+          WHERE c.name LIKE ? 
+          AND c.id != ? 
+          AND c.is_public = 1 
+          LIMIT 10`,
             [`%${query}%`, currentChildId],
         );
     }
 
     static async addFriend(followerId, followedId) {
-        return this.query(
-            "INSERT IGNORE INTO following (following_child_id, followed_child_id) VALUES (?, ?)",
-            [followerId, followedId],
-        );
+        const sql =
+            "INSERT IGNORE INTO following (following_child_id, followed_child_id) VALUES (?, ?)";
+
+        return Promise.all([
+            this.query(sql, [followerId, followedId]),
+            this.query(sql, [followedId, followerId]),
+        ]);
     }
 
     static getRecommendations(childId) {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "six-huit-v1";
+const CACHE_NAME = "six-huit-v2";
 
 const ASSETS_TO_CACHE = [
     "/",
