@@ -187,6 +187,23 @@
     pointer-events: none;
 }
 
+.success-mascot-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.ca-success-mascot {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+    animation: bounce 2s infinite;
+}
+
 .ca-days-row {
     display: flex;
     flex-wrap: wrap;

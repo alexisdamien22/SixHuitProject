@@ -103,7 +103,11 @@ export class RegisterChildPage {
                     el(
                         "div",
                         { className: "ca-success-mascot" },
-                        state.childRegisterData.mascot || "🎵",
+                        el("img", {
+                            src: state.childRegisterData.mascot || "/assets/img/mascots/fox.png",
+                            alt: "Mascotte de bienvenue",
+                            className: "success-mascot-img"
+                        })
                     ),
                     el(
                         "h2",
