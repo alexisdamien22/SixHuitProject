@@ -24,7 +24,7 @@ export const FormHelpers = {
                 const time_amount = parseInt(data.time_amount, 10);
                 return !isNaN(time_amount) && time_amount >= 0;
             case 5:
-                return data.school?.trim().length > 0;
+                return true;
             case 6:
                 return !!data.mascot;
             case 7:

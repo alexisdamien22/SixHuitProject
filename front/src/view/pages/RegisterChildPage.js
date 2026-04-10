@@ -127,6 +127,7 @@ export class RegisterChildPage {
         }
 
         const illus = STEP_ILLUS[currentStep] || { png: "", lbl: "" };
+        const showIllustration = [1, 2, 4].includes(currentStep);
 
         const isValid = FormHelpers.isChildStepValid(
             currentStep,
@@ -159,11 +160,13 @@ export class RegisterChildPage {
                     `Étape ${currentStep}/${TOTAL_STEPS}`,
                 ),
 
-                el(
-                    "div",
-                    { className: "ca-illus-wrap" },
-                    el("img", { src: illus.png, alt: illus.lbl }),
-                ),
+                showIllustration
+                    ? el(
+                          "div",
+                          { className: "ca-illus-wrap" },
+                          el("img", { src: illus.png, alt: illus.lbl }),
+                      )
+                    : null,
 
                 el(
                     "div",
@@ -278,7 +281,7 @@ export class RegisterChildPage {
                     el(
                         "p",
                         { className: "ca-question" },
-                        "Ton école ou conservatoire ?",
+                        "Ton école ou conservatoire ? (Optionnel)",
                     ),
                     el("input", {
                         className: "ca-input",
@@ -444,10 +447,10 @@ export class RegisterChildPage {
                                     onClick: () =>
                                         controller.handleMascotSelect(m),
                                 },
-                                el("img", { 
+                                el("img", {
                                     src: m,
                                     alt: "Mascotte",
-                                    className: "mascot-img"
+                                    className: "mascot-img",
                                 }),
                             ),
                         ),
