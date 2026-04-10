@@ -18,9 +18,9 @@ export class WeeklyPlanModel extends BaseModel {
     static setDay(childId, day_of_week, practice) {
         return this.query(
             `INSERT INTO weekly_plan (child_id, day_of_week, practice, status)
-                VALUES (?, ?, ?, 0)
-                ON DUPLICATE KEY UPDATE practice = ?`,
-            [childId, day_of_week, practice, practice],
+             VALUES (?, ?, ?, false)
+             ON CONFLICT (child_id, day_of_week) DO UPDATE SET practice = EXCLUDED.practice`,
+            [childId, day_of_week, practice],
         );
     }
 }

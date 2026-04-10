@@ -1,11 +1,12 @@
 import { BaseModel } from "./BaseModel.js";
 
 export class AdultAccountModel extends BaseModel {
-    static findByEmail(email) {
-        return this.query(
+    static async findByEmail(email) {
+        const rows = await this.query(
             "SELECT id, email, password_hash, teacher, pin FROM adultaccount WHERE email = ?",
             [email],
         );
+        return rows[0];
     }
 
     static create({ email, password, teacher, pin }) {
@@ -14,29 +15,28 @@ export class AdultAccountModel extends BaseModel {
             [
                 email,
                 password,
-                teacher !== undefined ? teacher : 0,
+                teacher !== undefined ? teacher : false,
                 pin !== undefined ? pin : null,
             ],
         );
     }
 
-    static findById(id) {
-        return this.query(
+    static async findById(id) {
+        const rows = await this.query(
             "SELECT id, email, teacher, pin, created_at FROM adultaccount WHERE id = ?",
             [id],
         );
+        return rows[0];
     }
 
     static updatePin(id, pinHash) {
-        return this.query("UPDATE adultaccount SET pin = ? WHERE id = ?", [
-            pinHash,
-            id,
-        ]);
+        return this.query("UPDATE adultaccount SET pin = ? WHERE id = ?", [pinHash, id]);
     }
 
     static saveResetToken(email, token) {
+        // Syntaxe Postgres pour ajouter 1 heure
         return this.query(
-            "UPDATE adultaccount SET reset_token = ?, reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = ?",
+            "UPDATE adultaccount SET reset_token = ?, reset_token_expires = NOW() + INTERVAL '1 hour' WHERE email = ?",
             [token, email],
         );
     }
@@ -52,13 +52,6 @@ export class AdultAccountModel extends BaseModel {
         return this.query(
             "UPDATE adultaccount SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?",
             [hashedPassword, id],
-        );
-    }
-
-    static getPasswordHash(id) {
-        return this.query(
-            "SELECT password_hash FROM adultaccount WHERE id = ?",
-            [id],
         );
     }
 }
